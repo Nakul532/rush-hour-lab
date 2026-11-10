@@ -28,3 +28,13 @@ Definitions are in `eval/scoring.ts` (top comment): optimal plan, found optimal,
 ## Spending limits
 
 LLM spend for the whole evaluation is capped at $1.00 of OpenRouter credit (checked against the account balance between scenarios) and 600,000 tokens. If a cap is hit, remaining scenarios are reported as not run.
+
+## Addendum 1 (post-lock run, committed before running)
+
+Three changes after the first results, each run as a separately labelled post-lock run; the original results stay as they were.
+
+1. **Agent loop: retry empty replies.** gpt-oss sometimes returns an empty reply (no text, no tool call). The loop now retries the same request up to 2 times instead of counting it towards "stop". Everything else (prompts, limits, scoring) is unchanged. The 15 original scenarios are re-run with this loop and reported as "post-lock run".
+2. **Five interacting-changes scenarios** (`eval/scenariosInteracting.ts`), locked in this commit before brute force, greedy or the agent ran on them. They were designed by probing single changes and the intended pairs only. Mechanisms: superadditive (I1–I3) and budget trap (I4–I5). Same searchers, scoring and limits as the original 15.
+3. **Model builder prompt fix for stated zeros.** The fix was written after seeing B01–B10 failures, so B01–B10 are reported but are no longer a fair test. Five held-out cases (H01–H05) were committed before the fix ran (commit `31f3b71`) and are the fair test.
+
+Spending cap for this addendum: $1.00 of OpenRouter credit.

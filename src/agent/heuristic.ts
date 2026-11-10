@@ -70,6 +70,6 @@ export function runHeuristic(base: CafeSpec, opts: { constraints?: Constraints; 
   steps.push({ kind: 'stop', reason: stopReason, message: stopReason === 'finished' ? 'No further change helped.' : `Stopped at the experiment budget (${maxExperiments}).` });
   return {
     baseline, bottleneck: findBottleneck(baseline), experiments, recommended: pickRecommended(experiments),
-    steps, stopReason, summary: null, llmCalls: 0, tokens: 0,
+    steps, stopReason, summary: null, llmCalls: 0, tokens: 0, emptyRetries: 0,
   };
 }

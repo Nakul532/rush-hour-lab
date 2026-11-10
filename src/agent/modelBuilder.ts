@@ -82,6 +82,14 @@ export function draftToSpec(draft: CafeDraft): BuiltModel {
   const staffCount = (k: 'cashier' | 'barista' | 'kitchen') =>
     Math.round(pick(`${k[0].toUpperCase()}${k.slice(1)} staff`, draft.staff?.[k], 0, 10, DEFAULTS.staff.value, DEFAULTS.staff.why));
   const staff: CafeSpec['staff'] = { cashier: staffCount('cashier'), barista: staffCount('barista'), kitchen: staffCount('kitchen') };
+  if (staff.cashier === 0) {
+    staff.cashier = 1;
+    assumptions.push('No cashier: modelled as 1 person taking orders (ASSUMPTION; the simulator needs someone to take each order)');
+  }
+  if (staff.barista === 0) {
+    staff.barista = 1;
+    assumptions.push('No barista: modelled as 1 person making drinks and handing over orders (ASSUMPTION)');
+  }
 
   const minutes = (k: 'order' | 'drink' | 'food' | 'handoff') =>
     pick(`Typical ${k} time (min)`, draft.minutes?.[k], 0.1, 60, DEFAULTS.minutes[k].value, DEFAULTS.minutes[k].why);
@@ -102,6 +110,13 @@ export function draftToSpec(draft: CafeDraft): BuiltModel {
     handoff = 'dedicated';
     staff.handoff = Math.round(pick('Handoff staff', draft.staff?.handoff, 1, 5, 1, 'ASSUMPTION'));
   } else if (draft.handoff !== 'barista') assumptions.push('The barista hands over orders (ASSUMPTION)');
+
+  if (staff.kitchen === 0 && ((mix.food ?? 0) > 0 || (mix.drinkFood ?? 0) > 0)) {
+    // Food with nobody cooking: treat it as ready items handed over at the counter.
+    mix = { drink: (mix.drink ?? 0) + (mix.drinkFood ?? 0), food: 0, drinkFood: 0, grabGo: (mix.grabGo ?? 0) + (mix.food ?? 0) };
+    assumptions.push('No kitchen staff: food is treated as ready items handed over at the counter; drink + food orders count as drinks (ASSUMPTION)');
+  }
+  if (staff.kitchen === 0) staff.kitchen = 1; // unused when no orders need the kitchen; keeps the config valid
 
   const spec: CafeSpec = {
     name: typeof draft.name === 'string' && draft.name.trim() ? draft.name.trim().slice(0, 80) : 'Your café',
@@ -125,7 +140,12 @@ export type BuildResult = { ok: true; model: BuiltModel; llmCalls: number } | { 
 
 export async function buildModelFromDescription(description: string, llm: LlmClient, maxAttempts = 2): Promise<BuildResult> {
   const messages: ChatMessage[] = [
-    { role: 'system', content: 'Extract the café described by the user into the build_model tool. Include only facts the user stated. Use 24-hour HH:MM times.' },
+    {
+      role: 'system',
+      content:
+        'Extract the café described by the user into the build_model tool. Include only facts the user stated, but do include stated zeros ' +
+        '("no kitchen staff" means kitchen 0; "drinks only" means mix 100/0/0). Percentages are 0–100. Use 24-hour HH:MM times.',
+    },
     { role: 'user', content: description.slice(0, 2000) },
   ];
   let llmCalls = 0;

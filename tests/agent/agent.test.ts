@@ -112,6 +112,28 @@ describe('experiment loop (mock LLM)', () => {
       expect(r.summary).toBeNull();
     });
 
+    it('an empty reply (no text, no tool call) is retried and the run continues', async () => {
+      const llm = new MockLlm([
+        {},
+        {},
+        { toolCalls: [{ name: 'test_change', args: { hypothesis: 'More barista.', changes: addBarista } }] },
+        { toolCalls: [{ name: 'finish', args: { summary: 'Done.' } }] },
+      ]);
+      const r = await runAnalysis(syntheticCafe(), llm, { sim: SIM });
+      expect(r.stopReason).toBe('finished');
+      expect(r.emptyRetries).toBe(2);
+      expect(r.experiments).toHaveLength(1);
+      // Retries resend the same history: the empty replies are not added to it.
+      expect(llm.requests[2].messages).toHaveLength(llm.requests[0].messages.length);
+    });
+
+    it('after two failed retries the empty reply counts as a silent turn', async () => {
+      const llm = new MockLlm([{}], true);
+      const r = await runAnalysis(syntheticCafe(), llm, { sim: SIM });
+      expect(r.stopReason).toBe('no_tool_call');
+      expect(r.llmCalls).toBe(6); // (1 + 2 retries) × 2 silent turns
+    });
+
     it('replies without a tool call: nudged once, then stopped', async () => {
       const llm = new MockLlm([{ content: 'I think you should hire.' }], true);
       const r = await runAnalysis(syntheticCafe(), llm, { sim: SIM });

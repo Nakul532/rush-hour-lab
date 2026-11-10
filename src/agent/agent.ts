@@ -9,7 +9,7 @@
 import type { CafeSpec } from '../sim/cafe';
 import { applyChanges, ChangeError, describeChange, parseChanges, type Change } from './changes';
 import { compare, decide, DEFAULT_SIM, findBottleneck, sensitivity, simulate, type Bottleneck, type Comparison, type Decision, type Evidence, type ResultSummary, type SimSettings } from './evaluate';
-import { LlmLimitError, type ChatMessage, type LlmClient, type ToolCall } from './llm';
+import { LlmLimitError, type ChatMessage, type LlmClient, type LlmResponse, type ToolCall } from './llm';
 import { DEFAULT_COSTS, constraintViolations, planCost, type Constraints, type CostTable } from './plan';
 import { AGENT_TOOLS, agentSystemPrompt, describeCafe, describeConstraints, r1 } from './prompts';
 import { describeSpace, matchPlan, type ChangeSpace } from './space';
@@ -42,6 +42,9 @@ export type StopReason = 'finished' | 'experiment_budget' | 'llm_call_limit' | '
 /** Stop after the model sends the same failing call this many times in a row. */
 export const MAX_REPEATED_ERRORS = 3;
 
+/** Retries when the model returns a completely empty reply. */
+export const MAX_EMPTY_RETRIES = 2;
+
 export interface AnalysisOptions {
   constraints?: Constraints;
   costs?: CostTable;
@@ -68,6 +71,8 @@ export interface AnalysisResult {
   summary: string | null;
   llmCalls: number;
   tokens: number;
+  /** Empty replies that were retried. */
+  emptyRetries: number;
 }
 
 /** LLM text shown to users must not carry numbers: those come from code. */
@@ -147,6 +152,7 @@ export async function runAnalysis(base: CafeSpec, llm: LlmClient, opts: Analysis
   let summary: string | null = null;
   let stopReason: StopReason | null = null;
   let silentTurns = 0;
+  let emptyRetries = 0;
   let lastFailed = '';
   let repeatedFailures = 0;
 
@@ -236,7 +242,7 @@ export async function runAnalysis(base: CafeSpec, llm: LlmClient, opts: Analysis
       stopReason = 'llm_call_limit';
       break;
     }
-    let res;
+    let res: LlmResponse;
     try {
       res = await llm.complete({ messages, tools: AGENT_TOOLS, toolChoice: 'required', maxTokens: opts.maxTokensPerCall ?? 1024 });
     } catch (err) {
@@ -247,6 +253,26 @@ export async function runAnalysis(base: CafeSpec, llm: LlmClient, opts: Analysis
     }
     llmCalls++;
     tokens += res.usage.totalTokens;
+    const isEmpty = (r: LlmResponse) => !(r.message.tool_calls?.length) && !(r.message.content ?? '').trim();
+    // gpt-oss sometimes ends after reasoning with no text and no tool call.
+    // Retry the same request (it is not added to the history), up to MAX_EMPTY_RETRIES times.
+    let retries = 0;
+    while (isEmpty(res) && retries < MAX_EMPTY_RETRIES && llmCalls < maxCalls) {
+      retries++;
+      emptyRetries++;
+      steps.push({ kind: 'error', message: `Empty reply from the model; retrying (${retries} of ${MAX_EMPTY_RETRIES})` });
+      try {
+        res = await llm.complete({ messages, tools: AGENT_TOOLS, toolChoice: 'required', maxTokens: opts.maxTokensPerCall ?? 1024 });
+      } catch (err) {
+        if (err instanceof LlmLimitError) stopReason = err.limit === 'calls' ? 'llm_call_limit' : 'token_budget';
+        else stopReason = 'llm_error';
+        steps.push({ kind: 'error', message: err instanceof Error ? err.message : String(err) });
+        break;
+      }
+      llmCalls++;
+      tokens += res.usage.totalTokens;
+    }
+    if (stopReason !== null) break;
     messages.push(res.message);
     const calls = res.message.tool_calls ?? [];
     if (calls.length === 0) {
@@ -295,5 +321,5 @@ export async function runAnalysis(base: CafeSpec, llm: LlmClient, opts: Analysis
     repeated_error: `Stopped: the model sent the same invalid call ${MAX_REPEATED_ERRORS} times in a row.`,
   };
   steps.push({ kind: 'stop', reason: final, message: stopMessages[final] });
-  return { baseline, bottleneck, experiments, recommended: pickRecommended(experiments), steps, stopReason: final, summary, llmCalls, tokens };
+  return { baseline, bottleneck, experiments, recommended: pickRecommended(experiments), steps, stopReason: final, summary, llmCalls, tokens, emptyRetries };
 }

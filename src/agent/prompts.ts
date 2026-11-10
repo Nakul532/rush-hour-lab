@@ -66,7 +66,8 @@ export const WHAT_IF_TOOL: ToolSpec = tool(
 
 export const BUILD_MODEL_TOOL: ToolSpec = tool(
   'build_model',
-  'Record the café described by the user. Leave out anything they did not say; do not guess.',
+  'Record the café described by the user. Leave out anything they did not say; do not guess. ' +
+    'Stated zeros are facts: "no kitchen staff" → staff.kitchen 0; "drinks only" or "no food" → mixPercent drink 100, food 0, drinkFood 0.',
   {
     name: { type: 'string' },
     rushMinutes: { type: 'number', description: 'Length of the rush in minutes' },
@@ -74,11 +75,13 @@ export const BUILD_MODEL_TOOL: ToolSpec = tool(
     ordersPerHour: { type: 'number' },
     mixPercent: {
       type: 'object',
+      description: 'Share of orders by type, in percent (0–100, e.g. half = 50). Fill all three when the user gives the split or says drinks only.',
       properties: { drink: { type: 'number' }, food: { type: 'number' }, drinkFood: { type: 'number' }, grabGo: { type: 'number' } },
       additionalProperties: false,
     },
     staff: {
       type: 'object',
+      description: 'Head count per station. Include every station the user mentions, including 0 for one they say they do not have.',
       properties: { cashier: { type: 'integer' }, barista: { type: 'integer' }, kitchen: { type: 'integer' }, handoff: { type: 'integer' } },
       additionalProperties: false,
     },
@@ -88,7 +91,7 @@ export const BUILD_MODEL_TOOL: ToolSpec = tool(
       properties: { order: { type: 'number' }, drink: { type: 'number' }, food: { type: 'number' }, handoff: { type: 'number' } },
       additionalProperties: false,
     },
-    prepMode: { type: 'string', enum: ['parallel', 'sequential'] },
+    prepMode: { type: 'string', enum: ['parallel', 'sequential'], description: 'sequential if one is made before the other (e.g. drink first, then food); parallel if made at the same time' },
     handoff: { type: 'string', enum: ['barista', 'dedicated'] },
     foodBatching: {
       type: 'object',

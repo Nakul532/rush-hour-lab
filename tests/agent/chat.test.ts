@@ -71,6 +71,20 @@ describe('model builder', () => {
     expect(assumptions.some((a) => a.startsWith('Orders per hour'))).toBe(false);
   });
 
+  it('no kitchen staff: food becomes ready items, and the café still serves every order', async () => {
+    const m = draftToSpec({ staff: { cashier: 1, barista: 2, kitchen: 0 }, mixPercent: { drink: 60, food: 20, drinkFood: 20 } });
+    expect(m.spec.mix).toEqual({ drink: 80, food: 0, drinkFood: 0, grabGo: 20 });
+    expect(m.assumptions.some((a) => a.startsWith('No kitchen staff'))).toBe(true);
+    const { simulate } = await import('../../src/agent/evaluate');
+    expect(simulate(m.spec, { reps: 20, seed: 1 }).runs.every((r) => r.unserved === 0)).toBe(true);
+  });
+
+  it('no cashier: modelled as one order-taker, labelled as an assumption', () => {
+    const m = draftToSpec({ staff: { cashier: 0, barista: 1, kitchen: 1 } });
+    expect(m.spec.staff.cashier).toBe(1);
+    expect(m.assumptions.some((a) => a.startsWith('No cashier'))).toBe(true);
+  });
+
   it('replaces impossible values and says so', () => {
     const m = draftToSpec({ staff: { barista: -2 }, ordersPerHour: 100000 });
     expect(m.problems).toHaveLength(2);
