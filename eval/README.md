@@ -76,10 +76,11 @@ Run after the results above, with the changes committed beforehand in [PROTOCOL.
 | | Best plan found | Within 5% | Simulations | Tokens |
 |---|---|---|---|---|
 | Original run | 6 of 15 | 7 of 15 | 365 | 450,172 |
-| Post-lock run (retries) | **7 of 15** | 8 of 15 | 331 | 428,144 |
+| Post-lock run 1 (retries; 4 runs cut short by Groq rate limits) | 7 of 15 | 8 of 15 | 331 | 428,144 |
+| **Post-lock run 1b (retries + rate-limit backoff; clean)** | **6 of 15** | 7 of 15 | 364 | 495,473 |
 | Greedy (no LLM) | 15 of 15 | 15 of 15 | 714 | — |
 
-Retries helped a little (one more scenario solved). Empty replies retried: 18. Stop reasons: experiment_budget 7, llm_call_limit 2, finished 1, llm_error 4, no_tool_call 1. The agent still mostly misses by stopping one or two changes short of the best combination.
+**Retrying empty replies did not help.** In the clean run (1b), 20 empty replies were retried successfully and runs now end at the experiment budget or by choice (stop reasons: experiment_budget 7, no_tool_call 2, finished 6), but the outcome changed in 0 of 15 scenarios. Early stopping was not what cost the agent; its choice of which plans to test is. Run 1 scored one more because of run-to-run variation (S14 was solved in run 1 and missed in 1b), which also shows results vary between runs even at temperature 0.
 
 ### 2. Five interacting-changes scenarios (locked before running)
 
@@ -119,7 +120,7 @@ Remaining errors: the model often gives a handoff head count but leaves out the 
 
 "Wait" starts when the order is placed (matching how the 18 observed orders were timed), so a plan could shorten it by holding customers longer in the order line. Checked after locking: of 167 accepted plans across both sets, **0 made time in café (arrival → order received) worse**. The flip side shows up in display, not decisions: in S06, adding a cashier makes "wait" about 67% longer but time in café about 7% shorter, because people leave the order line sooner and wait at pickup instead. Stage 4 shows both numbers.
 
-Post-lock LLM cost: OpenRouter account usage after all runs $0.158 of $5 (this addendum about $0.06).
+LLM cost: OpenRouter account usage after all Stage 3 runs $0.19 of $5 (both addenda together about $0.10).
 
 ## Limitations
 

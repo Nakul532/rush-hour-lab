@@ -144,10 +144,12 @@ P();
 // ---------------------------------------------------------------- post-lock addendum
 {
   const has = (f: string) => existsSync(f);
-  if (has('eval/results-postlock/agent.json') && has('eval/results-interacting/agent.json')) {
+  if (has('eval/results-postlock-b/agent.json') && has('eval/results-interacting/agent.json')) {
     const J = (f: string) => JSON.parse(readFileSync(f, 'utf8'));
-    const pl: SearcherScore[] = J('eval/results-postlock/agent.json');
-    const plRuns = J('eval/results-postlock/agent-runs.json');
+    const pl: SearcherScore[] = J('eval/results-postlock-b/agent.json');
+    const plRuns = J('eval/results-postlock-b/agent-runs.json');
+    const plA: SearcherScore[] = J('eval/results-postlock/agent.json');
+    const plARuns = J('eval/results-postlock/agent-runs.json');
     const iAgent: SearcherScore[] = J('eval/results-interacting/agent.json');
     const iGreedy: SearcherScore[] = J('eval/results-interacting/greedy.json');
     const iGt: GroundTruth[] = J('eval/results-interacting/ground-truth.json');
@@ -165,12 +167,14 @@ P();
     P('| | Best plan found | Within 5% | Simulations | Tokens |');
     P('|---|---|---|---|---|');
     P(`| Original run | ${count(agent, 'foundOptimal')} of 15 | ${count(agent, 'within5')} of 15 | ${sum(agent.map((a) => a.simulations))} | ${runs.tokens.toLocaleString('en-US')} |`);
-    P(`| Post-lock run (retries) | **${count(pl, 'foundOptimal')} of 15** | ${count(pl, 'within5')} of 15 | ${sum(pl.map((a) => a.simulations))} | ${plRuns.tokens.toLocaleString('en-US')} |`);
+    P(`| Post-lock run 1 (retries; 4 runs cut short by Groq rate limits) | ${count(plA, 'foundOptimal')} of 15 | ${count(plA, 'within5')} of 15 | ${sum(plA.map((a) => a.simulations))} | ${plARuns.tokens.toLocaleString('en-US')} |`);
+    P(`| **Post-lock run 1b (retries + rate-limit backoff; clean)** | **${count(pl, 'foundOptimal')} of 15** | ${count(pl, 'within5')} of 15 | ${sum(pl.map((a) => a.simulations))} | ${plRuns.tokens.toLocaleString('en-US')} |`);
     P(`| Greedy (no LLM) | ${count(greedy, 'foundOptimal')} of 15 | ${count(greedy, 'within5')} of 15 | ${greedySims} | — |`);
     P();
     const plStops: Record<string, number> = {};
     for (const r of plRuns.runs) plStops[r.stopReason] = (plStops[r.stopReason] ?? 0) + 1;
-    P(`Retries helped a little (one more scenario solved). Empty replies retried: ${sum(plRuns.runs.map((r: { emptyRetries?: number }) => r.emptyRetries ?? 0))}. Stop reasons: ${Object.entries(plStops).map(([k, v]) => `${k} ${v}`).join(', ')}. The agent still mostly misses by stopping one or two changes short of the best combination.`);
+    const changed = SCENARIOS.filter((s) => by(agent, s.id).foundOptimal !== by(pl, s.id).foundOptimal).length;
+    P(`**Retrying empty replies did not help.** In the clean run (1b), ${sum(plRuns.runs.map((r: { emptyRetries?: number }) => r.emptyRetries ?? 0))} empty replies were retried successfully and runs now end at the experiment budget or by choice (stop reasons: ${Object.entries(plStops).map(([k, v]) => `${k} ${v}`).join(', ')}), but the outcome changed in ${changed} of 15 scenarios. Early stopping was not what cost the agent; its choice of which plans to test is. Run 1 scored one more because of run-to-run variation (S14 was solved in run 1 and missed in 1b), which also shows results vary between runs even at temperature 0.`);
     P();
     P('### 2. Five interacting-changes scenarios (locked before running)');
     P();
@@ -215,7 +219,7 @@ P();
     P();
     P(`"Wait" starts when the order is placed (matching how the 18 observed orders were timed), so a plan could shorten it by holding customers longer in the order line. Checked after locking: of ${tic.of} accepted plans across both sets, **${tic.worse} made time in café (arrival → order received) worse**. The flip side shows up in display, not decisions: in S06, adding a cashier makes "wait" about 67% longer but time in café about 7% shorter, because people leave the order line sooner and wait at pickup instead. Stage 4 shows both numbers.`);
     P();
-    P(`Post-lock LLM cost: OpenRouter account usage after all runs $0.158 of $5 (this addendum about $0.06).`);
+    P(`LLM cost: OpenRouter account usage after all Stage 3 runs $0.19 of $5 (both addenda together about $0.10).`);
     P();
   }
 }

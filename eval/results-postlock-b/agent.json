@@ -1,0 +1,257 @@
+[
+  {
+    "searcher": "llm-agent",
+    "scenario": "S01",
+    "recommendedKey": "0,-1,-1,-1,-1",
+    "recommendedLabel": "+1 barista",
+    "recommendedP90": 10.293542639210434,
+    "optimalKey": "0,-1,-1,-1,-1",
+    "foundOptimal": true,
+    "within5": true,
+    "simulations": 32,
+    "experiments": 6,
+    "acceptedTested": 4,
+    "notes": [
+      "stop: experiment_budget",
+      "8 LLM calls, 32057 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S02",
+    "recommendedKey": "0,-1,0,-1,-1",
+    "recommendedLabel": "cashier → barista + grab-and-go 20%",
+    "recommendedP90": 10.088496109872276,
+    "optimalKey": "0,-1,1,-1,1",
+    "foundOptimal": false,
+    "within5": false,
+    "simulations": 27,
+    "experiments": 6,
+    "acceptedTested": 3,
+    "notes": [
+      "stop: experiment_budget",
+      "7 LLM calls, 27476 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S03",
+    "recommendedKey": "-1,1,-1,-1",
+    "recommendedLabel": "+1 kitchen 07:15–08:00",
+    "recommendedP90": 16.727790945087136,
+    "optimalKey": "0,1,-1,-1",
+    "foundOptimal": false,
+    "within5": false,
+    "simulations": 26,
+    "experiments": 6,
+    "acceptedTested": 1,
+    "notes": [
+      "stop: experiment_budget",
+      "7 LLM calls, 27463 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S04",
+    "recommendedKey": "-1,-1,-1,0,-1",
+    "recommendedLabel": "grab-and-go 30%",
+    "recommendedP90": 14.589336978375503,
+    "optimalKey": "-1,-1,-1,0,-1",
+    "foundOptimal": true,
+    "within5": true,
+    "simulations": 7,
+    "experiments": 4,
+    "acceptedTested": 1,
+    "notes": [
+      "stop: no_tool_call",
+      "10 LLM calls, 39522 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S05",
+    "recommendedKey": "0,-1,0,-1,-1",
+    "recommendedLabel": "+1 barista + +1 kitchen",
+    "recommendedP90": 3.8126678876974682,
+    "optimalKey": "0,-1,0,0,-1",
+    "foundOptimal": false,
+    "within5": true,
+    "simulations": 25,
+    "experiments": 4,
+    "acceptedTested": 3,
+    "notes": [
+      "stop: finished",
+      "8 LLM calls, 30108 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S06",
+    "recommendedKey": "-1,0,-1,-1",
+    "recommendedLabel": "+1 barista",
+    "recommendedP90": 5.681474767163988,
+    "optimalKey": "-1,0,-1,-1",
+    "foundOptimal": true,
+    "within5": true,
+    "simulations": 31,
+    "experiments": 5,
+    "acceptedTested": 3,
+    "notes": [
+      "stop: finished",
+      "10 LLM calls, 42796 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S07",
+    "recommendedKey": "-1,0,-1,-1,-1",
+    "recommendedLabel": "+1 barista",
+    "recommendedP90": 10.195370206565016,
+    "optimalKey": "-1,0,-1,0,-1",
+    "foundOptimal": false,
+    "within5": false,
+    "simulations": 19,
+    "experiments": 3,
+    "acceptedTested": 3,
+    "notes": [
+      "stop: finished",
+      "7 LLM calls, 25587 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S08",
+    "recommendedKey": "-1,0,-1,-1",
+    "recommendedLabel": "+1 barista",
+    "recommendedP90": 5.119190933247652,
+    "optimalKey": "-1,0,-1,-1",
+    "foundOptimal": true,
+    "within5": true,
+    "simulations": 22,
+    "experiments": 3,
+    "acceptedTested": 2,
+    "notes": [
+      "stop: no_tool_call",
+      "12 LLM calls, 49637 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S09",
+    "recommendedKey": "-1,-1,-1,0,-1,-1",
+    "recommendedLabel": "+1 barista",
+    "recommendedP90": 11.16673066860064,
+    "optimalKey": "0,-1,-1,0,-1,-1",
+    "foundOptimal": false,
+    "within5": false,
+    "simulations": 33,
+    "experiments": 6,
+    "acceptedTested": 4,
+    "notes": [
+      "stop: experiment_budget",
+      "8 LLM calls, 32453 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S10",
+    "recommendedKey": "0,-1,0,-1,-1",
+    "recommendedLabel": "parallel prep + +1 kitchen",
+    "recommendedP90": 10.506530690206187,
+    "optimalKey": "-1,0,0,-1,-1",
+    "foundOptimal": false,
+    "within5": false,
+    "simulations": 19,
+    "experiments": 3,
+    "acceptedTested": 3,
+    "notes": [
+      "stop: finished",
+      "7 LLM calls, 26036 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S11",
+    "recommendedKey": "0,-1,0",
+    "recommendedLabel": "+1 barista first peak (07:00–07:45) + grab-and-go 30%",
+    "recommendedP90": 11.331511362290078,
+    "optimalKey": "-1,1,0",
+    "foundOptimal": false,
+    "within5": false,
+    "simulations": 19,
+    "experiments": 4,
+    "acceptedTested": 3,
+    "notes": [
+      "stop: finished",
+      "8 LLM calls, 30640 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S12",
+    "recommendedKey": null,
+    "recommendedLabel": "Nothing",
+    "recommendedP90": null,
+    "optimalKey": null,
+    "foundOptimal": true,
+    "within5": true,
+    "simulations": 33,
+    "experiments": 6,
+    "acceptedTested": 0,
+    "notes": [
+      "stop: experiment_budget",
+      "8 LLM calls, 32548 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S13",
+    "recommendedKey": "-1,0,-1,-1,0,-1",
+    "recommendedLabel": "+1 kitchen + grab-and-go 20%",
+    "recommendedP90": 15.928122705332427,
+    "optimalKey": "1,0,-1,-1,-1,0",
+    "foundOptimal": false,
+    "within5": false,
+    "simulations": 19,
+    "experiments": 4,
+    "acceptedTested": 3,
+    "notes": [
+      "stop: finished",
+      "8 LLM calls, 31367 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S14",
+    "recommendedKey": "-1,0,-1,-1",
+    "recommendedLabel": "grab-and-go 30%",
+    "recommendedP90": 20.03130479078005,
+    "optimalKey": "-1,1,-1,-1",
+    "foundOptimal": false,
+    "within5": false,
+    "simulations": 19,
+    "experiments": 6,
+    "acceptedTested": 2,
+    "notes": [
+      "stop: experiment_budget",
+      "6 LLM calls, 24724 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "S15",
+    "recommendedKey": null,
+    "recommendedLabel": "Nothing",
+    "recommendedP90": null,
+    "optimalKey": null,
+    "foundOptimal": true,
+    "within5": true,
+    "simulations": 33,
+    "experiments": 6,
+    "acceptedTested": 0,
+    "notes": [
+      "stop: experiment_budget",
+      "10 LLM calls, 43059 tokens"
+    ]
+  }
+]
