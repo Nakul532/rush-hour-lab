@@ -13,6 +13,7 @@ npm install
 npm test            # unit tests + calibration check
 npm run typecheck
 npm run calibrate   # refits the observed café (~20 min), writes calibration/REPORT.md
+npm run calibrate:curio   # refits the Curio scale factor (~1 min), writes calibration/CURIO.md
 npm run live-run -- --live   # one-off live agent test on Groq, capped at 40K tokens (needs GROQ_API_KEY in .env.local)
 ```
 
@@ -26,7 +27,8 @@ npm run live-run -- --live   # one-off live agent test on Groq, capped at 40K to
 | `src/sim/arrivals.ts` | Arrivals with a rate per 15-minute bucket (non-homogeneous Poisson) |
 | `src/data/observed.ts` | The 18 observed orders (OBSERVED) |
 | `src/calibration/` | Model of the observed café, grid fit, bootstrap, leave-one-out |
-| `src/presets/observedCafe.ts` | Calibrated observed-café preset |
+| `src/presets/observedCafe.ts` | Observed café: the primary example, calibrated on 18 observed orders |
+| `src/presets/curio.ts` | Curio Coffee: secondary example, reconstructed from a 2025 class proposal whose figures were inconsistent (calibration/CURIO.md) |
 | `calibration/REPORT.md` | Calibration results, assumptions and limitations |
 | `src/agent/changes.ts` | The menu of changes the agent may propose, checked and applied by code |
 | `src/agent/plan.ts` | Costs (user-entered; defaults are ASSUMPTIONS) and constraints |

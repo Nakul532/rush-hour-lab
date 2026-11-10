@@ -8,7 +8,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "calibrate": "tsx scripts/calibrate.ts",
-    "live-run": "tsx scripts/live-run.ts"
+    "live-run": "tsx scripts/live-run.ts",
+    "calibrate:curio": "tsx scripts/calibrate-curio.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
