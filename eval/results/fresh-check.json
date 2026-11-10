@@ -1,0 +1,1172 @@
+[
+  {
+    "scenario": "S01",
+    "key": "0,-1,-1,-1,-1",
+    "label": "+1 barista",
+    "improvementEval": 0.3523247906754754,
+    "improvementFresh": 0.3523285922311879,
+    "ciLowFresh": 5.0373320160587856,
+    "holds": true
+  },
+  {
+    "scenario": "S01",
+    "key": "1,-1,-1,-1,-1",
+    "label": "+1 barista 07:30–08:15",
+    "improvementEval": 0.2474086449682158,
+    "improvementFresh": 0.24359414399849705,
+    "ciLowFresh": 3.4233095809096135,
+    "holds": true
+  },
+  {
+    "scenario": "S01",
+    "key": "-1,-1,0,-1,-1",
+    "label": "+1 kitchen",
+    "improvementEval": 0.15767621244778254,
+    "improvementFresh": 0.15200244832065893,
+    "ciLowFresh": 2.114597848650253,
+    "holds": true
+  },
+  {
+    "scenario": "S01",
+    "key": "-1,-1,-1,0,-1",
+    "label": "dedicated handoff (1)",
+    "improvementEval": 0.337007570244917,
+    "improvementFresh": 0.34023589673232807,
+    "ciLowFresh": 4.877153644583737,
+    "holds": true
+  },
+  {
+    "scenario": "S01",
+    "key": "-1,-1,-1,-1,0",
+    "label": "grab-and-go 20%",
+    "improvementEval": 0.15070551014159753,
+    "improvementFresh": 0.15835142097151406,
+    "ciLowFresh": 2.118670686046114,
+    "holds": true
+  },
+  {
+    "scenario": "S01",
+    "key": "-1,-1,-1,-1,1",
+    "label": "grab-and-go 40%",
+    "improvementEval": 0.24650114485473934,
+    "improvementFresh": 0.24561802237466426,
+    "ciLowFresh": 3.3559300256514257,
+    "holds": true
+  },
+  {
+    "scenario": "S02",
+    "key": "0,-1,-1,-1,-1",
+    "label": "cashier → barista",
+    "improvementEval": 0.378633332409483,
+    "improvementFresh": 0.3797327867334855,
+    "ciLowFresh": 5.696114618117486,
+    "holds": true
+  },
+  {
+    "scenario": "S02",
+    "key": "-1,-1,0,-1,-1",
+    "label": "grab-and-go 20%",
+    "improvementEval": 0.1491100143486561,
+    "improvementFresh": 0.15364262722316435,
+    "ciLowFresh": 2.1517948786807284,
+    "holds": true
+  },
+  {
+    "scenario": "S02",
+    "key": "0,-1,0,-1,-1",
+    "label": "cashier → barista + grab-and-go 20%",
+    "improvementEval": 0.39101090571942565,
+    "improvementFresh": 0.3877069049291603,
+    "ciLowFresh": 5.777427777461019,
+    "holds": true
+  },
+  {
+    "scenario": "S02",
+    "key": "-1,-1,1,-1,-1",
+    "label": "grab-and-go 40%",
+    "improvementEval": 0.24528452851903404,
+    "improvementFresh": 0.2421479851117239,
+    "ciLowFresh": 3.4674277423223754,
+    "holds": true
+  },
+  {
+    "scenario": "S02",
+    "key": "0,-1,1,-1,-1",
+    "label": "cashier → barista + grab-and-go 40%",
+    "improvementEval": 0.39718382081912995,
+    "improvementFresh": 0.37991840982325437,
+    "ciLowFresh": 5.616512831682281,
+    "holds": true
+  },
+  {
+    "scenario": "S02",
+    "key": "0,-1,-1,-1,1",
+    "label": "cashier → barista + batches of 6 every 20 min",
+    "improvementEval": 0.6033893601488935,
+    "improvementFresh": 0.6413288924956607,
+    "ciLowFresh": 9.796259547710454,
+    "holds": true
+  },
+  {
+    "scenario": "S02",
+    "key": "0,-1,0,-1,1",
+    "label": "cashier → barista + grab-and-go 20% + batches of 6 every 20 min",
+    "improvementEval": 0.6277528200708475,
+    "improvementFresh": 0.6497270407705262,
+    "ciLowFresh": 9.892335008173019,
+    "holds": true
+  },
+  {
+    "scenario": "S02",
+    "key": "0,-1,1,-1,1",
+    "label": "cashier → barista + grab-and-go 40% + batches of 6 every 20 min",
+    "improvementEval": 0.6428779175484305,
+    "improvementFresh": 0.6535781850545009,
+    "ciLowFresh": 9.933375912103916,
+    "holds": true
+  },
+  {
+    "scenario": "S03",
+    "key": "-1,1,-1,-1",
+    "label": "+1 kitchen 07:15–08:00",
+    "improvementEval": 0.4688512638041615,
+    "improvementFresh": 0.446226104222962,
+    "ciLowFresh": 13.11782348355303,
+    "holds": true
+  },
+  {
+    "scenario": "S03",
+    "key": "0,1,-1,-1",
+    "label": "parallel prep + +1 kitchen 07:15–08:00",
+    "improvementEval": 0.5265927184155849,
+    "improvementFresh": 0.5033163185877669,
+    "ciLowFresh": 14.854831030641542,
+    "holds": true
+  },
+  {
+    "scenario": "S04",
+    "key": "-1,-1,-1,0,-1",
+    "label": "grab-and-go 30%",
+    "improvementEval": 0.34127399337806197,
+    "improvementFresh": 0.35282744933763976,
+    "ciLowFresh": 6.973548064544419,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "0,-1,-1,-1,-1",
+    "label": "+1 barista",
+    "improvementEval": 0.15191029331270725,
+    "improvementFresh": 0.15390892379369675,
+    "ciLowFresh": 0.8010542030275465,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "0,0,-1,-1,-1",
+    "label": "+1 barista + +1 cashier",
+    "improvementEval": 0.12960554150941123,
+    "improvementFresh": 0.14148482980345614,
+    "ciLowFresh": 0.7314703267972447,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "-1,-1,0,-1,-1",
+    "label": "+1 kitchen",
+    "improvementEval": 0.11460452181870319,
+    "improvementFresh": 0.12560679587452708,
+    "ciLowFresh": 0.6404321981128314,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "0,-1,0,-1,-1",
+    "label": "+1 barista + +1 kitchen",
+    "improvementEval": 0.3173431133705646,
+    "improvementFresh": 0.3219053319384359,
+    "ciLowFresh": 1.7145612801710035,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "0,0,0,-1,-1",
+    "label": "+1 barista + +1 cashier + +1 kitchen",
+    "improvementEval": 0.3131563279395565,
+    "improvementFresh": 0.31648677027051586,
+    "ciLowFresh": 1.6855809032631297,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "0,-1,-1,0,-1",
+    "label": "+1 barista + grab-and-go 30%",
+    "improvementEval": 0.15639972589613246,
+    "improvementFresh": 0.1701460840479764,
+    "ciLowFresh": 0.8510769162855343,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "0,0,-1,0,-1",
+    "label": "+1 barista + +1 cashier + grab-and-go 30%",
+    "improvementEval": 0.14095336839991685,
+    "improvementFresh": 0.15867565868901826,
+    "ciLowFresh": 0.786994041445134,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "-1,-1,0,0,-1",
+    "label": "+1 kitchen + grab-and-go 30%",
+    "improvementEval": 0.18385567026742153,
+    "improvementFresh": 0.19489105185472,
+    "ciLowFresh": 1.0027250442195224,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "0,-1,0,0,-1",
+    "label": "+1 barista + +1 kitchen + grab-and-go 30%",
+    "improvementEval": 0.33020414019962724,
+    "improvementFresh": 0.3287958253688435,
+    "ciLowFresh": 1.7445683086400523,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "-1,0,0,0,-1",
+    "label": "+1 cashier + +1 kitchen + grab-and-go 30%",
+    "improvementEval": 0.16338933420239923,
+    "improvementFresh": 0.1740480051747205,
+    "ciLowFresh": 0.8842275824175958,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "0,0,0,0,-1",
+    "label": "+1 barista + +1 cashier + +1 kitchen + grab-and-go 30%",
+    "improvementEval": 0.3251806553268636,
+    "improvementFresh": 0.3257631305333218,
+    "ciLowFresh": 1.7279178500689758,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "0,-1,0,-1,0",
+    "label": "+1 barista + +1 kitchen + sequential prep",
+    "improvementEval": 0.1366184199761608,
+    "improvementFresh": 0.1385880222055088,
+    "ciLowFresh": 0.6843358933790438,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "0,0,0,-1,0",
+    "label": "+1 barista + +1 cashier + +1 kitchen + sequential prep",
+    "improvementEval": 0.1368681506263015,
+    "improvementFresh": 0.13494476701401445,
+    "ciLowFresh": 0.6654766301260047,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "0,-1,0,0,0",
+    "label": "+1 barista + +1 kitchen + grab-and-go 30% + sequential prep",
+    "improvementEval": 0.14482463472999668,
+    "improvementFresh": 0.14942535598159512,
+    "ciLowFresh": 0.7386062386473429,
+    "holds": true
+  },
+  {
+    "scenario": "S05",
+    "key": "0,0,0,0,0",
+    "label": "+1 barista + +1 cashier + +1 kitchen + grab-and-go 30% + sequential prep",
+    "improvementEval": 0.1448889124054633,
+    "improvementFresh": 0.14668144259767632,
+    "ciLowFresh": 0.7235428669147236,
+    "holds": true
+  },
+  {
+    "scenario": "S06",
+    "key": "-1,0,-1,-1",
+    "label": "+1 barista",
+    "improvementEval": 0.27453250078208713,
+    "improvementFresh": 0.2724441107652846,
+    "ciLowFresh": 1.9705514208612818,
+    "holds": true
+  },
+  {
+    "scenario": "S06",
+    "key": "-1,0,0,-1",
+    "label": "+1 barista + grab-and-go 20%",
+    "improvementEval": 0.1857991596615812,
+    "improvementFresh": 0.19885597343610031,
+    "ciLowFresh": 1.3688393060611557,
+    "holds": true
+  },
+  {
+    "scenario": "S06",
+    "key": "-1,-1,-1,0",
+    "label": "express drinks (1)",
+    "improvementEval": 0.24153295537413189,
+    "improvementFresh": 0.23628911451261583,
+    "ciLowFresh": 1.7007326880927451,
+    "holds": true
+  },
+  {
+    "scenario": "S06",
+    "key": "-1,0,-1,0",
+    "label": "+1 barista + express drinks (1)",
+    "improvementEval": 0.2616701974025045,
+    "improvementFresh": 0.25724979441696716,
+    "ciLowFresh": 1.8601811150735024,
+    "holds": true
+  },
+  {
+    "scenario": "S06",
+    "key": "-1,-1,0,0",
+    "label": "grab-and-go 20% + express drinks (1)",
+    "improvementEval": 0.16595669809264169,
+    "improvementFresh": 0.17813838779625138,
+    "ciLowFresh": 1.2117030016328731,
+    "holds": true
+  },
+  {
+    "scenario": "S06",
+    "key": "-1,0,0,0",
+    "label": "+1 barista + grab-and-go 20% + express drinks (1)",
+    "improvementEval": 0.18229846344250886,
+    "improvementFresh": 0.19556075334032177,
+    "ciLowFresh": 1.3449579781058407,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "0,-1,-1,-1,-1",
+    "label": "dedicated handoff (1)",
+    "improvementEval": 0.6899824247271917,
+    "improvementFresh": 0.6881416627442042,
+    "ciLowFresh": 21.458367019055697,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "-1,0,-1,-1,-1",
+    "label": "+1 barista",
+    "improvementEval": 0.6982752769000694,
+    "improvementFresh": 0.6977826336146971,
+    "ciLowFresh": 21.76726415810161,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "0,0,-1,-1,-1",
+    "label": "dedicated handoff (1) + +1 barista",
+    "improvementEval": 0.6939647034511961,
+    "improvementFresh": 0.6932290510081792,
+    "ciLowFresh": 21.614630908508012,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "-1,-1,0,-1,-1",
+    "label": "express drinks (1)",
+    "improvementEval": 0.637456853815154,
+    "improvementFresh": 0.6343766614573422,
+    "ciLowFresh": 19.786473525044563,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "0,-1,0,-1,-1",
+    "label": "dedicated handoff (1) + express drinks (1)",
+    "improvementEval": 0.6462774280675102,
+    "improvementFresh": 0.6447095537110805,
+    "ciLowFresh": 20.11408569198949,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "-1,0,0,-1,-1",
+    "label": "+1 barista + express drinks (1)",
+    "improvementEval": 0.6462980510483495,
+    "improvementFresh": 0.6449226895660749,
+    "ciLowFresh": 20.121132637789227,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "-1,-1,-1,0,-1",
+    "label": "grab-and-go 30%",
+    "improvementEval": 0.3700510404301315,
+    "improvementFresh": 0.3803236822433077,
+    "ciLowFresh": 11.71760598625739,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "0,-1,-1,0,-1",
+    "label": "dedicated handoff (1) + grab-and-go 30%",
+    "improvementEval": 0.7088228716610849,
+    "improvementFresh": 0.7017275865816351,
+    "ciLowFresh": 21.882206007597574,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "-1,0,-1,0,-1",
+    "label": "+1 barista + grab-and-go 30%",
+    "improvementEval": 0.7158065126659751,
+    "improvementFresh": 0.7079175541565078,
+    "ciLowFresh": 22.079207301742834,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "-1,-1,0,0,-1",
+    "label": "express drinks (1) + grab-and-go 30%",
+    "improvementEval": 0.6944263230713994,
+    "improvementFresh": 0.6827355910817295,
+    "ciLowFresh": 21.274410037171783,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "0,-1,-1,-1,0",
+    "label": "dedicated handoff (1) + sequential prep",
+    "improvementEval": 0.6501587673330093,
+    "improvementFresh": 0.6440083727429953,
+    "ciLowFresh": 20.04516929048117,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "-1,0,-1,-1,0",
+    "label": "+1 barista + sequential prep",
+    "improvementEval": 0.6665444742557355,
+    "improvementFresh": 0.6635527413261998,
+    "ciLowFresh": 20.66702379478603,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "-1,-1,0,-1,0",
+    "label": "express drinks (1) + sequential prep",
+    "improvementEval": 0.6170206880262636,
+    "improvementFresh": 0.6118070816793293,
+    "ciLowFresh": 19.05465356826096,
+    "holds": true
+  },
+  {
+    "scenario": "S07",
+    "key": "-1,-1,-1,0,0",
+    "label": "grab-and-go 30% + sequential prep",
+    "improvementEval": 0.3364625912851501,
+    "improvementFresh": 0.34240248088009284,
+    "ciLowFresh": 10.490632885724471,
+    "holds": true
+  },
+  {
+    "scenario": "S08",
+    "key": "-1,0,-1,-1",
+    "label": "+1 barista",
+    "improvementEval": 0.7750172065850155,
+    "improvementFresh": 0.7549619439568942,
+    "ciLowFresh": 15.46998201975759,
+    "holds": true
+  },
+  {
+    "scenario": "S08",
+    "key": "-1,-1,0,-1",
+    "label": "grab-and-go 20%",
+    "improvementEval": 0.3766332625908418,
+    "improvementFresh": 0.3860381786492759,
+    "ciLowFresh": 7.774301170962842,
+    "holds": true
+  },
+  {
+    "scenario": "S08",
+    "key": "-1,-1,1,-1",
+    "label": "grab-and-go 40%",
+    "improvementEval": 0.5750502425087917,
+    "improvementFresh": 0.5803479105011117,
+    "ciLowFresh": 11.851183796891503,
+    "holds": true
+  },
+  {
+    "scenario": "S09",
+    "key": "0,-1,-1,-1,-1,-1",
+    "label": "parallel prep",
+    "improvementEval": 0.13047606920452057,
+    "improvementFresh": 0.13770491018551526,
+    "ciLowFresh": 2.214015201351415,
+    "holds": true
+  },
+  {
+    "scenario": "S09",
+    "key": "-1,-1,0,-1,-1,-1",
+    "label": "+1 kitchen",
+    "improvementEval": 0.16866695171073995,
+    "improvementFresh": 0.14953738098999889,
+    "ciLowFresh": 2.317740045585154,
+    "holds": true
+  },
+  {
+    "scenario": "S09",
+    "key": "0,-1,0,-1,-1,-1",
+    "label": "parallel prep + +1 kitchen",
+    "improvementEval": 0.24682668364140842,
+    "improvementFresh": 0.23491035383756637,
+    "ciLowFresh": 3.715443280082917,
+    "holds": true
+  },
+  {
+    "scenario": "S09",
+    "key": "-1,-1,-1,0,-1,-1",
+    "label": "+1 barista",
+    "improvementEval": 0.3535529133317629,
+    "improvementFresh": 0.365157496824882,
+    "ciLowFresh": 5.77173144860706,
+    "holds": true
+  },
+  {
+    "scenario": "S09",
+    "key": "0,-1,-1,0,-1,-1",
+    "label": "parallel prep + +1 barista",
+    "improvementEval": 0.44302497451812606,
+    "improvementFresh": 0.46114632170932573,
+    "ciLowFresh": 7.348166878718985,
+    "holds": true
+  },
+  {
+    "scenario": "S09",
+    "key": "-1,-1,-1,-1,0,-1",
+    "label": "grab-and-go 20%",
+    "improvementEval": 0.23244132847822466,
+    "improvementFresh": 0.22263455508577432,
+    "ciLowFresh": 3.4040751676483376,
+    "holds": true
+  },
+  {
+    "scenario": "S09",
+    "key": "0,-1,-1,-1,0,-1",
+    "label": "parallel prep + grab-and-go 20%",
+    "improvementEval": 0.3443867261903071,
+    "improvementFresh": 0.3334188887792094,
+    "ciLowFresh": 5.223314845879299,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "0,-1,-1,-1,-1",
+    "label": "parallel prep",
+    "improvementEval": 0.10390054386266472,
+    "improvementFresh": 0.11082612701345124,
+    "ciLowFresh": 1.4141332061899647,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "-1,0,-1,-1,-1",
+    "label": "+1 barista",
+    "improvementEval": 0.23206060537850898,
+    "improvementFresh": 0.20793292008966915,
+    "ciLowFresh": 2.621848785139577,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "0,0,-1,-1,-1",
+    "label": "parallel prep + +1 barista",
+    "improvementEval": 0.3467215907533883,
+    "improvementFresh": 0.32507836406877316,
+    "ciLowFresh": 4.186126693458854,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "-1,-1,0,-1,-1",
+    "label": "+1 kitchen",
+    "improvementEval": 0.16503703827430352,
+    "improvementFresh": 0.17915156003967914,
+    "ciLowFresh": 2.2351890128296876,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "0,-1,0,-1,-1",
+    "label": "parallel prep + +1 kitchen",
+    "improvementEval": 0.24881794858684136,
+    "improvementFresh": 0.2713979013322934,
+    "ciLowFresh": 3.465138904440117,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "-1,0,0,-1,-1",
+    "label": "+1 barista + +1 kitchen",
+    "improvementEval": 0.5063498411472889,
+    "improvementFresh": 0.4867409403345313,
+    "ciLowFresh": 6.258517623705214,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "0,-1,-1,0,-1",
+    "label": "parallel prep + grab-and-go 20%",
+    "improvementEval": 0.17941188705035266,
+    "improvementFresh": 0.1773676624033481,
+    "ciLowFresh": 2.198766032763439,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "-1,0,-1,0,-1",
+    "label": "+1 barista + grab-and-go 20%",
+    "improvementEval": 0.2266670255926401,
+    "improvementFresh": 0.20819654714189786,
+    "ciLowFresh": 2.5832061843007312,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "-1,-1,0,0,-1",
+    "label": "+1 kitchen + grab-and-go 20%",
+    "improvementEval": 0.2702034305017183,
+    "improvementFresh": 0.26080039377866443,
+    "ciLowFresh": 3.2876675620568294,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "-1,-1,-1,-1,0",
+    "label": "dedicated handoff (1)",
+    "improvementEval": 0.20301015258908225,
+    "improvementFresh": 0.182570306545185,
+    "ciLowFresh": 2.3018403066591957,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "0,-1,-1,-1,0",
+    "label": "parallel prep + dedicated handoff (1)",
+    "improvementEval": 0.3337442174572857,
+    "improvementFresh": 0.31765538502052143,
+    "ciLowFresh": 4.092445604474781,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "-1,0,-1,-1,0",
+    "label": "+1 barista + dedicated handoff (1)",
+    "improvementEval": 0.23594705401069793,
+    "improvementFresh": 0.21139221334534108,
+    "ciLowFresh": 2.6660851205411746,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "-1,-1,0,-1,0",
+    "label": "+1 kitchen + dedicated handoff (1)",
+    "improvementEval": 0.4449077103363022,
+    "improvementFresh": 0.432436401700954,
+    "ciLowFresh": 5.557018719350729,
+    "holds": true
+  },
+  {
+    "scenario": "S10",
+    "key": "-1,-1,-1,0,0",
+    "label": "grab-and-go 20% + dedicated handoff (1)",
+    "improvementEval": 0.20860098734700208,
+    "improvementFresh": 0.19201826170100572,
+    "ciLowFresh": 2.3711008064432284,
+    "holds": true
+  },
+  {
+    "scenario": "S11",
+    "key": "0,-1,-1",
+    "label": "+1 barista first peak (07:00–07:45)",
+    "improvementEval": 0.14230374234164736,
+    "improvementFresh": 0.1314297400221796,
+    "ciLowFresh": 1.6932912657448496,
+    "holds": true
+  },
+  {
+    "scenario": "S11",
+    "key": "-1,-1,0",
+    "label": "grab-and-go 30%",
+    "improvementEval": 0.16916485577811127,
+    "improvementFresh": 0.20335729460764412,
+    "ciLowFresh": 2.6580416613620024,
+    "holds": true
+  },
+  {
+    "scenario": "S11",
+    "key": "0,-1,0",
+    "label": "+1 barista first peak (07:00–07:45) + grab-and-go 30%",
+    "improvementEval": 0.23892217863975562,
+    "improvementFresh": 0.25872826323658243,
+    "ciLowFresh": 3.431774274833106,
+    "holds": true
+  },
+  {
+    "scenario": "S11",
+    "key": "1,-1,0",
+    "label": "+1 barista second peak (08:15–09:00) + grab-and-go 30%",
+    "improvementEval": 0.22132289711667938,
+    "improvementFresh": 0.25814106928265185,
+    "ciLowFresh": 3.4344592286732722,
+    "holds": true
+  },
+  {
+    "scenario": "S11",
+    "key": "-1,1,0",
+    "label": "+1 kitchen second peak + grab-and-go 30%",
+    "improvementEval": 0.2957318215759892,
+    "improvementFresh": 0.31227150367930656,
+    "ciLowFresh": 4.219653692921126,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "0,-1,-1,-1,-1,-1",
+    "label": "+1 barista",
+    "improvementEval": 0.21854237308593116,
+    "improvementFresh": 0.2039080611702961,
+    "ciLowFresh": 5.855770696214733,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,-1,-1,-1,-1,-1",
+    "label": "+1 barista 07:30–08:15",
+    "improvementEval": 0.16874355468108498,
+    "improvementFresh": 0.15617985848901664,
+    "ciLowFresh": 4.440211411991626,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,0,-1,-1,-1,-1",
+    "label": "+1 kitchen",
+    "improvementEval": 0.3210782426899797,
+    "improvementFresh": 0.3208129420626083,
+    "ciLowFresh": 9.254077537441885,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,0,-1,-1,-1,-1",
+    "label": "+1 barista 07:30–08:15 + +1 kitchen",
+    "improvementEval": 0.65646223865129,
+    "improvementFresh": 0.6454891197253309,
+    "ciLowFresh": 18.93152904396197,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,1,-1,-1,-1,-1",
+    "label": "+1 kitchen 07:30–08:15",
+    "improvementEval": 0.270899698154912,
+    "improvementFresh": 0.2674720018935506,
+    "ciLowFresh": 7.678620704957916,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "0,1,-1,-1,-1,-1",
+    "label": "+1 barista + +1 kitchen 07:30–08:15",
+    "improvementEval": 0.6555190197568459,
+    "improvementFresh": 0.644886881551778,
+    "ciLowFresh": 18.94021953586234,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,1,-1,-1,-1,-1",
+    "label": "+1 barista 07:30–08:15 + +1 kitchen 07:30–08:15",
+    "improvementEval": 0.5758751677430933,
+    "improvementFresh": 0.5637129337156599,
+    "ciLowFresh": 16.48349591155232,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,-1,0,-1,-1,-1",
+    "label": "+1 barista 07:30–08:15 + +1 cashier",
+    "improvementEval": 0.15288988406836584,
+    "improvementFresh": 0.137340478200912,
+    "ciLowFresh": 3.8642807510339052,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,-1,-1,0,-1,-1",
+    "label": "dedicated handoff (1)",
+    "improvementEval": 0.19219746377826552,
+    "improvementFresh": 0.18092145911700055,
+    "ciLowFresh": 5.190628393383925,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,-1,-1,-1,0,-1",
+    "label": "grab-and-go 20%",
+    "improvementEval": 0.11274499750235031,
+    "improvementFresh": 0.10453009004627453,
+    "ciLowFresh": 2.702049099874791,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "0,-1,-1,-1,0,-1",
+    "label": "+1 barista + grab-and-go 20%",
+    "improvementEval": 0.2272340349350216,
+    "improvementFresh": 0.20962614462339998,
+    "ciLowFresh": 5.829520177008146,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,-1,-1,-1,0,-1",
+    "label": "+1 barista 07:30–08:15 + grab-and-go 20%",
+    "improvementEval": 0.19327066869395657,
+    "improvementFresh": 0.1772048767894752,
+    "ciLowFresh": 4.857487803554317,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,0,-1,-1,0,-1",
+    "label": "+1 kitchen + grab-and-go 20%",
+    "improvementEval": 0.4993740891302193,
+    "improvementFresh": 0.49981147118350167,
+    "ciLowFresh": 14.578129160939177,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,1,-1,-1,0,-1",
+    "label": "+1 kitchen 07:30–08:15 + grab-and-go 20%",
+    "improvementEval": 0.43054892183648086,
+    "improvementFresh": 0.4275164536198071,
+    "ciLowFresh": 12.409181294577216,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,1,-1,-1,0,-1",
+    "label": "+1 barista 07:30–08:15 + +1 kitchen 07:30–08:15 + grab-and-go 20%",
+    "improvementEval": 0.6052360629074071,
+    "improvementFresh": 0.5973091595984632,
+    "ciLowFresh": 17.46541777935272,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,-1,-1,-1,1,-1",
+    "label": "grab-and-go 40%",
+    "improvementEval": 0.18541539263402018,
+    "improvementFresh": 0.1665235863166636,
+    "ciLowFresh": 4.442143208929355,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "0,-1,-1,-1,1,-1",
+    "label": "+1 barista + grab-and-go 40%",
+    "improvementEval": 0.23730035490569307,
+    "improvementFresh": 0.2193099309178583,
+    "ciLowFresh": 6.017253960359001,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,-1,-1,-1,1,-1",
+    "label": "+1 barista 07:30–08:15 + grab-and-go 40%",
+    "improvementEval": 0.21657302352008354,
+    "improvementFresh": 0.1982291408266138,
+    "ciLowFresh": 5.387316078726581,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,0,-1,-1,1,-1",
+    "label": "+1 kitchen + grab-and-go 40%",
+    "improvementEval": 0.6189970188333831,
+    "improvementFresh": 0.6212418524277756,
+    "ciLowFresh": 18.21337444839448,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,1,-1,-1,1,-1",
+    "label": "+1 kitchen 07:30–08:15 + grab-and-go 40%",
+    "improvementEval": 0.5306937134846154,
+    "improvementFresh": 0.5338585170803042,
+    "ciLowFresh": 15.569988632842511,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,1,-1,-1,1,-1",
+    "label": "+1 barista 07:30–08:15 + +1 kitchen 07:30–08:15 + grab-and-go 40%",
+    "improvementEval": 0.6297513623731181,
+    "improvementFresh": 0.6239053725228187,
+    "ciLowFresh": 18.252366120357607,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,-1,0,-1,1,-1",
+    "label": "+1 cashier + grab-and-go 40%",
+    "improvementEval": 0.1671171096982832,
+    "improvementFresh": 0.14326534771438101,
+    "ciLowFresh": 3.741436371313884,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "0,-1,-1,-1,-1,0",
+    "label": "+1 barista + parallel prep",
+    "improvementEval": 0.2493885251144586,
+    "improvementFresh": 0.23671417236727205,
+    "ciLowFresh": 6.847619854710458,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,-1,-1,-1,-1,0",
+    "label": "+1 barista 07:30–08:15 + parallel prep",
+    "improvementEval": 0.21700521567629558,
+    "improvementFresh": 0.20248244848298327,
+    "ciLowFresh": 5.830982247745343,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,0,-1,-1,-1,0",
+    "label": "+1 kitchen + parallel prep",
+    "improvementEval": 0.35480139169528313,
+    "improvementFresh": 0.35568534645761496,
+    "ciLowFresh": 10.29949551556158,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,0,-1,-1,-1,0",
+    "label": "+1 barista 07:30–08:15 + +1 kitchen + parallel prep",
+    "improvementEval": 0.6860577469641662,
+    "improvementFresh": 0.6772640977222181,
+    "ciLowFresh": 19.888043221674764,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,1,-1,-1,-1,0",
+    "label": "+1 kitchen 07:30–08:15 + parallel prep",
+    "improvementEval": 0.3163341777875124,
+    "improvementFresh": 0.31872107645765096,
+    "ciLowFresh": 9.218985402645188,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "0,1,-1,-1,-1,0",
+    "label": "+1 barista + +1 kitchen 07:30–08:15 + parallel prep",
+    "improvementEval": 0.684685728728499,
+    "improvementFresh": 0.6807105966725872,
+    "ciLowFresh": 20.028113059349153,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,1,-1,-1,-1,0",
+    "label": "+1 barista 07:30–08:15 + +1 kitchen 07:30–08:15 + parallel prep",
+    "improvementEval": 0.6044261220409188,
+    "improvementFresh": 0.5965598176898489,
+    "ciLowFresh": 17.475634096144034,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,-1,0,-1,-1,0",
+    "label": "+1 barista 07:30–08:15 + +1 cashier + parallel prep",
+    "improvementEval": 0.1992073755278625,
+    "improvementFresh": 0.18293378211616473,
+    "ciLowFresh": 5.233791498363919,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,-1,-1,0,-1,0",
+    "label": "dedicated handoff (1) + parallel prep",
+    "improvementEval": 0.2468924403674653,
+    "improvementFresh": 0.23662220527874986,
+    "ciLowFresh": 6.849620846159049,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,-1,-1,-1,0,0",
+    "label": "grab-and-go 20% + parallel prep",
+    "improvementEval": 0.17104222794051227,
+    "improvementFresh": 0.16121227300055008,
+    "ciLowFresh": 4.417899177487282,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "0,-1,-1,-1,0,0",
+    "label": "+1 barista + grab-and-go 20% + parallel prep",
+    "improvementEval": 0.2611332660062355,
+    "improvementFresh": 0.24146275016123886,
+    "ciLowFresh": 6.79432936531824,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,-1,-1,-1,0,0",
+    "label": "+1 barista 07:30–08:15 + grab-and-go 20% + parallel prep",
+    "improvementEval": 0.23724890113540412,
+    "improvementFresh": 0.21910297943322968,
+    "ciLowFresh": 6.124649404252089,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,0,-1,-1,0,0",
+    "label": "+1 kitchen + grab-and-go 20% + parallel prep",
+    "improvementEval": 0.5339752768328442,
+    "improvementFresh": 0.539152925678446,
+    "ciLowFresh": 15.76064633814762,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,1,-1,-1,0,0",
+    "label": "+1 kitchen 07:30–08:15 + grab-and-go 20% + parallel prep",
+    "improvementEval": 0.47921533982976,
+    "improvementFresh": 0.4794826813914176,
+    "ciLowFresh": 13.974871111102217,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,-1,0,-1,0,0",
+    "label": "+1 cashier + grab-and-go 20% + parallel prep",
+    "improvementEval": 0.15186160947023636,
+    "improvementFresh": 0.13621122653056242,
+    "ciLowFresh": 3.6643146743931565,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,-1,-1,-1,1,0",
+    "label": "grab-and-go 40% + parallel prep",
+    "improvementEval": 0.2363684452827839,
+    "improvementFresh": 0.21530970516577386,
+    "ciLowFresh": 5.920983519673809,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "0,-1,-1,-1,1,0",
+    "label": "+1 barista + grab-and-go 40% + parallel prep",
+    "improvementEval": 0.270632963746535,
+    "improvementFresh": 0.2527741573186414,
+    "ciLowFresh": 7.031896225380501,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "1,-1,-1,-1,1,0",
+    "label": "+1 barista 07:30–08:15 + grab-and-go 40% + parallel prep",
+    "improvementEval": 0.2578843339785383,
+    "improvementFresh": 0.23770223485944983,
+    "ciLowFresh": 6.584111651098701,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,0,-1,-1,1,0",
+    "label": "+1 kitchen + grab-and-go 40% + parallel prep",
+    "improvementEval": 0.6581832950981322,
+    "improvementFresh": 0.6629025367254457,
+    "ciLowFresh": 19.470014457022696,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,1,-1,-1,1,0",
+    "label": "+1 kitchen 07:30–08:15 + grab-and-go 40% + parallel prep",
+    "improvementEval": 0.5803907111739186,
+    "improvementFresh": 0.5833390320897983,
+    "ciLowFresh": 17.065577296363237,
+    "holds": true
+  },
+  {
+    "scenario": "S13",
+    "key": "-1,-1,0,-1,1,0",
+    "label": "+1 cashier + grab-and-go 40% + parallel prep",
+    "improvementEval": 0.21809523941099787,
+    "improvementFresh": 0.19165024335856568,
+    "ciLowFresh": 5.207396002661436,
+    "holds": true
+  },
+  {
+    "scenario": "S14",
+    "key": "1,-1,-1,-1",
+    "label": "+1 barista 07:30–08:00",
+    "improvementEval": 0.27587410859018047,
+    "improvementFresh": 0.27221711352368433,
+    "ciLowFresh": 6.791810692814913,
+    "holds": true
+  },
+  {
+    "scenario": "S14",
+    "key": "-1,0,-1,-1",
+    "label": "grab-and-go 30%",
+    "improvementEval": 0.28772242588773544,
+    "improvementFresh": 0.2927906844379756,
+    "ciLowFresh": 7.23828197264071,
+    "holds": true
+  },
+  {
+    "scenario": "S14",
+    "key": "-1,1,-1,-1",
+    "label": "grab-and-go 50%",
+    "improvementEval": 0.37137372556854903,
+    "improvementFresh": 0.36404847094986165,
+    "ciLowFresh": 9.060024423957604,
+    "holds": true
+  },
+  {
+    "scenario": "S14",
+    "key": "1,-1,-1,0",
+    "label": "+1 barista 07:30–08:00 + sequential prep",
+    "improvementEval": 0.2314649945203144,
+    "improvementFresh": 0.21786417615839343,
+    "ciLowFresh": 5.357092121161936,
+    "holds": true
+  },
+  {
+    "scenario": "S14",
+    "key": "-1,0,-1,0",
+    "label": "grab-and-go 30% + sequential prep",
+    "improvementEval": 0.2269385729590593,
+    "improvementFresh": 0.23369729440749035,
+    "ciLowFresh": 5.663674928856871,
+    "holds": true
+  },
+  {
+    "scenario": "S14",
+    "key": "-1,1,-1,0",
+    "label": "grab-and-go 50% + sequential prep",
+    "improvementEval": 0.3179438866603371,
+    "improvementFresh": 0.3117621611694094,
+    "ciLowFresh": 7.668382584361763,
+    "holds": true
+  }
+]

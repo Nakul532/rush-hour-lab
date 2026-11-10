@@ -1,0 +1,879 @@
+{
+  "model": "openai/gpt-oss-120b",
+  "provider": "Groq",
+  "tokens": 450172,
+  "reportedCostUsd": 0.040784999999999995,
+  "creditsUsedUsd": 0.030807750000000002,
+  "creditsRemainingUsd": 4.93830665,
+  "runs": [
+    {
+      "scenario": "S01",
+      "stopReason": "no_tool_call",
+      "llmCalls": 8,
+      "tokens": 31186,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "Adding a barista reduces barista load and p90",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add a dedicated handoff point with 1 staff"
+          ],
+          "hypothesis": "Dedicated handoff reduces handoff queue and p90",
+          "failed": []
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add 1 barista staff for the whole rush",
+            "Add a dedicated handoff point with 1 staff"
+          ],
+          "hypothesis": "Combine extra barista and handoff to further reduce p90",
+          "failed": [
+            "Uses 2 changes; the limit is 1"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Sell 20% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "Grab‑and‑go reduces barista load by pre‑making drinks",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "The model replied without calling a tool",
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "S02",
+      "stopReason": "no_tool_call",
+      "llmCalls": 7,
+      "tokens": 27002,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "blocked",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "adding a barista reduces barista load and p90",
+          "failed": [
+            "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Remove 1 cashier staff for the whole rush",
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "moving a cashier to barista balances load",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Sell 40% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "reducing drink prep load lowers barista wait",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "The model replied without calling a tool",
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "S03",
+      "stopReason": "experiment_budget",
+      "llmCalls": 6,
+      "tokens": 22658,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "blocked",
+          "plan": [
+            "Add 1 kitchen staff for the whole rush"
+          ],
+          "hypothesis": "Adding a kitchen staff reduces kitchen load and overall p90",
+          "failed": [
+            "Costs about $660 (first month); the budget is $500"
+          ]
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add 1 kitchen staff for the whole rush"
+          ],
+          "hypothesis": "Adding a kitchen staff reduces kitchen load and overall p90",
+          "failed": [
+            "Costs about $660 (first month); the budget is $500"
+          ]
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Make drinks and food at the same time"
+          ],
+          "hypothesis": "Parallel prep speeds drinkFood handling",
+          "failed": [
+            "Bad-case wait improves by at least 10%"
+          ]
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Cook food in batches of 4 every 15 min"
+          ],
+          "hypothesis": "Batching food reduces kitchen queue",
+          "failed": [
+            "Bad-case wait improves by at least 10%",
+            "Improvement is clear of simulation noise",
+            "Still helps if tasks are 30% faster"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 kitchen staff from 07:15 to 08:00"
+          ],
+          "hypothesis": "Adding a kitchen staff during peak reduces bottleneck",
+          "failed": []
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Add 1 kitchen staff from 07:15 to 08:00",
+            "Cook food in batches of 4 every 15 min"
+          ],
+          "hypothesis": "Partial kitchen staff plus batching further cuts kitchen load",
+          "failed": [
+            "Bad-case wait improves by at least 10%",
+            "Improvement is clear of simulation noise",
+            "Still helps if tasks are 30% faster"
+          ]
+        }
+      ],
+      "errors": []
+    },
+    {
+      "scenario": "S04",
+      "stopReason": "experiment_budget",
+      "llmCalls": 8,
+      "tokens": 31706,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "blocked",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "adding a barista reduces barista load and p90",
+          "failed": [
+            "Costs about $880 (first month); the budget is $300"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Sell 30% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "grab-and-go reduces drink load on barista",
+          "failed": []
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add a dedicated handoff point with 1 staff",
+            "Sell 30% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "adding handoff and grab‑go further eases barista",
+          "failed": [
+            "Costs about $1230 (first month); the budget is $300"
+          ]
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add 1 barista staff from 07:30 to 08:15",
+            "Sell 30% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "peak barista plus grab‑go further cuts p90",
+          "failed": [
+            "Costs about $530 (first month); the budget is $300"
+          ]
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add a dedicated handoff point with 1 staff"
+          ],
+          "hypothesis": "dedicated handoff reduces barista load",
+          "failed": [
+            "Costs about $1030 (first month); the budget is $300"
+          ]
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add a dedicated handoff point with 1 staff"
+          ],
+          "hypothesis": "dedicated handoff reduces barista load",
+          "failed": [
+            "Costs about $1030 (first month); the budget is $300"
+          ]
+        }
+      ],
+      "errors": [
+        "Not one of the allowed options: {\"kind\":\"grabGo\",\"shareOfDrinks\":0.5}. Use only the options listed.",
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "S05",
+      "stopReason": "finished",
+      "llmCalls": 6,
+      "tokens": 22673,
+      "summary": "The combined addition of one barista and one kitchen staff member cuts the bad‑case wait dramatically while keeping all order types faster and remaining robust to task‑time variations.",
+      "experiments": [
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "adding a barista reduces barista load and p90",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 kitchen staff for the whole rush"
+          ],
+          "hypothesis": "adding kitchen staff eases food prep bottleneck",
+          "failed": []
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Sell 30% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "grabGo reduces drink load on barista",
+          "failed": [
+            "Bad-case wait improves by at least 10%"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush",
+            "Add 1 kitchen staff for the whole rush"
+          ],
+          "hypothesis": "adding both barista and kitchen further reduces bottlenecks",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "S06",
+      "stopReason": "finished",
+      "llmCalls": 7,
+      "tokens": 27142,
+      "summary": "The combined addition of a barista and an express drink station cuts the bad‑case wait well beyond the required improvement while keeping all order types within limits",
+      "experiments": [
+        {
+          "status": "rejected",
+          "plan": [
+            "Add 1 cashier staff for the whole rush"
+          ],
+          "hypothesis": "adding a cashier reduces the bottleneck and lowers p90",
+          "failed": [
+            "Bad-case wait improves by at least 10%",
+            "Improvement is clear of simulation noise",
+            "Still helps if tasks are 30% faster",
+            "Still helps if tasks are 30% slower",
+            "No order type gets more than 10% worse"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "adding a barista balances load and cuts p90",
+          "failed": []
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Sell 20% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "grab‑go reduces drink load on barista",
+          "failed": [
+            "Bad-case wait improves by at least 10%",
+            "Still helps if tasks are 30% slower"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add an express drink station for drink-only orders with 1 staff"
+          ],
+          "hypothesis": "adding an express drink station offloads barista",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush",
+            "Add an express drink station for drink-only orders with 1 staff"
+          ],
+          "hypothesis": "adding a barista and an express drink station further reduces bottleneck",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "S07",
+      "stopReason": "no_tool_call",
+      "llmCalls": 7,
+      "tokens": 26900,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "adding a barista reduces barista load and p90",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add a dedicated handoff point with 1 staff"
+          ],
+          "hypothesis": "dedicated handoff reduces handoff bottleneck",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush",
+            "Add a dedicated handoff point with 1 staff"
+          ],
+          "hypothesis": "both reduce load",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush",
+            "Add an express drink station for drink-only orders with 1 staff"
+          ],
+          "hypothesis": "extra barista and express drinks reduce drink bottleneck",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "The model replied without calling a tool",
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "S08",
+      "stopReason": "no_tool_call",
+      "llmCalls": 9,
+      "tokens": 36143,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "adding a barista reduces barista load and p90",
+          "failed": []
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add an express drink station for drink-only orders with 1 staff"
+          ],
+          "hypothesis": "express drinks offloads barista",
+          "failed": [
+            "Costs about $1060 (first month); the budget is $700"
+          ]
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Add 1 cashier staff for the whole rush"
+          ],
+          "hypothesis": "adding cashier reduces queue and overall p90",
+          "failed": [
+            "Bad-case wait improves by at least 10%",
+            "Improvement is clear of simulation noise",
+            "Still helps if tasks are 30% faster",
+            "Still helps if tasks are 30% slower"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Sell 20% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "grab‑and‑go reduces drink load on barista",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "The model replied without calling a tool",
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "S09",
+      "stopReason": "experiment_budget",
+      "llmCalls": 8,
+      "tokens": 32179,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "adding a barista reduces barista load and p90",
+          "failed": []
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add a dedicated handoff point with 1 staff"
+          ],
+          "hypothesis": "dedicated handoff reduces handoff bottleneck",
+          "failed": [
+            "Costs about $1030 (first month); the budget is $1000"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Sell 20% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "grabGo reduces drink load on barista",
+          "failed": []
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add 1 barista staff for the whole rush",
+            "Sell 20% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "adding barista and grabGo reduces load further",
+          "failed": [
+            "Costs about $1080 (first month); the budget is $1000"
+          ]
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Add 1 barista staff for the whole rush",
+            "Cook food in batches of 8 every 15 min"
+          ],
+          "hypothesis": "extra barista plus batching speeds kitchen",
+          "failed": [
+            "Bad-case wait improves by at least 10%",
+            "Improvement is clear of simulation noise",
+            "Still helps if tasks are 30% faster",
+            "Still helps if tasks are 30% slower",
+            "No order type gets more than 10% worse"
+          ]
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Add 1 barista staff for the whole rush",
+            "Cook food in batches of 8 every 15 min"
+          ],
+          "hypothesis": "extra barista plus batching eases kitchen and barista",
+          "failed": [
+            "Bad-case wait improves by at least 10%",
+            "Improvement is clear of simulation noise",
+            "Still helps if tasks are 30% faster",
+            "Still helps if tasks are 30% slower",
+            "No order type gets more than 10% worse"
+          ]
+        }
+      ],
+      "errors": []
+    },
+    {
+      "scenario": "S10",
+      "stopReason": "no_tool_call",
+      "llmCalls": 6,
+      "tokens": 22335,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 kitchen staff for the whole rush"
+          ],
+          "hypothesis": "adding a kitchen staff reduces kitchen bottleneck and overall p90",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Make drinks and food at the same time"
+          ],
+          "hypothesis": "parallel prep lets barista start drink and food simultaneously reducing handoff delay",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 kitchen staff for the whole rush",
+            "Make drinks and food at the same time"
+          ],
+          "hypothesis": "adding kitchen staff and parallel prep together further reduce bottleneck",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "The model replied without calling a tool",
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "S11",
+      "stopReason": "no_tool_call",
+      "llmCalls": 6,
+      "tokens": 22745,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "blocked",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "adding a barista reduces barista load and p90",
+          "failed": [
+            "Costs about $880 (first month); the budget is $600"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Sell 30% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "pre‑making 30% of drinks reduces barista load and overall p90",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff from 07:00 to 07:45"
+          ],
+          "hypothesis": "adding barista during first peak eases early load",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Sell 30% of drink-only orders as grab-and-go items",
+            "Add 1 barista staff from 07:00 to 07:45"
+          ],
+          "hypothesis": "combining pre‑made drinks with extra barista early further cuts barista load",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "The model replied without calling a tool",
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "S12",
+      "stopReason": "experiment_budget",
+      "llmCalls": 7,
+      "tokens": 28063,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "rejected",
+          "plan": [
+            "Remove 1 barista staff for the whole rush",
+            "Add 1 kitchen staff for the whole rush"
+          ],
+          "hypothesis": "shifting a barista to kitchen reduces kitchen bottleneck and lowers p90",
+          "failed": [
+            "No order type gets more than 10% worse"
+          ]
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Make the drink first, then the food"
+          ],
+          "hypothesis": "sequential prep reduces handoff contention and improves p90",
+          "failed": [
+            "Bad-case wait improves by at least 10%",
+            "Improvement is clear of simulation noise",
+            "Still helps if tasks are 30% faster",
+            "Still helps if tasks are 30% slower",
+            "No order type gets more than 10% worse"
+          ]
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Cook food in batches of 4 every 10 min"
+          ],
+          "hypothesis": "small frequent batches reduce kitchen queue and p90",
+          "failed": [
+            "Still helps if tasks are 30% faster"
+          ]
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Sell 30% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "selling 30% drinks ready reduces barista load and improves p90",
+          "failed": [
+            "Bad-case wait improves by at least 10%",
+            "Improvement is clear of simulation noise",
+            "Still helps if tasks are 30% faster"
+          ]
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add a dedicated handoff point with 1 staff"
+          ],
+          "hypothesis": "adding a handoff station reduces barista‑kitchen handoff delay",
+          "failed": [
+            "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+          ]
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Cook food in batches of 4 every 10 min",
+            "Sell 30% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "batches cut kitchen time and grab‑go cuts barista load, together lower p90",
+          "failed": [
+            "Still helps if tasks are 30% faster"
+          ]
+        }
+      ],
+      "errors": []
+    },
+    {
+      "scenario": "S13",
+      "stopReason": "no_tool_call",
+      "llmCalls": 9,
+      "tokens": 36908,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 kitchen staff for the whole rush"
+          ],
+          "hypothesis": "Adding a kitchen staff reduces kitchen bottleneck and lowers overall p90",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "More barista capacity reduces barista queue and overall p90",
+          "failed": []
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add 1 kitchen staff for the whole rush",
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "Adding both kitchen and barista staff removes both bottlenecks, dramatically lowering p90",
+          "failed": [
+            "Costs about $1320 (first month); the budget is $1000"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Sell 20% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "Grab‑and‑go reduces drink prep load, lowering overall wait",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 kitchen staff for the whole rush",
+            "Sell 20% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "Kitchen staff plus grab‑and‑go reduces kitchen load and drink prep, improving p90",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "The model replied without calling a tool",
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "S14",
+      "stopReason": "finished",
+      "llmCalls": 8,
+      "tokens": 31627,
+      "summary": "The grab‑and‑go option for thirty percent of drink orders cuts the bad‑case wait dramatically while staying within budget and meeting all robustness checks.",
+      "experiments": [
+        {
+          "status": "blocked",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "adding a barista reduces barista load and p90",
+          "failed": [
+            "Costs about $660 (first month); the budget is $250"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Sell 30% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "reducing barista drink load lowers p90",
+          "failed": []
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Make the drink first, then the food"
+          ],
+          "hypothesis": "sequential prep reduces barista load",
+          "failed": [
+            "Bad-case wait improves by at least 10%",
+            "Improvement is clear of simulation noise",
+            "Still helps if tasks are 30% faster",
+            "Still helps if tasks are 30% slower",
+            "No order type gets more than 10% worse"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff from 07:30 to 08:00"
+          ],
+          "hypothesis": "adding barista during peak half hour eases queue",
+          "failed": []
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add a dedicated handoff point with 1 staff"
+          ],
+          "hypothesis": "adding handoff reduces barista handoff load",
+          "failed": [
+            "Costs about $810 (first month); the budget is $250"
+          ]
+        }
+      ],
+      "errors": [
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "S15",
+      "stopReason": "llm_call_limit",
+      "llmCalls": 12,
+      "tokens": 50905,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "blocked",
+          "plan": [
+            "Add 1 kitchen staff for the whole rush"
+          ],
+          "hypothesis": "adding a kitchen staff reduces kitchen load and p90",
+          "failed": [
+            "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+          ]
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Cook food in batches of 5 every 15 min"
+          ],
+          "hypothesis": "batching reduces kitchen load",
+          "failed": [
+            "Still helps if tasks are 30% faster"
+          ]
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Make drinks and food at the same time"
+          ],
+          "hypothesis": "parallel prep speeds up drink/food prep reducing p90",
+          "failed": [
+            "Bad-case wait improves by at least 10%"
+          ]
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Cook food in batches of 5 every 15 min",
+            "Make drinks and food at the same time"
+          ],
+          "hypothesis": "batching plus parallel prep reduces kitchen load and overall p90",
+          "failed": [
+            "Still helps if tasks are 30% faster"
+          ]
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Cook food in batches of 5 every 15 min"
+          ],
+          "hypothesis": "batching alone reduces kitchen load",
+          "failed": [
+            "Still helps if tasks are 30% faster"
+          ]
+        }
+      ],
+      "errors": [
+        "The plan leaves barista with no staff at the end of the rush, so some orders would never be served",
+        "The plan leaves kitchen with no staff at the end of the rush, so some orders would never be served",
+        "Not one of the allowed options: {\"kind\":\"dedicatedHandoff\",\"staff\":1}. Use only the options listed.",
+        "Not one of the allowed options: {\"kind\":\"expressDrinks\",\"staff\":1}. Use only the options listed.",
+        "The model replied without calling a tool"
+      ]
+    }
+  ]
+}

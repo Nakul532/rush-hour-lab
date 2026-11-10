@@ -1,0 +1,303 @@
+{
+  "scores": [
+    {
+      "id": "B01",
+      "fields": 8,
+      "correct": 8,
+      "wrong": [],
+      "invented": []
+    },
+    {
+      "id": "B02",
+      "fields": 6,
+      "correct": 5,
+      "wrong": [
+        {
+          "field": "staff.kitchen",
+          "expected": 0
+        }
+      ],
+      "invented": []
+    },
+    {
+      "id": "B03",
+      "fields": 7,
+      "correct": 3,
+      "wrong": [
+        {
+          "field": "mixPercent.drink",
+          "expected": 50,
+          "got": 0.5
+        },
+        {
+          "field": "mixPercent.food",
+          "expected": 20,
+          "got": 0.2
+        },
+        {
+          "field": "mixPercent.drinkFood",
+          "expected": 30,
+          "got": 0.3
+        },
+        {
+          "field": "prepMode",
+          "expected": "sequential"
+        }
+      ],
+      "invented": []
+    },
+    {
+      "id": "B04",
+      "fields": 7,
+      "correct": 7,
+      "wrong": [],
+      "invented": []
+    },
+    {
+      "id": "B05",
+      "fields": 6,
+      "correct": 5,
+      "wrong": [
+        {
+          "field": "staff.barista",
+          "expected": 1
+        }
+      ],
+      "invented": []
+    },
+    {
+      "id": "B06",
+      "fields": 4,
+      "correct": 4,
+      "wrong": [],
+      "invented": []
+    },
+    {
+      "id": "B07",
+      "fields": 8,
+      "correct": 4,
+      "wrong": [
+        {
+          "field": "staff.kitchen",
+          "expected": 0
+        },
+        {
+          "field": "mixPercent.drink",
+          "expected": 100
+        },
+        {
+          "field": "mixPercent.food",
+          "expected": 0
+        },
+        {
+          "field": "mixPercent.drinkFood",
+          "expected": 0
+        }
+      ],
+      "invented": []
+    },
+    {
+      "id": "B08",
+      "fields": 10,
+      "correct": 7,
+      "wrong": [
+        {
+          "field": "mixPercent.drink",
+          "expected": 40
+        },
+        {
+          "field": "mixPercent.food",
+          "expected": 30
+        },
+        {
+          "field": "mixPercent.drinkFood",
+          "expected": 30
+        }
+      ],
+      "invented": []
+    },
+    {
+      "id": "B09",
+      "fields": 5,
+      "correct": 5,
+      "wrong": [],
+      "invented": []
+    },
+    {
+      "id": "B10",
+      "fields": 9,
+      "correct": 9,
+      "wrong": [],
+      "invented": []
+    }
+  ],
+  "raw": [
+    {
+      "id": "B01",
+      "ok": true,
+      "draft": {
+        "minutes": {
+          "drink": 2,
+          "food": 5
+        },
+        "ordersPerHour": 40,
+        "rushMinutes": 120,
+        "staff": {
+          "barista": 1,
+          "cashier": 1,
+          "kitchen": 1
+        },
+        "startsAt": "07:00"
+      },
+      "llmCalls": 1
+    },
+    {
+      "id": "B02",
+      "ok": true,
+      "draft": {
+        "ordersPerHour": 60,
+        "rushMinutes": 90,
+        "staff": {
+          "barista": 2,
+          "cashier": 1
+        },
+        "startsAt": "08:00"
+      },
+      "llmCalls": 1
+    },
+    {
+      "id": "B03",
+      "ok": true,
+      "draft": {
+        "mixPercent": {
+          "drink": 0.5,
+          "drinkFood": 0.3,
+          "food": 0.2
+        },
+        "staff": {
+          "barista": 1,
+          "cashier": 1,
+          "kitchen": 1
+        }
+      },
+      "llmCalls": 1
+    },
+    {
+      "id": "B04",
+      "ok": true,
+      "draft": {
+        "minutes": {
+          "order": 1
+        },
+        "ordersPerHour": 75,
+        "rushMinutes": 90,
+        "staff": {
+          "barista": 3,
+          "cashier": 2,
+          "kitchen": 2
+        },
+        "startsAt": "06:30"
+      },
+      "llmCalls": 1
+    },
+    {
+      "id": "B05",
+      "ok": true,
+      "draft": {
+        "handoff": "dedicated",
+        "minutes": {
+          "food": 7
+        },
+        "staff": {
+          "cashier": 1,
+          "handoff": 1,
+          "kitchen": 1
+        }
+      },
+      "llmCalls": 1
+    },
+    {
+      "id": "B06",
+      "ok": true,
+      "draft": {
+        "foodBatching": {
+          "batchSize": 6,
+          "intervalMin": 10
+        },
+        "name": "Waffle shop",
+        "ordersPerHour": 50,
+        "rushMinutes": 120
+      },
+      "llmCalls": 1
+    },
+    {
+      "id": "B07",
+      "ok": true,
+      "draft": {
+        "minutes": {
+          "drink": 1.5
+        },
+        "ordersPerHour": 30,
+        "staff": {
+          "barista": 1,
+          "cashier": 1
+        }
+      },
+      "llmCalls": 1
+    },
+    {
+      "id": "B08",
+      "ok": true,
+      "draft": {
+        "ordersPerHour": 55,
+        "prepMode": "parallel",
+        "rushMinutes": 120,
+        "staff": {
+          "barista": 2,
+          "cashier": 1,
+          "kitchen": 2
+        },
+        "startsAt": "11:30"
+      },
+      "llmCalls": 1
+    },
+    {
+      "id": "B09",
+      "ok": true,
+      "draft": {
+        "handoff": "barista",
+        "minutes": {
+          "drink": 3,
+          "handoff": 0.5
+        },
+        "staff": {
+          "barista": 1,
+          "cashier": 1
+        }
+      },
+      "llmCalls": 1
+    },
+    {
+      "id": "B10",
+      "ok": true,
+      "draft": {
+        "minutes": {
+          "drink": 1.5,
+          "food": 4,
+          "handoff": 0.3333333333
+        },
+        "ordersPerHour": 100,
+        "rushMinutes": 45,
+        "staff": {
+          "barista": 4,
+          "cashier": 2,
+          "kitchen": 1
+        },
+        "startsAt": "08:15"
+      },
+      "llmCalls": 1
+    }
+  ],
+  "reportedCostUsd": 0.0016461,
+  "creditsUsedUsd": 0
+}

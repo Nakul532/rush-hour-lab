@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 570" width="940" height="570" font-family="system-ui, -apple-system, Segoe UI, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">Bad-case wait per scenario: today, best possible plan, LLM agent's plan</title>
+<desc id="d">SIMULATED overall 90th-percentile wait in minutes for 15 evaluation scenarios. Table in eval/README.md.</desc>
+<rect width="940" height="570" fill="#fcfcfb"/>
+<text x="16" y="26" font-size="15" font-weight="600" fill="#0b0b0b">Bad-case (p90) wait, minutes: today vs best possible vs LLM agent</text>
+<circle cx="22" cy="46" r="5" fill="none" stroke="#8a8984" stroke-width="2"/><text x="30" y="50" font-size="12" fill="#52514e">Today</text>
+<circle cx="96" cy="46" r="5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><text x="104" y="50" font-size="12" fill="#52514e">Best possible plan (brute force)</text>
+<path d="M326 40 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><text x="334" y="50" font-size="12" fill="#52514e">LLM agent's plan</text>
+<line x1="360" x2="360" y1="62" y2="520" stroke="#e4e3df" stroke-width="1"/>
+<text x="360" y="538" font-size="11" fill="#52514e" text-anchor="middle">0</text>
+<line x1="410" x2="410" y1="62" y2="520" stroke="#e4e3df" stroke-width="1"/>
+<text x="410" y="538" font-size="11" fill="#52514e" text-anchor="middle">5</text>
+<line x1="460" x2="460" y1="62" y2="520" stroke="#e4e3df" stroke-width="1"/>
+<text x="460" y="538" font-size="11" fill="#52514e" text-anchor="middle">10</text>
+<line x1="510" x2="510" y1="62" y2="520" stroke="#e4e3df" stroke-width="1"/>
+<text x="510" y="538" font-size="11" fill="#52514e" text-anchor="middle">15</text>
+<line x1="560" x2="560" y1="62" y2="520" stroke="#e4e3df" stroke-width="1"/>
+<text x="560" y="538" font-size="11" fill="#52514e" text-anchor="middle">20</text>
+<line x1="610" x2="610" y1="62" y2="520" stroke="#e4e3df" stroke-width="1"/>
+<text x="610" y="538" font-size="11" fill="#52514e" text-anchor="middle">25</text>
+<line x1="660" x2="660" y1="62" y2="520" stroke="#e4e3df" stroke-width="1"/>
+<text x="660" y="538" font-size="11" fill="#52514e" text-anchor="middle">30</text>
+<line x1="710" x2="710" y1="62" y2="520" stroke="#e4e3df" stroke-width="1"/>
+<text x="710" y="538" font-size="11" fill="#52514e" text-anchor="middle">35</text>
+<text x="535" y="562" font-size="11" fill="#52514e" text-anchor="middle">minutes (SIMULATED)</text>
+<text x="16" y="89" font-size="12" fill="#0b0b0b">S01 Barista-bound, one change allowed</text>
+<line x1="462.9354263921043" x2="518.9306258911129" y1="85" y2="85" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="518.9306258911129" cy="85" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<circle cx="462.9354263921043" cy="85" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M462.9354263921043 79 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="726" y="89" font-size="11" fill="#52514e">agent found best ✓</text>
+<text x="16" y="119" font-size="12" fill="#0b0b0b">S02 Barista-bound, no new hires</text>
+<line x1="419.1607431627051" x2="525.6597171381248" y1="115" y2="115" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="525.6597171381248" cy="115" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<circle cx="419.1607431627051" cy="115" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M462.9354263921043 109 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="726" y="119" font-size="11" fill="#52514e">agent missed</text>
+<text x="16" y="149" font-size="12" fill="#0b0b0b">S03 Kitchen-bound, sequential prep, $500 budget</text>
+<line x1="509.0930411497069" x2="674.9360961468897" y1="145" y2="145" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="674.9360961468897" cy="145" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<circle cx="509.0930411497069" cy="145" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M527.2779094508713 139 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="726" y="149" font-size="11" fill="#52514e">agent missed</text>
+<text x="16" y="179" font-size="12" fill="#0b0b0b">S04 Peaked rush, $300 budget</text>
+<line x1="505.893369783755" x2="581.4780778611149" y1="175" y2="175" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="581.4780778611149" cy="175" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<circle cx="505.893369783755" cy="175" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M505.893369783755 169 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="726" y="179" font-size="11" fill="#52514e">agent found best ✓</text>
+<text x="16" y="209" font-size="12" fill="#0b0b0b">S05 Quiet café: nothing should pass</text>
+<line x1="397.4083850319351" x2="415.8504273870614" y1="205" y2="205" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="415.8504273870614" cy="205" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<circle cx="397.4083850319351" cy="205" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M398.12667887697467 199 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="726" y="209" font-size="11" fill="#52514e">agent within 5%</text>
+<text x="16" y="239" font-size="12" fill="#0b0b0b">S06 Cashier-bound</text>
+<line x1="416.8147476716399" x2="438.31466982723384" y1="235" y2="235" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="438.31466982723384" cy="235" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<circle cx="416.8147476716399" cy="235" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M416.8147476716399 229 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="726" y="239" font-size="11" fill="#52514e">agent found best ✓</text>
+<text x="16" y="269" font-size="12" fill="#0b0b0b">S07 Barista slowed by handoffs, max 2 changes</text>
+<line x1="456.02984415385475" x2="697.9030429398498" y1="265" y2="265" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="697.9030429398498" cy="265" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<circle cx="456.02984415385475" cy="265" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M461.9537020656502 259 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="726" y="269" font-size="11" fill="#52514e">agent missed</text>
+<text x="16" y="299" font-size="12" fill="#0b0b0b">S08 Drink-heavy, $700 budget</text>
+<line x1="411.19190933247654" x2="587.5369976318689" y1="295" y2="295" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="587.5369976318689" cy="295" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<circle cx="411.19190933247654" cy="295" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M411.19190933247654 289 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="726" y="299" font-size="11" fill="#52514e">agent found best ✓</text>
+<text x="16" y="329" font-size="12" fill="#0b0b0b">S09 Curio Coffee (reconstructed), $1,000 budget</text>
+<line x1="456.2118977246629" x2="532.7400571352796" y1="325" y2="325" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="532.7400571352796" cy="325" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<circle cx="456.2118977246629" cy="325" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M471.6673066860064 319 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="726" y="329" font-size="11" fill="#52514e">agent missed</text>
+<text x="16" y="359" font-size="12" fill="#0b0b0b">S10 Observed café (calibrated), max 2 changes</text>
+<line x1="429.04518730784355" x2="499.86663646237037" y1="355" y2="355" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="499.86663646237037" cy="355" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<circle cx="429.04518730784355" cy="355" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M465.0653069020619 349 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="726" y="359" font-size="11" fill="#52514e">agent missed</text>
+<text x="16" y="389" font-size="12" fill="#0b0b0b">S11 Two peaks, $600 budget</text>
+<line x1="464.8568574978038" x2="508.8876832862861" y1="385" y2="385" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="508.8876832862861" cy="385" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<circle cx="464.8568574978038" cy="385" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M473.31511362290075 379 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="726" y="389" font-size="11" fill="#52514e">agent missed</text>
+<text x="16" y="419" font-size="12" fill="#0b0b0b">S12 Kitchen-bound, no new hires, two baristas</text>
+<circle cx="658.3855938079282" cy="415" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<text x="726" y="419" font-size="11" fill="#52514e">nothing passes; agent: nothing ✓</text>
+<text x="16" y="449" font-size="12" fill="#0b0b0b">S13 Largest space (288 plans), $1,000, max 3 changes</text>
+<line x1="459.88517613991365" x2="678.1641692827909" y1="445" y2="445" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="678.1641692827909" cy="445" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<circle cx="459.88517613991365" cy="445" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M519.2812270533243 439 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="726" y="449" font-size="11" fill="#52514e">agent missed</text>
+<text x="16" y="479" font-size="12" fill="#0b0b0b">S14 Overloaded barista, $250 budget</text>
+<line x1="536.7878838291804" x2="641.2289129802487" y1="475" y2="475" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="641.2289129802487" cy="475" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<circle cx="536.7878838291804" cy="475" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M560.3130479078005 469 l6 6 l-6 6 l-6 -6 z" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="726" y="479" font-size="11" fill="#52514e">agent missed</text>
+<text x="16" y="509" font-size="12" fill="#0b0b0b">S15 Bakery-style food, no new hires</text>
+<circle cx="668.7922919267734" cy="505" r="5" fill="none" stroke="#8a8984" stroke-width="2"/>
+<text x="726" y="509" font-size="11" fill="#52514e">nothing passes; agent: nothing ✓</text>
+</svg>
