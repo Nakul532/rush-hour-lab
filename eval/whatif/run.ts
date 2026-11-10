@@ -11,8 +11,12 @@ import { constraintBreaks, DEFAULT_COSTS } from '../../src/agent/plan';
 import { answerWhatIf, type WhatIfResult } from '../../src/agent/whatIf';
 import type { LlmClient } from '../../src/agent/llm';
 import { WHATIF_CAFE, WHATIF_CASES, type Expected, type WhatIfCase } from './cases';
+import { WHATIF_HELDOUT } from './heldout';
 
 const SIM = { reps: 80, seed: 99 };
+/** --heldout runs the 10 held-out phrasings; --tag names the output files. */
+const CASES = process.argv.includes('--heldout') ? WHATIF_HELDOUT : WHATIF_CASES;
+const TAG = process.argv.includes('--tag') ? process.argv[process.argv.indexOf('--tag') + 1] : '';
 
 const key = (c: Record<string, unknown>, onlyKind: boolean) =>
   onlyKind ? String(c.kind) : JSON.stringify(Object.fromEntries(Object.entries(c).filter(([k]) => k !== 'any').sort(([a], [b]) => a.localeCompare(b))));
@@ -45,7 +49,7 @@ export function scoreCase(c: WhatIfCase, r: WhatIfResult): { pass: boolean; why:
 
 async function runAll(label: string, llm: LlmClient | null) {
   const rows = [];
-  for (const c of WHATIF_CASES) {
+  for (const c of CASES) {
     const r = await answerWhatIf(WHATIF_CAFE, c.question, llm, SIM, { constraints: c.constraints ?? {}, costs: DEFAULT_COSTS });
     const s = scoreCase(c, r);
     rows.push({ id: c.id, question: c.question, ...s, readBy: r.readBy, changes: r.changes, limits: r.limits ? { breaks: r.limits.breaks, suggestion: r.limits.suggestion?.changes ?? null } : null, answer: r.answer, llmCalls: r.llmCalls });
@@ -54,7 +58,7 @@ async function runAll(label: string, llm: LlmClient | null) {
   const passed = rows.filter((x) => x.pass).length;
   console.log(`[whatif:${label}] ${passed} of ${rows.length} passed`);
   mkdirSync('eval/results-whatif', { recursive: true });
-  writeFileSync(`eval/results-whatif/${label}.json`, JSON.stringify({ passed, of: rows.length, rows }, null, 2) + '\n');
+  writeFileSync(`eval/results-whatif/${label}${TAG ? '-' + TAG : ''}.json`, JSON.stringify({ passed, of: rows.length, rows }, null, 2) + '\n');
   return passed;
 }
 
