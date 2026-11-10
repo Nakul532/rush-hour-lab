@@ -69,3 +69,37 @@ export const BUILDER_CASES: BuilderCase[] = [
     },
   },
 ];
+
+/**
+ * Held-out cases, written and committed after the first builder run and
+ * BEFORE the prompt fix for stated zeros was run on anything. The fix was
+ * written looking at B01–B10 failures, so B01–B10 are no longer a fair test
+ * of it; these five are.
+ */
+export const BUILDER_HELDOUT: BuilderCase[] = [
+  {
+    id: 'H01',
+    description: 'Coffee cart at the station, 6am to 8am. Just me making drinks and my partner taking payment. No food at all. Maybe 35 orders an hour.',
+    expected: { startsAt: '06:00', rushMinutes: 120, staff: { cashier: 1, barista: 1, kitchen: 0 }, mixPercent: { drink: 100, food: 0, drinkFood: 0 }, ordersPerHour: 35 },
+  },
+  {
+    id: 'H02',
+    description: 'Bagel shop. 60% of orders are food only, a quarter come with a coffee, the rest are coffee only. We toast first and pour the coffee after. Two on the toaster, one barista, one cashier.',
+    expected: { mixPercent: { food: 60, drinkFood: 25, drink: 15 }, prepMode: 'sequential', staff: { kitchen: 2, barista: 1, cashier: 1 } },
+  },
+  {
+    id: 'H03',
+    description: 'We have no cashier; customers order from the barista, who also hands everything out. One barista, one cook. Rush is 9 to 10.',
+    expected: { staff: { cashier: 0, barista: 1, kitchen: 1 }, handoff: 'barista', startsAt: '09:00', rushMinutes: 60 },
+  },
+  {
+    id: 'H04',
+    description: 'Around 120 orders over a 90-minute rush starting 7:45. Two baristas and two cashiers. Drinks take 2.5 minutes. Pastries are grab-from-the-case, no kitchen staff.',
+    expected: { ordersPerHour: 80, rushMinutes: 90, startsAt: '07:45', staff: { barista: 2, cashier: 2, kitchen: 0 }, minutes: { drink: 2.5 } },
+  },
+  {
+    id: 'H05',
+    description: 'Brunch café, 10:30 to 12:30. Kitchen and bar work at the same time on combined orders. 3 cooks, 2 baristas, 1 cashier, and someone at the pass handing out orders. Food takes 8 minutes.',
+    expected: { startsAt: '10:30', rushMinutes: 120, prepMode: 'parallel', staff: { kitchen: 3, barista: 2, cashier: 1, handoff: 1 }, handoff: 'dedicated', minutes: { food: 8 } },
+  },
+];
