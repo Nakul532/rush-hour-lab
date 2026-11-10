@@ -18,6 +18,8 @@ export interface ResultSummary {
   provenance: 'SIMULATED';
   reps: number;
   overall: { median: Interval; p90: Interval };
+  /** Arrival → order received (includes the order line), measured customers. */
+  timeInCafe: { median: Interval; p90: Interval };
   byType: Partial<Record<OrderType, { median: Interval; p90: Interval; orders: number }>>;
   ordersServed: Interval;
   stations: Record<string, { utilization: number | null; maxQueue: number }>;
@@ -42,6 +44,7 @@ function summarizeRuns(runs: RunResult[]): ResultSummary {
     provenance: 'SIMULATED',
     reps: runs.length,
     overall: { median: meanCI(runs.map((r) => r.wait.all.median)), p90: meanCI(runs.map((r) => r.wait.all.p90)) },
+    timeInCafe: { median: meanCI(runs.map((r) => r.timeInSystem.median)), p90: meanCI(runs.map((r) => r.timeInSystem.p90)) },
     byType,
     ordersServed: meanCI(runs.map((r) => r.served)),
     stations,
@@ -85,6 +88,8 @@ export interface Comparison {
   /** Orders never served per rush (mean). Anything above 0 means the plan is broken. */
   candidateUnserved: number;
   byType: Partial<Record<OrderType, { baseP90: number; candidateP90: number; change: number }>>;
+  /** p90 time in café (arrival → order received, includes the order line), mean across replications. */
+  timeInCafe: { baseP90: number; candidateP90: number; change: number };
 }
 
 function pairedCompare(base: RunResult[], cand: RunResult[]): Comparison {
@@ -102,7 +107,10 @@ function pairedCompare(base: RunResult[], cand: RunResult[]): Comparison {
     byType[t] = { baseP90: b, candidateP90: c, change: b > 0 ? (c - b) / b : 0 };
   }
   const candidateUnserved = cand.reduce((a, r) => a + r.unserved, 0) / cand.length;
-  return { baseP90, candidateP90, diff, improvement: baseP90 > 0 ? diff.mean / baseP90 : 0, candidateUnserved, byType };
+  const tb = meanCI(base.map((r) => r.timeInSystem.p90)).mean;
+  const tc = meanCI(cand.map((r) => r.timeInSystem.p90)).mean;
+  const timeInCafe = { baseP90: tb, candidateP90: tc, change: tb > 0 ? (tc - tb) / tb : 0 };
+  return { baseP90, candidateP90, diff, improvement: baseP90 > 0 ? diff.mean / baseP90 : 0, candidateUnserved, byType, timeInCafe };
 }
 
 /** Compare two cafés on identical simulated customers (common random numbers). */
@@ -155,6 +163,7 @@ export interface Decision {
 
 export const MIN_IMPROVEMENT = 0.1;
 export const MAX_TYPE_WORSENING = 0.1;
+export const MAX_TIME_IN_CAFE_WORSENING = 0.1;
 
 const pct = (x: number) => `${(x * 100).toFixed(1)}%`;
 const min = (x: number) => `${x.toFixed(1)} min`;
@@ -166,7 +175,10 @@ const min = (x: number) => `${x.toFixed(1)} min`;
  *  3. it still improves with task times 30% shorter;
  *  4. it still improves with task times 30% longer;
  *  5. no single order type's p90 gets more than 10% worse;
- *  6. every order is served (also with task times ±30%).
+ *  6. every order is served (also with task times ±30%);
+ *  7. time in café (arrival → order received) does not get more than 10% worse.
+ *     "Wait" starts when the order is placed, so without this a plan could
+ *     shorten it by keeping people longer in the order line (found in Stage 4).
  */
 export function decide(e: Evidence): Decision {
   const n = e.nominal;
@@ -207,6 +219,11 @@ export function decide(e: Evidence): Decision {
         n.candidateUnserved + e.faster.candidateUnserved + e.slower.candidateUnserved === 0
           ? 'No order is left waiting at the end'
           : `About ${Math.round(n.candidateUnserved)} orders per rush are never served`,
+    },
+    {
+      name: 'Time in café does not get more than 10% worse',
+      passed: !(n.timeInCafe.change > MAX_TIME_IN_CAFE_WORSENING),
+      detail: `Time in café (arrival to order received, p90) ${min(n.timeInCafe.baseP90)} → ${min(n.timeInCafe.candidateP90)}`,
     },
   ];
   return { accepted: checks.every((c) => c.passed), checks };

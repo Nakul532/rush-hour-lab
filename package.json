@@ -11,12 +11,23 @@
     "live-run": "tsx scripts/live-run.ts",
     "calibrate:curio": "tsx scripts/calibrate-curio.ts",
     "eval": "tsx eval/run.ts",
-    "eval:report": "tsx eval/report.ts"
+    "eval:report": "tsx eval/report.ts",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
+    "vite": "^8.3.7",
     "vitest": "^5.1.0"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   }
 }

@@ -12,6 +12,7 @@ function comparison(base: number, cand: number, ciLow: number, extra: Partial<Co
     baseP90: base, candidateP90: cand, improvement: (base - cand) / base, candidateUnserved: 0,
     diff: { mean: base - cand, low: ciLow, high: base - cand + 1, n: 100 },
     byType: { drink: { baseP90: base, candidateP90: cand, change: (cand - base) / base } },
+    timeInCafe: { baseP90: base + 2, candidateP90: cand + 2, change: (cand - base) / (base + 2) },
     ...extra,
   };
 }
@@ -49,6 +50,11 @@ describe('decide() — each check on its own', () => {
   it('allows an order type to get up to 10% worse', () => {
     const nominal = comparison(10, 8, 1.5, { byType: { drink: { baseP90: 4, candidateP90: 4.39, change: 0.0975 } } });
     expect(decide({ ...good(), nominal }).accepted).toBe(true);
+  });
+
+  it('rejects a plan that shortens the wait by keeping people longer in the order line', () => {
+    const nominal = comparison(10, 6, 3, { timeInCafe: { baseP90: 40, candidateP90: 160, change: 3 } });
+    expect(failed({ ...good(), nominal })).toEqual(['Time in café does not get more than 10% worse']);
   });
 
   it('rejects a plan that leaves orders unserved', () => {

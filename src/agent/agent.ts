@@ -7,7 +7,7 @@
 // token budget, whichever comes first.
 
 import type { CafeSpec } from '../sim/cafe';
-import { applyChanges, ChangeError, describeChange, parseChanges, type Change } from './changes';
+import { applyChanges, ChangeError, describeChange, parseChanges, validatePlan, type Change } from './changes';
 import { compare, decide, DEFAULT_SIM, findBottleneck, sensitivity, simulate, type Bottleneck, type Comparison, type Decision, type Evidence, type ResultSummary, type SimSettings } from './evaluate';
 import { LlmLimitError, type ChatMessage, type LlmClient, type LlmResponse, type ToolCall } from './llm';
 import { DEFAULT_COSTS, constraintViolations, planCost, type Constraints, type CostTable } from './plan';
@@ -24,9 +24,10 @@ export interface ExperimentRecord {
   descriptions: string[];
   /** First-month cost using the cost table (defaults are ASSUMPTIONS). */
   costUsd: number;
-  /** Constraints the plan broke. A blocked plan is not simulated. */
+  /** Constraints the plan broke, or (if invalid) why it is not a valid plan. Neither is simulated. */
   violations: string[];
-  status: 'accepted' | 'rejected' | 'blocked';
+  /** invalid = fails the shared plan validator (e.g. leaves a station empty); blocked = breaks a constraint. */
+  status: 'accepted' | 'rejected' | 'blocked' | 'invalid';
   decision?: Decision;
   evidence?: Evidence;
 }
@@ -103,7 +104,7 @@ function compactComparison(c: Comparison) {
 }
 
 function compactExperiment(e: ExperimentRecord) {
-  if (e.status === 'blocked') return { experiment: e.id, status: 'blocked', violations: e.violations };
+  if (e.status === 'blocked' || e.status === 'invalid') return { experiment: e.id, status: e.status, violations: e.violations };
   return {
     experiment: e.id,
     status: e.status,
@@ -121,18 +122,15 @@ export function pickRecommended(experiments: ExperimentRecord[]): ExperimentReco
   return ok[0] ?? null;
 }
 
-/** Run one experiment: constraints first, then the acceptance rule. */
+/** Run one experiment: the shared plan validator, then constraints, then the acceptance rule. */
 export function runExperiment(
   id: number, base: CafeSpec, hypothesis: string, changes: Change[], constraints: Constraints, costs: CostTable, sim: SimSettings,
 ): ExperimentRecord {
+  const descriptions = changes.map((c) => describeChange(c, base.startsAt));
+  const problems = validatePlan(base, changes);
+  if (problems.length > 0) return { id, hypothesis, changes, descriptions, costUsd: 0, violations: problems, status: 'invalid' };
   const violations = constraintViolations(base, changes, constraints, costs);
-  const record: ExperimentRecord = {
-    id, hypothesis, changes,
-    descriptions: changes.map((c) => describeChange(c, base.startsAt)),
-    costUsd: planCost(base, changes, costs),
-    violations,
-    status: 'blocked',
-  };
+  const record: ExperimentRecord = { id, hypothesis, changes, descriptions, costUsd: planCost(base, changes, costs), violations, status: 'blocked' };
   if (violations.length > 0) return record;
   const evidence = sensitivity(base, applyChanges(base, changes), sim);
   const decision = decide(evidence);

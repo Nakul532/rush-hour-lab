@@ -4,7 +4,11 @@ An operations analyst for small cafés that tests changes in a simulator before 
 
 ## Status
 
-Stage 1 (simulation engine) is built. The observed-café preset is calibrated on 18 observed orders; drink + food waits come out about 5.6 min short of the observed median, an accepted and documented gap (calibration/REPORT.md §7). Stage 2 (the agent) is built and tested with a mocked LLM; a capped live test against Groq is next. Evaluation and the web app come later.
+- **Stage 1 (simulation engine)** and **Stage 2 (agent)**: done.
+- **Stage 3 (evaluation)**: done; see eval/README.md. The LLM agent never beat plain search, so Stage 4 uses a hybrid.
+- **Stage 4 (web app)**: built and tested locally; **not deployed yet**.
+
+The observed café is the primary example (calibrated on 18 observed orders; drink + food waits run about 5.6 min short, calibration/REPORT.md §7). Curio Coffee is a secondary example reconstructed from a 2025 class proposal whose figures were inconsistent (calibration/CURIO.md).
 
 ## Commands
 
@@ -14,7 +18,9 @@ npm test            # unit tests + calibration check
 npm run typecheck
 npm run calibrate   # refits the observed café (~20 min), writes calibration/REPORT.md
 npm run calibrate:curio   # refits the Curio scale factor (~1 min), writes calibration/CURIO.md
-npm run live-run -- --live   # one-off live agent test on Groq, capped at 40K tokens (needs GROQ_API_KEY in .env.local)
+npm run live-run -- --live   # one-off live agent test, capped at 40K tokens (needs OPENROUTER_API_KEY in .env)
+npm run dev         # web app at http://localhost:5173 (serves /api/llm locally with the key from .env)
+npm run build       # static site in dist/
 ```
 
 ## Layout
@@ -54,5 +60,18 @@ A change is recommended only if all of these hold:
 3. It still improves with every task 30% faster, and with every task 30% slower.
 4. No single order type's 90th-percentile wait gets more than 10% worse.
 5. Every order is served.
+6. Time in café (arrival → order received) does not get more than 10% worse.
+
+Before any of that, every plan from every path (LLM agent, what-if, greedy, brute force, hybrid, baseline, evaluation) goes through one shared validator, `validatePlan()` in src/agent/changes.ts: no station that orders use may be left without staff at any point in the rush. The recommended plan is then re-checked on 1,000 fresh simulated rushes before it is shown.
 
 Everything else is shown as "tested and rejected" with its numbers. Numbers shown to users always come from code; text the LLM writes is dropped if it contains digits.
+
+## Web app (Stage 4)
+
+| Path | What it is |
+|---|---|
+| `app/` | React front end; all simulation runs in a Web Worker (`app/worker.ts`) |
+| `src/agent/hybrid.ts` | Recommender: brute force (or greedy when too slow) plus the AI analyst's ideas; best passing plan wins and is re-checked |
+| `api/llm.ts` | Vercel edge function, the only place the OpenRouter key is used; model and provider fixed; per-analysis, per-visitor and site-wide daily limits |
+
+Environment variables (Vercel): `OPENROUTER_API_KEY` (required for AI features), `SITE_DAILY_LLM_CALLS` (optional, default 1500), `LLM_MODE=off` (optional, switches AI off; simulation still works).

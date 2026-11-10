@@ -205,6 +205,7 @@ export function runOnce(config: SimConfig, seed: number, options: RunOptions = {
   let lastAreaT = 0;
   let arrivalsLeft = customers.length;
   let lastCustomerEventT = 0;
+  const maxSimMin = windowMin * 20 + 1000;
 
   const touchServer = (st: ServerSim, t: number) => {
     const dt = t - st.lastT;
@@ -261,6 +262,10 @@ export function runOnce(config: SimConfig, seed: number, options: RunOptions = {
     if (!ev) break;
     const customersFinished = arrivalsLeft === 0 && inSystem === 0;
     if (customersFinished && ev.t > Math.max(windowMin, lastCustomerEventT)) break;
+    // Safety stop: if some orders can never be served (e.g. a station with no
+    // staff), batch cooking would otherwise keep the calendar going forever.
+    // Anything still waiting is reported as unserved.
+    if (ev.t > maxSimMin) break;
 
     areaN += inSystem * (ev.t - lastAreaT);
     lastAreaT = ev.t;

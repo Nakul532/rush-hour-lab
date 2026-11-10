@@ -88,25 +88,65 @@ export function parseChanges(raw: unknown, spec: CafeSpec): Change[] {
     out.push(c);
     current = applyChange(current, c);
   }
-  const empty = unstaffedStations(current);
-  if (empty.length > 0)
-    throw new ChangeError(`The plan leaves ${empty.join(' and ')} with no staff at the end of the rush, so some orders would never be served`);
+  const problems = validatePlan(spec, out);
+  if (problems.length > 0) throw new ChangeError(problems.join('; '));
   return out;
 }
 
-/** Stations that orders still go to but that end the rush with 0 staff. */
-export function unstaffedStations(spec: CafeSpec): string[] {
+/** Stations that orders go to in this café (and so must be staffed). */
+export function stationsInUse(spec: CafeSpec): Array<keyof CafeSpec['staff']> {
   const used: Array<keyof CafeSpec['staff']> = ['cashier', 'barista'];
   const anyFood = (spec.mix.food ?? 0) > 0 || (spec.mix.drinkFood ?? 0) > 0;
   if (anyFood && !spec.foodBatching) used.push('kitchen');
   if (spec.handoff === 'dedicated') used.push('handoff');
   if (spec.drinkOnlyStation === 'express') used.push('express');
-  return used.filter((k) => {
-    const s = spec.staff[k];
-    if (s === undefined) return true;
+  return used;
+}
+
+function clockLabel(startsAt: string | undefined, m: number): string {
+  if (!startsAt) return `minute ${m}`;
+  const [h, mm] = startsAt.split(':').map(Number);
+  const t = h * 60 + mm + m;
+  return `${String(Math.floor(t / 60) % 24).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
+}
+
+/**
+ * THE plan validator. Every path that evaluates a plan goes through it:
+ * the LLM agent and what-if (via parseChanges), and greedy, brute force, the
+ * hybrid, the rule-based baseline and the evaluation (via runExperiment).
+ *
+ * A plan is invalid if it cannot be applied, or if any station that orders
+ * go to has no staff at any point during the rush. (This bug appeared twice:
+ * first an empty kitchen, then an empty register.)
+ * Returns the problems in plain English; an empty list means the plan is valid.
+ */
+export function validatePlan(base: CafeSpec, changes: Change[]): string[] {
+  let after: CafeSpec;
+  try {
+    after = applyChanges(base, changes);
+  } catch (err) {
+    if (err instanceof ChangeError) return [err.message];
+    throw err;
+  }
+  const rush = windowMinutes(after.arrivals);
+  const problems: string[] = [];
+  for (const k of stationsInUse(after)) {
+    const s = after.staff[k];
+    if (s === undefined) {
+      problems.push(`The plan sends orders to the ${k} station, which has no staff`);
+      continue;
+    }
     const w = toWindows(s);
-    return w[w.length - 1].servers === 0;
-  });
+    w.forEach((win, i) => {
+      if (win.servers > 0 || win.fromMin >= rush) return;
+      const to = Math.min(w[i + 1]?.fromMin ?? rush, rush);
+      const whole = win.fromMin === 0 && to === rush;
+      problems.push(
+        `The plan leaves ${k} with no staff ${whole ? 'for the whole rush' : `from ${clockLabel(after.startsAt, win.fromMin)} to ${clockLabel(after.startsAt, to)}`}, so orders there would wait or never be served`,
+      );
+    });
+  }
+  return problems;
 }
 
 function serversAt(windows: StaffWindow[], t: number): number {

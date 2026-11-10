@@ -2,7 +2,8 @@
 // Confirms the OpenRouter key loads (prints its name only), shows credits,
 // and makes one tiny call pinned to Groq.
 
-import { loadEnvKey, OpenRouterLlm } from '../src/agent/openrouter';
+import { loadEnvKey } from '../src/agent/env';
+import { OpenRouterLlm } from '../src/agent/openrouter';
 
 const key = await loadEnvKey('OPENROUTER_API_KEY');
 if (!key) {

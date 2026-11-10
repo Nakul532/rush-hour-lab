@@ -194,3 +194,13 @@ describe('random inputs', () => {
     expect(Math.abs(mean(xs) - expectedMean) / expectedMean).toBeLessThan(0.01);
   });
 });
+
+describe('safety stop', () => {
+  it('a café whose cashier is gone, with batch cooking, ends instead of running forever', () => {
+    const spec = busyCafe({ staff: { cashier: 0, barista: 1, kitchen: 1, handoff: 1 } });
+    const r = runOnce(buildConfig(spec), 1);
+    expect(r.served).toBe(0);
+    expect(r.arrivals).toBeGreaterThan(0);
+    expect(r.unserved).toBe(r.arrivals);
+  });
+});

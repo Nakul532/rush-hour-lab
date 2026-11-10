@@ -14,7 +14,8 @@
 
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { runAnalysis, type AnalysisResult } from '../src/agent/agent';
-import { loadEnvKey, OpenRouterLlm, OPENROUTER_MODEL, PINNED_PROVIDER } from '../src/agent/openrouter';
+import { loadEnvKey } from '../src/agent/env';
+import { OpenRouterLlm, OPENROUTER_MODEL, PINNED_PROVIDER } from '../src/agent/openrouter';
 import { LimitedLlm, RecordingLlm, TokenBudget } from '../src/agent/llm';
 import { buildModelFromDescription } from '../src/agent/modelBuilder';
 import { answerWhatIf } from '../src/agent/whatIf';

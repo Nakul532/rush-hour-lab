@@ -22,7 +22,6 @@
 
 import type { AnalysisResult, ExperimentRecord } from '../src/agent/agent';
 import { runExperiment } from '../src/agent/agent';
-import { ChangeError } from '../src/agent/changes';
 import { compare, type SimSettings } from '../src/agent/evaluate';
 import { applyChanges } from '../src/agent/changes';
 import { DEFAULT_COSTS } from '../src/agent/plan';
@@ -60,7 +59,7 @@ export function rowFromExperiment(key: string, label: string, e: ExperimentRecor
     improvement: e.evidence?.nominal.improvement ?? null,
     candidateP90: e.evidence?.nominal.candidateP90 ?? null,
     costUsd: e.costUsd,
-    failed: e.status === 'blocked' ? e.violations : (e.decision?.checks.filter((c) => !c.passed).map((c) => c.name) ?? []),
+    failed: e.status === 'blocked' || e.status === 'invalid' ? e.violations : (e.decision?.checks.filter((c) => !c.passed).map((c) => c.name) ?? []),
   };
 }
 
@@ -76,14 +75,10 @@ export function evaluateChoice(s: Scenario, choice: Choice): PlanRow {
   const label = describeChoice(s.space, choice);
   const changes = choiceChanges(s.space, choice);
   if (changes.length === 0) return { key, label, changes: 0, status: 'rejected', improvement: 0, candidateP90: null, costUsd: 0, failed: ['No change'] };
-  try {
-    applyChanges(s.spec, changes); // throws ChangeError for impossible plans
-    const e = runExperiment(0, s.spec, '', changes, s.constraints, DEFAULT_COSTS, EVAL_SIM);
-    return rowFromExperiment(key, label, e);
-  } catch (err) {
-    if (err instanceof ChangeError) return { key, label, changes: changes.length, status: 'invalid', improvement: null, candidateP90: null, costUsd: null, failed: [err.message] };
-    throw err;
-  }
+  // runExperiment applies the shared plan validator (status 'invalid' for impossible plans).
+  const e = runExperiment(0, s.spec, '', changes, s.constraints, DEFAULT_COSTS, EVAL_SIM);
+  const row = rowFromExperiment(key, label, e);
+  return e.status === 'invalid' ? { ...row, improvement: null, candidateP90: null, costUsd: null } : row;
 }
 
 export function allChoices(s: Scenario): Choice[] {
