@@ -11,7 +11,7 @@ import { HttpLlm } from './httpLlm';
 
 export type WorkerRequest =
   | { id: number; type: 'recommend'; spec: CafeSpec; constraints: Constraints; costs: CostTable; useLlm: boolean; analysisId: string }
-  | { id: number; type: 'whatIf'; spec: CafeSpec; question: string; analysisId: string }
+  | { id: number; type: 'whatIf'; spec: CafeSpec; question: string; analysisId: string; constraints: Constraints; costs: CostTable; useLlm: boolean }
   | { id: number; type: 'build'; description: string; analysisId: string };
 
 export type WorkerResponse =
@@ -40,7 +40,8 @@ self.onmessage = async (e: MessageEvent<WorkerRequest>) => {
       const after = result.recommended ? simulate(applyChanges(m.spec, result.recommended.record.changes), REPORT_SIM).summary : null;
       post({ id: m.id, type: 'recommend', result, before, after });
     } else if (m.type === 'whatIf') {
-      post({ id: m.id, type: 'whatIf', result: await answerWhatIf(m.spec, m.question, new HttpLlm(m.analysisId)) });
+      const llm = m.useLlm ? new HttpLlm(m.analysisId) : null;
+      post({ id: m.id, type: 'whatIf', result: await answerWhatIf(m.spec, m.question, llm, { reps: 300, seed: 7 }, { constraints: m.constraints, costs: m.costs }) });
     } else if (m.type === 'build') {
       post({ id: m.id, type: 'build', result: await buildModelFromDescription(m.description, new HttpLlm(m.analysisId)) });
     }

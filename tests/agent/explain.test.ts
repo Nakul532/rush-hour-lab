@@ -16,7 +16,7 @@ describe('plain-sentence verdicts', () => {
 
   it('a plan that helps too little says so, with the bar', () => {
     const v = verdict(run(syntheticCafe(), [{ kind: 'foodBatching', intervalMin: 20, batchSize: 6 }]));
-    expect(v.sentence).toMatch(/only \d+% shorter \(needs 10%\)/);
+    expect(v.sentence).toMatch(/only \d+\.\d% shorter \(needs 10%\)/);
   });
 
   it('names the order type that got worse', () => {

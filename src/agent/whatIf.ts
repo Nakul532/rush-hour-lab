@@ -372,6 +372,8 @@ export async function answerWhatIf(
     return { ...base, ok: false, answer: `${lead} ${WHAT_IF_HELP}` };
   }
 
+  if (!spec.startsAt && /\d{1,2}(:\d{2})?\s*(am|pm)?\s*(-|–|to|till|until)\s*\d/i.test(question))
+    notes.push("Your rush has no start time set, so I couldn't place that time and applied the change to the whole rush.");
   const comparison = compare(spec, applyChanges(spec, changes), sim);
   let answer = formatWhatIfAnswer(spec, changes, comparison);
   if (notes.length) answer += ` ${notes.join(' ')}`;

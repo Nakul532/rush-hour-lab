@@ -31,7 +31,8 @@ export function failedReasons(e: ExperimentRecord): string[] {
     if (worst) out.push(`${ORDER_TYPE_LABEL[worst[0]].toLowerCase()} waits got ${pct(worst[1].change)} longer`);
   }
   if (failed.has('Bad-case wait improves by at least 10%'))
-    out.push(n.improvement < 0 ? `bad-case wait got ${pct(n.improvement)} longer` : `bad-case wait only ${pct(n.improvement)} shorter (needs ${pct(MIN_IMPROVEMENT)})`);
+    // One decimal here, so 9.6% never reads as "only 10% shorter (needs 10%)".
+    out.push(n.improvement < 0 ? `bad-case wait got ${pct(n.improvement)} longer` : `bad-case wait only ${(n.improvement * 100).toFixed(1)}% shorter (needs ${pct(MIN_IMPROVEMENT)})`);
   if (failed.has('Improvement is clear of simulation noise') && n.improvement >= 0) out.push('the gain is within simulation noise');
   if (failed.has('Still helps if tasks are 30% faster') && n.improvement > 0) out.push('stops helping if tasks are 30% faster');
   if (failed.has('Still helps if tasks are 30% slower') && n.improvement > 0) out.push('stops helping if tasks are 30% slower');
