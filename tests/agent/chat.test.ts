@@ -79,6 +79,12 @@ describe('model builder', () => {
     expect(simulate(m.spec, { reps: 20, seed: 1 }).runs.every((r) => r.unserved === 0)).toBe(true);
   });
 
+  it('a stated handoff person implies a dedicated handoff point', () => {
+    const m = draftToSpec({ staff: { cashier: 1, barista: 1, kitchen: 1, handoff: 1 } });
+    expect(m.spec.handoff).toBe('dedicated');
+    expect(m.spec.staff.handoff).toBe(1);
+  });
+
   it('no cashier: modelled as one order-taker, labelled as an assumption', () => {
     const m = draftToSpec({ staff: { cashier: 0, barista: 1, kitchen: 1 } });
     expect(m.spec.staff.cashier).toBe(1);

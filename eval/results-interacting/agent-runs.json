@@ -1,0 +1,243 @@
+{
+  "model": "openai/gpt-oss-120b",
+  "provider": "Groq",
+  "tokens": 158896,
+  "reportedCostUsd": 0.008698800000000001,
+  "creditsUsedUsd": 0.005105999999999999,
+  "creditsRemainingUsd": 4.858494275,
+  "runs": [
+    {
+      "scenario": "I1",
+      "stopReason": "no_tool_call",
+      "emptyRetries": 0,
+      "llmCalls": 5,
+      "tokens": 18122,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "adding a barista reduces barista bottleneck and p90",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 kitchen staff for the whole rush"
+          ],
+          "hypothesis": "adding a kitchen reduces kitchen load and overall p90",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush",
+            "Add 1 kitchen staff for the whole rush"
+          ],
+          "hypothesis": "adding both barista and kitchen further reduces bottlenecks",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "The model replied without calling a tool",
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "I2",
+      "stopReason": "no_tool_call",
+      "emptyRetries": 2,
+      "llmCalls": 12,
+      "tokens": 48583,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "accepted",
+          "plan": [
+            "Remove 1 cashier staff for the whole rush",
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "shifting a cashier to barista reduces barista bottleneck",
+          "failed": []
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "adding a barista reduces barista load",
+          "failed": [
+            "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Remove 1 cashier staff for the whole rush",
+            "Add 1 kitchen staff for the whole rush"
+          ],
+          "hypothesis": "shifting a cashier to kitchen eases kitchen bottleneck",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Remove 1 cashier staff for the whole rush",
+            "Add 1 barista staff for the whole rush",
+            "Remove 1 cashier staff for the whole rush",
+            "Add 1 kitchen staff for the whole rush",
+            "Sell 30% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "adding grab‑and‑go reduces drink load further",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "Empty reply from the model; retrying (1 of 2)",
+        "Empty reply from the model; retrying (2 of 2)",
+        "The model replied without calling a tool",
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "I3",
+      "stopReason": "no_tool_call",
+      "emptyRetries": 1,
+      "llmCalls": 7,
+      "tokens": 27056,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff from 07:30 to 08:00"
+          ],
+          "hypothesis": "Adding a barista during peak should reduce barista load and lower p90",
+          "failed": []
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Add 1 kitchen staff from 07:30 to 08:00"
+          ],
+          "hypothesis": "Adding a kitchen staff during peak will reduce kitchen load and improve overall p90",
+          "failed": [
+            "Bad-case wait improves by at least 10%"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff from 07:30 to 08:00",
+            "Sell 30% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "Barista extra plus 30% grab‑go reduces drink prep load and further cuts p90",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "Empty reply from the model; retrying (1 of 2)",
+        "The model replied without calling a tool",
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "I4",
+      "stopReason": "no_tool_call",
+      "emptyRetries": 4,
+      "llmCalls": 11,
+      "tokens": 42629,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "adding a barista reduces barista load and p90",
+          "failed": []
+        },
+        {
+          "status": "rejected",
+          "plan": [
+            "Add 1 kitchen staff from 07:30 to 08:00"
+          ],
+          "hypothesis": "adding kitchen staff during peak reduces kitchen bottleneck",
+          "failed": [
+            "Bad-case wait improves by at least 10%"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Sell 30% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "grab-and-go reduces drink orders load on barista",
+          "failed": []
+        },
+        {
+          "status": "blocked",
+          "plan": [
+            "Add 1 barista staff for the whole rush",
+            "Sell 30% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "adding barista and grab‑go together should further cut barista load and overall p90",
+          "failed": [
+            "Costs about $860 (first month); the budget is $700"
+          ]
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff from 07:30 to 08:00",
+            "Sell 30% of drink-only orders as grab-and-go items"
+          ],
+          "hypothesis": "partial barista plus grab‑go reduces peak load",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "Empty reply from the model; retrying (1 of 2)",
+        "Empty reply from the model; retrying (2 of 2)",
+        "The model replied without calling a tool",
+        "Empty reply from the model; retrying (1 of 2)",
+        "Empty reply from the model; retrying (2 of 2)",
+        "The model replied without calling a tool"
+      ]
+    },
+    {
+      "scenario": "I5",
+      "stopReason": "no_tool_call",
+      "emptyRetries": 2,
+      "llmCalls": 6,
+      "tokens": 22506,
+      "summary": null,
+      "experiments": [
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 barista staff for the whole rush"
+          ],
+          "hypothesis": "adding a barista reduces barista bottleneck and overall p90",
+          "failed": []
+        },
+        {
+          "status": "accepted",
+          "plan": [
+            "Add 1 kitchen staff for the whole rush"
+          ],
+          "hypothesis": "adding a kitchen staff reduces kitchen bottleneck and overall p90",
+          "failed": []
+        }
+      ],
+      "errors": [
+        "Empty reply from the model; retrying (1 of 2)",
+        "Empty reply from the model; retrying (2 of 2)",
+        "The model replied without calling a tool",
+        "The model replied without calling a tool"
+      ]
+    }
+  ]
+}

@@ -15,6 +15,8 @@ export interface OpenRouterOptions {
   model?: string;
   reasoningEffort?: 'low' | 'medium' | 'high';
   fetchImpl?: typeof fetch;
+  /** Backoff before each retry of a 429/5xx response. Default 2 s, 4 s, 8 s. */
+  retryDelaysMs?: number[];
 }
 
 export interface OpenRouterResponse extends LlmResponse {
@@ -26,6 +28,8 @@ export interface OpenRouterResponse extends LlmResponse {
 export class OpenRouterLlm implements LlmClient {
   /** Total USD credits reported across calls made by this client. */
   costUsd = 0;
+  /** Rate-limit / server-error retries made. */
+  retries = 0;
   constructor(private readonly opts: OpenRouterOptions) {
     if (!opts.apiKey) throw new Error('OpenRouterLlm needs an API key');
   }
@@ -45,11 +49,21 @@ export class OpenRouterLlm implements LlmClient {
       provider: { order: [PINNED_PROVIDER], allow_fallbacks: false },
       usage: { include: true },
     };
-    const res = await this.fetch(`${OPENROUTER_BASE}/chat/completions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${this.opts.apiKey}`, 'X-Title': 'Rush Hour Lab' },
-      body: JSON.stringify(body),
-    });
+    // Groq is pinned with no fallback, so a busy Groq returns 429. Retry
+    // rate limits and server errors with backoff before giving up.
+    const delays = this.opts.retryDelaysMs ?? [2000, 4000, 8000];
+    let res: Response;
+    for (let attempt = 0; ; attempt++) {
+      res = await this.fetch(`${OPENROUTER_BASE}/chat/completions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${this.opts.apiKey}`, 'X-Title': 'Rush Hour Lab' },
+        body: JSON.stringify(body),
+      });
+      const retryable = res.status === 429 || res.status >= 500;
+      if (res.ok || !retryable || attempt >= delays.length) break;
+      this.retries++;
+      await new Promise((r) => setTimeout(r, delays[attempt]));
+    }
     if (!res.ok) throw new LlmHttpError(res.status, `OpenRouter returned ${res.status}: ${(await res.text()).slice(0, 300)}`);
     const json = (await res.json()) as {
       model: string;

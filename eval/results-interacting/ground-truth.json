@@ -1,0 +1,1460 @@
+[
+  {
+    "scenario": "I1",
+    "plans": [
+      {
+        "key": "-1,-1,-1,-1",
+        "label": "No change",
+        "changes": 0,
+        "status": "rejected",
+        "improvement": 0,
+        "candidateP90": null,
+        "costUsd": 0,
+        "failed": [
+          "No change"
+        ]
+      },
+      {
+        "key": "0,-1,-1,-1",
+        "label": "+1 barista",
+        "changes": 1,
+        "status": "accepted",
+        "improvement": 0.15124892881105437,
+        "candidateP90": 9.922049715461654,
+        "costUsd": 660,
+        "failed": []
+      },
+      {
+        "key": "1,-1,-1,-1",
+        "label": "+1 barista 07:30–08:00",
+        "changes": 1,
+        "status": "accepted",
+        "improvement": 0.10940053060495411,
+        "candidateP90": 10.411264871245448,
+        "costUsd": 220,
+        "failed": []
+      },
+      {
+        "key": "-1,0,-1,-1",
+        "label": "+1 kitchen",
+        "changes": 1,
+        "status": "accepted",
+        "improvement": 0.11391477381138941,
+        "candidateP90": 10.358492571990267,
+        "costUsd": 660,
+        "failed": []
+      },
+      {
+        "key": "0,0,-1,-1",
+        "label": "+1 barista + +1 kitchen",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.7513239008646551,
+        "candidateP90": 2.9070674576134747,
+        "costUsd": 1320,
+        "failed": []
+      },
+      {
+        "key": "1,0,-1,-1",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.44454681278134967,
+        "candidateP90": 6.493345723234066,
+        "costUsd": 880,
+        "failed": []
+      },
+      {
+        "key": "-1,1,-1,-1",
+        "label": "+1 kitchen 07:30–08:00",
+        "changes": 1,
+        "status": "rejected",
+        "improvement": 0.08415639613340743,
+        "candidateP90": 10.706373255497164,
+        "costUsd": 220,
+        "failed": [
+          "Bad-case wait improves by at least 10%"
+        ]
+      },
+      {
+        "key": "0,1,-1,-1",
+        "label": "+1 barista + +1 kitchen 07:30–08:00",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.46384755587112786,
+        "candidateP90": 6.267716632464416,
+        "costUsd": 880,
+        "failed": []
+      },
+      {
+        "key": "1,1,-1,-1",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.376137066584536,
+        "candidateP90": 7.2930677216240944,
+        "costUsd": 440,
+        "failed": []
+      },
+      {
+        "key": "-1,-1,0,-1",
+        "label": "+1 cashier",
+        "changes": 1,
+        "status": "rejected",
+        "improvement": -0.05715198585877247,
+        "candidateP90": 12.358293163384655,
+        "costUsd": 660,
+        "failed": [
+          "Bad-case wait improves by at least 10%",
+          "Improvement is clear of simulation noise",
+          "Still helps if tasks are 30% faster",
+          "Still helps if tasks are 30% slower"
+        ]
+      },
+      {
+        "key": "0,-1,0,-1",
+        "label": "+1 barista + +1 cashier",
+        "changes": 2,
+        "status": "rejected",
+        "improvement": 0.0922710138170123,
+        "candidateP90": 10.611511943609907,
+        "costUsd": 1320,
+        "failed": [
+          "Bad-case wait improves by at least 10%"
+        ]
+      },
+      {
+        "key": "1,-1,0,-1",
+        "label": "+1 barista 07:30–08:00 + +1 cashier",
+        "changes": 2,
+        "status": "rejected",
+        "improvement": 0.05135889775626689,
+        "candidateP90": 11.089781795983486,
+        "costUsd": 880,
+        "failed": [
+          "Bad-case wait improves by at least 10%",
+          "Still helps if tasks are 30% faster"
+        ]
+      },
+      {
+        "key": "-1,0,0,-1",
+        "label": "+1 kitchen + +1 cashier",
+        "changes": 2,
+        "status": "rejected",
+        "improvement": 0.05521317005289357,
+        "candidateP90": 11.044724673062293,
+        "costUsd": 1320,
+        "failed": [
+          "Bad-case wait improves by at least 10%"
+        ]
+      },
+      {
+        "key": "0,0,0,-1",
+        "label": "+1 barista + +1 kitchen + +1 cashier",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1980,
+        "failed": [
+          "Uses 3 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "1,0,0,-1",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen + +1 cashier",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1540,
+        "failed": [
+          "Uses 3 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "-1,1,0,-1",
+        "label": "+1 kitchen 07:30–08:00 + +1 cashier",
+        "changes": 2,
+        "status": "rejected",
+        "improvement": 0.026563405718995493,
+        "candidateP90": 11.379645471051974,
+        "costUsd": 880,
+        "failed": [
+          "Bad-case wait improves by at least 10%",
+          "Still helps if tasks are 30% faster"
+        ]
+      },
+      {
+        "key": "0,1,0,-1",
+        "label": "+1 barista + +1 kitchen 07:30–08:00 + +1 cashier",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1540,
+        "failed": [
+          "Uses 3 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "1,1,0,-1",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + +1 cashier",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1100,
+        "failed": [
+          "Uses 3 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "-1,-1,-1,0",
+        "label": "grab-and-go 30%",
+        "changes": 1,
+        "status": "rejected",
+        "improvement": 0,
+        "candidateP90": 11.69017636886474,
+        "costUsd": 200,
+        "failed": [
+          "Bad-case wait improves by at least 10%",
+          "Improvement is clear of simulation noise",
+          "Still helps if tasks are 30% faster",
+          "Still helps if tasks are 30% slower"
+        ]
+      },
+      {
+        "key": "0,-1,-1,0",
+        "label": "+1 barista + grab-and-go 30%",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.15124892881105437,
+        "candidateP90": 9.922049715461654,
+        "costUsd": 860,
+        "failed": []
+      },
+      {
+        "key": "1,-1,-1,0",
+        "label": "+1 barista 07:30–08:00 + grab-and-go 30%",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.10940053060495411,
+        "candidateP90": 10.411264871245448,
+        "costUsd": 420,
+        "failed": []
+      },
+      {
+        "key": "-1,0,-1,0",
+        "label": "+1 kitchen + grab-and-go 30%",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.11391477381138941,
+        "candidateP90": 10.358492571990267,
+        "costUsd": 860,
+        "failed": []
+      },
+      {
+        "key": "0,0,-1,0",
+        "label": "+1 barista + +1 kitchen + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1520,
+        "failed": [
+          "Uses 3 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "1,0,-1,0",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1080,
+        "failed": [
+          "Uses 3 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "-1,1,-1,0",
+        "label": "+1 kitchen 07:30–08:00 + grab-and-go 30%",
+        "changes": 2,
+        "status": "rejected",
+        "improvement": 0.08415639613340743,
+        "candidateP90": 10.706373255497164,
+        "costUsd": 420,
+        "failed": [
+          "Bad-case wait improves by at least 10%"
+        ]
+      },
+      {
+        "key": "0,1,-1,0",
+        "label": "+1 barista + +1 kitchen 07:30–08:00 + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1080,
+        "failed": [
+          "Uses 3 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "1,1,-1,0",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 640,
+        "failed": [
+          "Uses 3 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "-1,-1,0,0",
+        "label": "+1 cashier + grab-and-go 30%",
+        "changes": 2,
+        "status": "rejected",
+        "improvement": -0.05715198585877247,
+        "candidateP90": 12.358293163384655,
+        "costUsd": 860,
+        "failed": [
+          "Bad-case wait improves by at least 10%",
+          "Improvement is clear of simulation noise",
+          "Still helps if tasks are 30% faster",
+          "Still helps if tasks are 30% slower"
+        ]
+      },
+      {
+        "key": "0,-1,0,0",
+        "label": "+1 barista + +1 cashier + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1520,
+        "failed": [
+          "Uses 3 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "1,-1,0,0",
+        "label": "+1 barista 07:30–08:00 + +1 cashier + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1080,
+        "failed": [
+          "Uses 3 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "-1,0,0,0",
+        "label": "+1 kitchen + +1 cashier + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1520,
+        "failed": [
+          "Uses 3 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "0,0,0,0",
+        "label": "+1 barista + +1 kitchen + +1 cashier + grab-and-go 30%",
+        "changes": 4,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 2180,
+        "failed": [
+          "Uses 4 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "1,0,0,0",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen + +1 cashier + grab-and-go 30%",
+        "changes": 4,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1740,
+        "failed": [
+          "Uses 4 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "-1,1,0,0",
+        "label": "+1 kitchen 07:30–08:00 + +1 cashier + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1080,
+        "failed": [
+          "Uses 3 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "0,1,0,0",
+        "label": "+1 barista + +1 kitchen 07:30–08:00 + +1 cashier + grab-and-go 30%",
+        "changes": 4,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1740,
+        "failed": [
+          "Uses 4 changes; the limit is 2"
+        ]
+      },
+      {
+        "key": "1,1,0,0",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + +1 cashier + grab-and-go 30%",
+        "changes": 4,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1300,
+        "failed": [
+          "Uses 4 changes; the limit is 2"
+        ]
+      }
+    ],
+    "baseP90": 11.69017636886474,
+    "optimal": {
+      "key": "0,0,-1,-1",
+      "label": "+1 barista + +1 kitchen",
+      "changes": 2,
+      "status": "accepted",
+      "improvement": 0.7513239008646551,
+      "candidateP90": 2.9070674576134747,
+      "costUsd": 1320,
+      "failed": []
+    },
+    "simulations": 114
+  },
+  {
+    "scenario": "I2",
+    "plans": [
+      {
+        "key": "-1,-1,-1,-1",
+        "label": "No change",
+        "changes": 0,
+        "status": "rejected",
+        "improvement": 0,
+        "candidateP90": null,
+        "costUsd": 0,
+        "failed": [
+          "No change"
+        ]
+      },
+      {
+        "key": "0,-1,-1,-1",
+        "label": "cashier → barista",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.14877260693593602,
+        "candidateP90": 10.066943419063463,
+        "costUsd": 0,
+        "failed": []
+      },
+      {
+        "key": "-1,0,-1,-1",
+        "label": "cashier → kitchen",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.11224451559926933,
+        "candidateP90": 10.498938713962213,
+        "costUsd": 0,
+        "failed": []
+      },
+      {
+        "key": "0,0,-1,-1",
+        "label": "cashier → barista + cashier → kitchen",
+        "changes": 4,
+        "status": "accepted",
+        "improvement": 0.7465368244553344,
+        "candidateP90": 2.997553259934002,
+        "costUsd": 0,
+        "failed": []
+      },
+      {
+        "key": "-1,-1,0,-1",
+        "label": "+1 barista (hire)",
+        "changes": 1,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 660,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "0,-1,0,-1",
+        "label": "cashier → barista + +1 barista (hire)",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 660,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "-1,0,0,-1",
+        "label": "cashier → kitchen + +1 barista (hire)",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 660,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "0,0,0,-1",
+        "label": "cashier → barista + cashier → kitchen + +1 barista (hire)",
+        "changes": 5,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 660,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "-1,-1,1,-1",
+        "label": "+1 kitchen (hire)",
+        "changes": 1,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 660,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "0,-1,1,-1",
+        "label": "cashier → barista + +1 kitchen (hire)",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 660,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "-1,0,1,-1",
+        "label": "cashier → kitchen + +1 kitchen (hire)",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 660,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "0,0,1,-1",
+        "label": "cashier → barista + cashier → kitchen + +1 kitchen (hire)",
+        "changes": 5,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 660,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "-1,-1,-1,0",
+        "label": "grab-and-go 30%",
+        "changes": 1,
+        "status": "rejected",
+        "improvement": 0,
+        "candidateP90": 11.826385641592962,
+        "costUsd": 200,
+        "failed": [
+          "Bad-case wait improves by at least 10%",
+          "Improvement is clear of simulation noise",
+          "Still helps if tasks are 30% faster",
+          "Still helps if tasks are 30% slower"
+        ]
+      },
+      {
+        "key": "0,-1,-1,0",
+        "label": "cashier → barista + grab-and-go 30%",
+        "changes": 3,
+        "status": "accepted",
+        "improvement": 0.14877260693593602,
+        "candidateP90": 10.066943419063463,
+        "costUsd": 200,
+        "failed": []
+      },
+      {
+        "key": "-1,0,-1,0",
+        "label": "cashier → kitchen + grab-and-go 30%",
+        "changes": 3,
+        "status": "accepted",
+        "improvement": 0.11224451559926933,
+        "candidateP90": 10.498938713962213,
+        "costUsd": 200,
+        "failed": []
+      },
+      {
+        "key": "0,0,-1,0",
+        "label": "cashier → barista + cashier → kitchen + grab-and-go 30%",
+        "changes": 5,
+        "status": "accepted",
+        "improvement": 0.7465368244553344,
+        "candidateP90": 2.997553259934002,
+        "costUsd": 200,
+        "failed": []
+      },
+      {
+        "key": "-1,-1,0,0",
+        "label": "+1 barista (hire) + grab-and-go 30%",
+        "changes": 2,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 860,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "0,-1,0,0",
+        "label": "cashier → barista + +1 barista (hire) + grab-and-go 30%",
+        "changes": 4,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 860,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "-1,0,0,0",
+        "label": "cashier → kitchen + +1 barista (hire) + grab-and-go 30%",
+        "changes": 4,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 860,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "0,0,0,0",
+        "label": "cashier → barista + cashier → kitchen + +1 barista (hire) + grab-and-go 30%",
+        "changes": 6,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 860,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "-1,-1,1,0",
+        "label": "+1 kitchen (hire) + grab-and-go 30%",
+        "changes": 2,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 860,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "0,-1,1,0",
+        "label": "cashier → barista + +1 kitchen (hire) + grab-and-go 30%",
+        "changes": 4,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 860,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "-1,0,1,0",
+        "label": "cashier → kitchen + +1 kitchen (hire) + grab-and-go 30%",
+        "changes": 4,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 860,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      },
+      {
+        "key": "0,0,1,0",
+        "label": "cashier → barista + cashier → kitchen + +1 kitchen (hire) + grab-and-go 30%",
+        "changes": 6,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 860,
+        "failed": [
+          "Needs more staff on shift than today (from minute 0); the constraint is no new hires"
+        ]
+      }
+    ],
+    "baseP90": 11.826385641592962,
+    "optimal": {
+      "key": "0,0,-1,-1",
+      "label": "cashier → barista + cashier → kitchen",
+      "changes": 4,
+      "status": "accepted",
+      "improvement": 0.7465368244553344,
+      "candidateP90": 2.997553259934002,
+      "costUsd": 0,
+      "failed": []
+    },
+    "simulations": 42
+  },
+  {
+    "scenario": "I3",
+    "plans": [
+      {
+        "key": "-1,-1,-1,-1",
+        "label": "No change",
+        "changes": 0,
+        "status": "rejected",
+        "improvement": 0,
+        "candidateP90": null,
+        "costUsd": 0,
+        "failed": [
+          "No change"
+        ]
+      },
+      {
+        "key": "0,-1,-1,-1",
+        "label": "+1 barista 07:30–08:00",
+        "changes": 1,
+        "status": "accepted",
+        "improvement": 0.13049121663856633,
+        "candidateP90": 8.843991512785784,
+        "costUsd": 220,
+        "failed": []
+      },
+      {
+        "key": "-1,0,-1,-1",
+        "label": "+1 kitchen 07:30–08:00",
+        "changes": 1,
+        "status": "rejected",
+        "improvement": 0.09147700291928305,
+        "candidateP90": 9.24081484753976,
+        "costUsd": 220,
+        "failed": [
+          "Bad-case wait improves by at least 10%"
+        ]
+      },
+      {
+        "key": "0,0,-1,-1",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.45505506069268864,
+        "candidateP90": 5.542771401960733,
+        "costUsd": 440,
+        "failed": []
+      },
+      {
+        "key": "-1,-1,0,-1",
+        "label": "+1 cashier 07:30–08:00",
+        "changes": 1,
+        "status": "rejected",
+        "improvement": -0.030410851226771084,
+        "candidateP90": 10.480566726079763,
+        "costUsd": 220,
+        "failed": [
+          "Bad-case wait improves by at least 10%",
+          "Improvement is clear of simulation noise",
+          "Still helps if tasks are 30% faster",
+          "Still helps if tasks are 30% slower"
+        ]
+      },
+      {
+        "key": "0,-1,0,-1",
+        "label": "+1 barista 07:30–08:00 + +1 cashier 07:30–08:00",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.10155506583325502,
+        "candidateP90": 9.138308346648614,
+        "costUsd": 440,
+        "failed": []
+      },
+      {
+        "key": "-1,0,0,-1",
+        "label": "+1 kitchen 07:30–08:00 + +1 cashier 07:30–08:00",
+        "changes": 2,
+        "status": "rejected",
+        "improvement": 0.0667592057202348,
+        "candidateP90": 9.492225750829355,
+        "costUsd": 440,
+        "failed": [
+          "Bad-case wait improves by at least 10%"
+        ]
+      },
+      {
+        "key": "0,0,0,-1",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + +1 cashier 07:30–08:00",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 660,
+        "failed": [
+          "Costs about $660 (first month); the budget is $500"
+        ]
+      },
+      {
+        "key": "-1,-1,-1,0",
+        "label": "grab-and-go 30%",
+        "changes": 1,
+        "status": "rejected",
+        "improvement": 0,
+        "candidateP90": 10.171250345046314,
+        "costUsd": 200,
+        "failed": [
+          "Bad-case wait improves by at least 10%",
+          "Improvement is clear of simulation noise",
+          "Still helps if tasks are 30% faster",
+          "Still helps if tasks are 30% slower"
+        ]
+      },
+      {
+        "key": "0,-1,-1,0",
+        "label": "+1 barista 07:30–08:00 + grab-and-go 30%",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.13049121663856633,
+        "candidateP90": 8.843991512785784,
+        "costUsd": 420,
+        "failed": []
+      },
+      {
+        "key": "-1,0,-1,0",
+        "label": "+1 kitchen 07:30–08:00 + grab-and-go 30%",
+        "changes": 2,
+        "status": "rejected",
+        "improvement": 0.09147700291928305,
+        "candidateP90": 9.24081484753976,
+        "costUsd": 420,
+        "failed": [
+          "Bad-case wait improves by at least 10%"
+        ]
+      },
+      {
+        "key": "0,0,-1,0",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 640,
+        "failed": [
+          "Costs about $640 (first month); the budget is $500"
+        ]
+      },
+      {
+        "key": "-1,-1,0,0",
+        "label": "+1 cashier 07:30–08:00 + grab-and-go 30%",
+        "changes": 2,
+        "status": "rejected",
+        "improvement": -0.030410851226771084,
+        "candidateP90": 10.480566726079763,
+        "costUsd": 420,
+        "failed": [
+          "Bad-case wait improves by at least 10%",
+          "Improvement is clear of simulation noise",
+          "Still helps if tasks are 30% faster",
+          "Still helps if tasks are 30% slower"
+        ]
+      },
+      {
+        "key": "0,-1,0,0",
+        "label": "+1 barista 07:30–08:00 + +1 cashier 07:30–08:00 + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 640,
+        "failed": [
+          "Costs about $640 (first month); the budget is $500"
+        ]
+      },
+      {
+        "key": "-1,0,0,0",
+        "label": "+1 kitchen 07:30–08:00 + +1 cashier 07:30–08:00 + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 640,
+        "failed": [
+          "Costs about $640 (first month); the budget is $500"
+        ]
+      },
+      {
+        "key": "0,0,0,0",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + +1 cashier 07:30–08:00 + grab-and-go 30%",
+        "changes": 4,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 860,
+        "failed": [
+          "Costs about $860 (first month); the budget is $500"
+        ]
+      }
+    ],
+    "baseP90": 10.171250345046314,
+    "optimal": {
+      "key": "0,0,-1,-1",
+      "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00",
+      "changes": 2,
+      "status": "accepted",
+      "improvement": 0.45505506069268864,
+      "candidateP90": 5.542771401960733,
+      "costUsd": 440,
+      "failed": []
+    },
+    "simulations": 60
+  },
+  {
+    "scenario": "I4",
+    "plans": [
+      {
+        "key": "-1,-1,-1,-1",
+        "label": "No change",
+        "changes": 0,
+        "status": "rejected",
+        "improvement": 0,
+        "candidateP90": null,
+        "costUsd": 0,
+        "failed": [
+          "No change"
+        ]
+      },
+      {
+        "key": "0,-1,-1,-1",
+        "label": "+1 barista whole rush",
+        "changes": 1,
+        "status": "accepted",
+        "improvement": 0.30024825994551846,
+        "candidateP90": 5.842651288457431,
+        "costUsd": 660,
+        "failed": []
+      },
+      {
+        "key": "1,-1,-1,-1",
+        "label": "+1 barista 07:30–08:00",
+        "changes": 1,
+        "status": "accepted",
+        "improvement": 0.25534610884002945,
+        "candidateP90": 6.217566556250226,
+        "costUsd": 220,
+        "failed": []
+      },
+      {
+        "key": "-1,0,-1,-1",
+        "label": "+1 kitchen 07:30–08:00",
+        "changes": 1,
+        "status": "rejected",
+        "improvement": 0.05142412517347789,
+        "candidateP90": 7.920234763293778,
+        "costUsd": 220,
+        "failed": [
+          "Bad-case wait improves by at least 10%"
+        ]
+      },
+      {
+        "key": "0,0,-1,-1",
+        "label": "+1 barista whole rush + +1 kitchen 07:30–08:00",
+        "changes": 2,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 880,
+        "failed": [
+          "Costs about $880 (first month); the budget is $700"
+        ]
+      },
+      {
+        "key": "1,0,-1,-1",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.4570319088808965,
+        "candidateP90": 4.5335696013007505,
+        "costUsd": 440,
+        "failed": []
+      },
+      {
+        "key": "-1,-1,0,-1",
+        "label": "grab-and-go 30%",
+        "changes": 1,
+        "status": "accepted",
+        "improvement": 0.1352112191115743,
+        "candidateP90": 7.220645545672963,
+        "costUsd": 200,
+        "failed": []
+      },
+      {
+        "key": "0,-1,0,-1",
+        "label": "+1 barista whole rush + grab-and-go 30%",
+        "changes": 2,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 860,
+        "failed": [
+          "Costs about $860 (first month); the budget is $700"
+        ]
+      },
+      {
+        "key": "1,-1,0,-1",
+        "label": "+1 barista 07:30–08:00 + grab-and-go 30%",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.26588888652941545,
+        "candidateP90": 6.129538516983015,
+        "costUsd": 420,
+        "failed": []
+      },
+      {
+        "key": "-1,0,0,-1",
+        "label": "+1 kitchen 07:30–08:00 + grab-and-go 30%",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.20974161167667618,
+        "candidateP90": 6.598346136862875,
+        "costUsd": 420,
+        "failed": []
+      },
+      {
+        "key": "0,0,0,-1",
+        "label": "+1 barista whole rush + +1 kitchen 07:30–08:00 + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1080,
+        "failed": [
+          "Costs about $1080 (first month); the budget is $700"
+        ]
+      },
+      {
+        "key": "1,0,0,-1",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + grab-and-go 30%",
+        "changes": 3,
+        "status": "accepted",
+        "improvement": 0.4864248526588586,
+        "candidateP90": 4.2881501032049005,
+        "costUsd": 640,
+        "failed": []
+      },
+      {
+        "key": "-1,-1,-1,0",
+        "label": "+1 cashier 07:30–08:00",
+        "changes": 1,
+        "status": "rejected",
+        "improvement": -0.050815473615359846,
+        "candidateP90": 8.773895125107906,
+        "costUsd": 220,
+        "failed": [
+          "Bad-case wait improves by at least 10%",
+          "Improvement is clear of simulation noise",
+          "Still helps if tasks are 30% faster",
+          "Still helps if tasks are 30% slower"
+        ]
+      },
+      {
+        "key": "0,-1,-1,0",
+        "label": "+1 barista whole rush + +1 cashier 07:30–08:00",
+        "changes": 2,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 880,
+        "failed": [
+          "Costs about $880 (first month); the budget is $700"
+        ]
+      },
+      {
+        "key": "1,-1,-1,0",
+        "label": "+1 barista 07:30–08:00 + +1 cashier 07:30–08:00",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.22009874646157707,
+        "candidateP90": 6.511868142694521,
+        "costUsd": 440,
+        "failed": []
+      },
+      {
+        "key": "-1,0,-1,0",
+        "label": "+1 kitchen 07:30–08:00 + +1 cashier 07:30–08:00",
+        "changes": 2,
+        "status": "rejected",
+        "improvement": 0.003976498062404181,
+        "candidateP90": 8.316403752674471,
+        "costUsd": 440,
+        "failed": [
+          "Bad-case wait improves by at least 10%",
+          "Improvement is clear of simulation noise",
+          "Still helps if tasks are 30% slower"
+        ]
+      },
+      {
+        "key": "0,0,-1,0",
+        "label": "+1 barista whole rush + +1 kitchen 07:30–08:00 + +1 cashier 07:30–08:00",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1100,
+        "failed": [
+          "Costs about $1100 (first month); the budget is $700"
+        ]
+      },
+      {
+        "key": "1,0,-1,0",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + +1 cashier 07:30–08:00",
+        "changes": 3,
+        "status": "accepted",
+        "improvement": 0.45982582520954357,
+        "candidateP90": 4.510241500914545,
+        "costUsd": 660,
+        "failed": []
+      },
+      {
+        "key": "-1,-1,0,0",
+        "label": "grab-and-go 30% + +1 cashier 07:30–08:00",
+        "changes": 2,
+        "status": "rejected",
+        "improvement": 0.08580798467930108,
+        "candidateP90": 7.63314308556791,
+        "costUsd": 420,
+        "failed": [
+          "Bad-case wait improves by at least 10%"
+        ]
+      },
+      {
+        "key": "0,-1,0,0",
+        "label": "+1 barista whole rush + grab-and-go 30% + +1 cashier 07:30–08:00",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1080,
+        "failed": [
+          "Costs about $1080 (first month); the budget is $700"
+        ]
+      },
+      {
+        "key": "1,-1,0,0",
+        "label": "+1 barista 07:30–08:00 + grab-and-go 30% + +1 cashier 07:30–08:00",
+        "changes": 3,
+        "status": "accepted",
+        "improvement": 0.2342903980267271,
+        "candidateP90": 6.393373444423371,
+        "costUsd": 640,
+        "failed": []
+      },
+      {
+        "key": "-1,0,0,0",
+        "label": "+1 kitchen 07:30–08:00 + grab-and-go 30% + +1 cashier 07:30–08:00",
+        "changes": 3,
+        "status": "accepted",
+        "improvement": 0.16185194898193128,
+        "candidateP90": 6.998205949180678,
+        "costUsd": 640,
+        "failed": []
+      },
+      {
+        "key": "0,0,0,0",
+        "label": "+1 barista whole rush + +1 kitchen 07:30–08:00 + grab-and-go 30% + +1 cashier 07:30–08:00",
+        "changes": 4,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1300,
+        "failed": [
+          "Costs about $1300 (first month); the budget is $700"
+        ]
+      },
+      {
+        "key": "1,0,0,0",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + grab-and-go 30% + +1 cashier 07:30–08:00",
+        "changes": 4,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 860,
+        "failed": [
+          "Costs about $860 (first month); the budget is $700"
+        ]
+      }
+    ],
+    "baseP90": 8.349605944534755,
+    "optimal": {
+      "key": "1,0,0,-1",
+      "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + grab-and-go 30%",
+      "changes": 3,
+      "status": "accepted",
+      "improvement": 0.4864248526588586,
+      "candidateP90": 4.2881501032049005,
+      "costUsd": 640,
+      "failed": []
+    },
+    "simulations": 90
+  },
+  {
+    "scenario": "I5",
+    "plans": [
+      {
+        "key": "-1,-1,-1",
+        "label": "No change",
+        "changes": 0,
+        "status": "rejected",
+        "improvement": 0,
+        "candidateP90": null,
+        "costUsd": 0,
+        "failed": [
+          "No change"
+        ]
+      },
+      {
+        "key": "0,-1,-1",
+        "label": "+1 barista whole rush",
+        "changes": 1,
+        "status": "accepted",
+        "improvement": 0.14862396524549817,
+        "candidateP90": 8.65955878726089,
+        "costUsd": 660,
+        "failed": []
+      },
+      {
+        "key": "1,-1,-1",
+        "label": "+1 barista 07:30–08:00",
+        "changes": 1,
+        "status": "accepted",
+        "improvement": 0.13049121663856633,
+        "candidateP90": 8.843991512785784,
+        "costUsd": 220,
+        "failed": []
+      },
+      {
+        "key": "-1,0,-1",
+        "label": "+1 kitchen whole rush",
+        "changes": 1,
+        "status": "accepted",
+        "improvement": 0.11145516405002934,
+        "candidateP90": 9.037611969245262,
+        "costUsd": 660,
+        "failed": []
+      },
+      {
+        "key": "0,0,-1",
+        "label": "+1 barista whole rush + +1 kitchen whole rush",
+        "changes": 2,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1320,
+        "failed": [
+          "Costs about $1320 (first month); the budget is $660"
+        ]
+      },
+      {
+        "key": "1,0,-1",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen whole rush",
+        "changes": 2,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 880,
+        "failed": [
+          "Costs about $880 (first month); the budget is $660"
+        ]
+      },
+      {
+        "key": "-1,1,-1",
+        "label": "+1 kitchen 07:30–08:00",
+        "changes": 1,
+        "status": "rejected",
+        "improvement": 0.09147700291928305,
+        "candidateP90": 9.24081484753976,
+        "costUsd": 220,
+        "failed": [
+          "Bad-case wait improves by at least 10%"
+        ]
+      },
+      {
+        "key": "0,1,-1",
+        "label": "+1 barista whole rush + +1 kitchen 07:30–08:00",
+        "changes": 2,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 880,
+        "failed": [
+          "Costs about $880 (first month); the budget is $660"
+        ]
+      },
+      {
+        "key": "1,1,-1",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.45505506069268864,
+        "candidateP90": 5.542771401960733,
+        "costUsd": 440,
+        "failed": []
+      },
+      {
+        "key": "-1,-1,0",
+        "label": "grab-and-go 30%",
+        "changes": 1,
+        "status": "rejected",
+        "improvement": 0,
+        "candidateP90": 10.171250345046314,
+        "costUsd": 200,
+        "failed": [
+          "Bad-case wait improves by at least 10%",
+          "Improvement is clear of simulation noise",
+          "Still helps if tasks are 30% faster",
+          "Still helps if tasks are 30% slower"
+        ]
+      },
+      {
+        "key": "0,-1,0",
+        "label": "+1 barista whole rush + grab-and-go 30%",
+        "changes": 2,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 860,
+        "failed": [
+          "Costs about $860 (first month); the budget is $660"
+        ]
+      },
+      {
+        "key": "1,-1,0",
+        "label": "+1 barista 07:30–08:00 + grab-and-go 30%",
+        "changes": 2,
+        "status": "accepted",
+        "improvement": 0.13049121663856633,
+        "candidateP90": 8.843991512785784,
+        "costUsd": 420,
+        "failed": []
+      },
+      {
+        "key": "-1,0,0",
+        "label": "+1 kitchen whole rush + grab-and-go 30%",
+        "changes": 2,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 860,
+        "failed": [
+          "Costs about $860 (first month); the budget is $660"
+        ]
+      },
+      {
+        "key": "0,0,0",
+        "label": "+1 barista whole rush + +1 kitchen whole rush + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1520,
+        "failed": [
+          "Costs about $1520 (first month); the budget is $660"
+        ]
+      },
+      {
+        "key": "1,0,0",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen whole rush + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1080,
+        "failed": [
+          "Costs about $1080 (first month); the budget is $660"
+        ]
+      },
+      {
+        "key": "-1,1,0",
+        "label": "+1 kitchen 07:30–08:00 + grab-and-go 30%",
+        "changes": 2,
+        "status": "rejected",
+        "improvement": 0.09147700291928305,
+        "candidateP90": 9.24081484753976,
+        "costUsd": 420,
+        "failed": [
+          "Bad-case wait improves by at least 10%"
+        ]
+      },
+      {
+        "key": "0,1,0",
+        "label": "+1 barista whole rush + +1 kitchen 07:30–08:00 + grab-and-go 30%",
+        "changes": 3,
+        "status": "blocked",
+        "improvement": null,
+        "candidateP90": null,
+        "costUsd": 1080,
+        "failed": [
+          "Costs about $1080 (first month); the budget is $660"
+        ]
+      },
+      {
+        "key": "1,1,0",
+        "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + grab-and-go 30%",
+        "changes": 3,
+        "status": "accepted",
+        "improvement": 0.45505506069268864,
+        "candidateP90": 5.542771401960733,
+        "costUsd": 640,
+        "failed": []
+      }
+    ],
+    "baseP90": 10.171250345046314,
+    "optimal": {
+      "key": "1,1,-1",
+      "label": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00",
+      "changes": 2,
+      "status": "accepted",
+      "improvement": 0.45505506069268864,
+      "candidateP90": 5.542771401960733,
+      "costUsd": 440,
+      "failed": []
+    },
+    "simulations": 54
+  }
+]

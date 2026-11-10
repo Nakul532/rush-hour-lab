@@ -1,0 +1,4296 @@
+{
+  "model": "openai/gpt-oss-120b",
+  "provider": "Groq",
+  "calls": [
+    {
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an operations analyst for a small café. Goal: shorten the bad-case wait (90th-percentile wait, \"p90\") without breaking the owner's constraints.\nYou only learn about the café through tools. Call exactly one tool per turn.\nBudget: 6 test_change experiments and 12 tool calls in total. Then you must call finish.\nCode decides acceptance, not you. A plan is accepted only if: overall p90 improves by at least 10%; the paired 95% CI of the improvement excludes zero; it still improves with task times 30% shorter and 30% longer; and no order type's p90 gets more than 10% worse.\nWork like a scientist: look at the bottleneck, form a hypothesis, test it, learn from the result, then test the next idea. Prefer cheap changes. Try combining changes that were accepted.\nUse your experiments: test at least 3 different plans (single changes or combinations) before calling finish, unless the budget runs out.\nMinutes in changes count from the start of the rush. Keep text short. finish.summary must contain no digits."
+          },
+          {
+            "role": "user",
+            "content": "Rush: 90 min from 07:00; orders/hour per 15-min block: 36,36,36,36,36,36.\nOrder mix: drink 50%, food 20%, drinkFood 30%.\nStaff: cashier 1; barista 1; kitchen 1; barista hands over orders.\nTypical task minutes: order 0.8, drink 1.3, food 2.5, handoff 0.3.\nDrink + food orders: made at the same time.\nHiring is allowed. At most 1 changes per plan.\nAllowed options (at most one per group; combine groups freely). Copy the changes exactly:\n- More barista staff: +1 barista = [{\"kind\":\"staff\",\"station\":\"barista\",\"delta\":1}] | +1 barista 07:30–08:15 = [{\"kind\":\"staff\",\"station\":\"barista\",\"delta\":1,\"fromMin\":30,\"toMin\":75}]\n- More cashier staff: +1 cashier = [{\"kind\":\"staff\",\"station\":\"cashier\",\"delta\":1}]\n- More kitchen staff: +1 kitchen = [{\"kind\":\"staff\",\"station\":\"kitchen\",\"delta\":1}]\n- Handoff point: dedicated handoff (1) = [{\"kind\":\"dedicatedHandoff\",\"staff\":1}]\n- Grab-and-go: grab-and-go 20% = [{\"kind\":\"grabGo\",\"shareOfDrinks\":0.2}] | grab-and-go 40% = [{\"kind\":\"grabGo\",\"shareOfDrinks\":0.4}]\nToday (simulated): {\"p90\":15.9,\"median\":9.1,\"byType\":{\"drink\":{\"p90\":13.1,\"median\":7.8},\"food\":{\"p90\":15.2,\"median\":9.9},\"drinkFood\":{\"p90\":16.5,\"median\":11.1}},\"stations\":{\"cashier\":{\"busy\":46.8,\"maxQueue\":3.4},\"barista\":{\"busy\":78.8,\"maxQueue\":9.3},\"kitchen\":{\"busy\":73.5,\"maxQueue\":4.3}}}\nBusiest station: barista (78.8% busy)."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "run_simulation",
+              "description": "Simulate the café with some changes. Returns p90 and median waits, staff utilization and queues.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "find_bottleneck",
+              "description": "Busiest station of the café with some changes.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "compare",
+              "description": "Compare two plans on the same simulated customers.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes_a": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  },
+                  "changes_b": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes_a",
+                  "changes_b"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "sensitivity",
+              "description": "Compare a plan with today, with all task times 30% shorter and 30% longer.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "test_change",
+              "description": "Formally test a plan against today. Uses one experiment. Code applies the acceptance rule and records the result.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "hypothesis": {
+                    "type": "string",
+                    "description": "Why you expect this to help, in one sentence."
+                  },
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "hypothesis",
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "finish",
+              "description": "Stop experimenting. The app shows all numbers itself.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "summary": {
+                    "type": "string",
+                    "description": "Two sentences, no numbers."
+                  }
+                },
+                "required": [
+                  "summary"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "toolChoice": "required",
+        "maxTokens": 1024
+      },
+      "response": {
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "type": "function",
+              "index": 0,
+              "id": "fc_fa18d337-24d7-484c-9d7c-e12e7caf3e43",
+              "function": {
+                "name": "test_change",
+                "arguments": "{\"changes\":[{\"delta\":1,\"kind\":\"staff\",\"station\":\"barista\"}],\"hypothesis\":\"adding a barista reduces barista load and p90\"}"
+              }
+            }
+          ]
+        },
+        "usage": {
+          "promptTokens": 3364,
+          "completionTokens": 75,
+          "totalTokens": 3439
+        },
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "costUsd": 0.0003
+      }
+    },
+    {
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an operations analyst for a small café. Goal: shorten the bad-case wait (90th-percentile wait, \"p90\") without breaking the owner's constraints.\nYou only learn about the café through tools. Call exactly one tool per turn.\nBudget: 6 test_change experiments and 12 tool calls in total. Then you must call finish.\nCode decides acceptance, not you. A plan is accepted only if: overall p90 improves by at least 10%; the paired 95% CI of the improvement excludes zero; it still improves with task times 30% shorter and 30% longer; and no order type's p90 gets more than 10% worse.\nWork like a scientist: look at the bottleneck, form a hypothesis, test it, learn from the result, then test the next idea. Prefer cheap changes. Try combining changes that were accepted.\nUse your experiments: test at least 3 different plans (single changes or combinations) before calling finish, unless the budget runs out.\nMinutes in changes count from the start of the rush. Keep text short. finish.summary must contain no digits."
+          },
+          {
+            "role": "user",
+            "content": "Rush: 90 min from 07:00; orders/hour per 15-min block: 36,36,36,36,36,36.\nOrder mix: drink 50%, food 20%, drinkFood 30%.\nStaff: cashier 1; barista 1; kitchen 1; barista hands over orders.\nTypical task minutes: order 0.8, drink 1.3, food 2.5, handoff 0.3.\nDrink + food orders: made at the same time.\nHiring is allowed. At most 1 changes per plan.\nAllowed options (at most one per group; combine groups freely). Copy the changes exactly:\n- More barista staff: +1 barista = [{\"kind\":\"staff\",\"station\":\"barista\",\"delta\":1}] | +1 barista 07:30–08:15 = [{\"kind\":\"staff\",\"station\":\"barista\",\"delta\":1,\"fromMin\":30,\"toMin\":75}]\n- More cashier staff: +1 cashier = [{\"kind\":\"staff\",\"station\":\"cashier\",\"delta\":1}]\n- More kitchen staff: +1 kitchen = [{\"kind\":\"staff\",\"station\":\"kitchen\",\"delta\":1}]\n- Handoff point: dedicated handoff (1) = [{\"kind\":\"dedicatedHandoff\",\"staff\":1}]\n- Grab-and-go: grab-and-go 20% = [{\"kind\":\"grabGo\",\"shareOfDrinks\":0.2}] | grab-and-go 40% = [{\"kind\":\"grabGo\",\"shareOfDrinks\":0.4}]\nToday (simulated): {\"p90\":15.9,\"median\":9.1,\"byType\":{\"drink\":{\"p90\":13.1,\"median\":7.8},\"food\":{\"p90\":15.2,\"median\":9.9},\"drinkFood\":{\"p90\":16.5,\"median\":11.1}},\"stations\":{\"cashier\":{\"busy\":46.8,\"maxQueue\":3.4},\"barista\":{\"busy\":78.8,\"maxQueue\":9.3},\"kitchen\":{\"busy\":73.5,\"maxQueue\":4.3}}}\nBusiest station: barista (78.8% busy)."
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_fa18d337-24d7-484c-9d7c-e12e7caf3e43",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"delta\":1,\"kind\":\"staff\",\"station\":\"barista\"}],\"hypothesis\":\"adding a barista reduces barista load and p90\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_fa18d337-24d7-484c-9d7c-e12e7caf3e43",
+            "content": "{\"experiment\":1,\"status\":\"accepted\",\"costUsd\":660,\"failed\":[],\"nominal\":{\"p90\":[15.9,10.3],\"improvementPct\":35.2,\"ci\":[4.8,6.4],\"byTypeP90\":{\"drink\":[13.1,2.9],\"food\":[15.2,11.4],\"drinkFood\":[16.5,11.5]}},\"faster30\":[6.5,4.7],\"slower30\":[34,20]}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "run_simulation",
+              "description": "Simulate the café with some changes. Returns p90 and median waits, staff utilization and queues.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "find_bottleneck",
+              "description": "Busiest station of the café with some changes.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "compare",
+              "description": "Compare two plans on the same simulated customers.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes_a": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  },
+                  "changes_b": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes_a",
+                  "changes_b"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "sensitivity",
+              "description": "Compare a plan with today, with all task times 30% shorter and 30% longer.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "test_change",
+              "description": "Formally test a plan against today. Uses one experiment. Code applies the acceptance rule and records the result.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "hypothesis": {
+                    "type": "string",
+                    "description": "Why you expect this to help, in one sentence."
+                  },
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "hypothesis",
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "finish",
+              "description": "Stop experimenting. The app shows all numbers itself.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "summary": {
+                    "type": "string",
+                    "description": "Two sentences, no numbers."
+                  }
+                },
+                "required": [
+                  "summary"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "toolChoice": "required",
+        "maxTokens": 1024
+      },
+      "response": {
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "type": "function",
+              "index": 0,
+              "id": "fc_ce90e7d8-d7f6-4bbf-9024-6cf3ae2c8c6c",
+              "function": {
+                "name": "test_change",
+                "arguments": "{\"changes\":[{\"kind\":\"dedicatedHandoff\",\"staff\":1}],\"hypothesis\":\"dedicated handoff reduces handoff queue\"}"
+              }
+            }
+          ]
+        },
+        "usage": {
+          "promptTokens": 3523,
+          "completionTokens": 60,
+          "totalTokens": 3583
+        },
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "costUsd": 0.00031485
+      }
+    },
+    {
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an operations analyst for a small café. Goal: shorten the bad-case wait (90th-percentile wait, \"p90\") without breaking the owner's constraints.\nYou only learn about the café through tools. Call exactly one tool per turn.\nBudget: 6 test_change experiments and 12 tool calls in total. Then you must call finish.\nCode decides acceptance, not you. A plan is accepted only if: overall p90 improves by at least 10%; the paired 95% CI of the improvement excludes zero; it still improves with task times 30% shorter and 30% longer; and no order type's p90 gets more than 10% worse.\nWork like a scientist: look at the bottleneck, form a hypothesis, test it, learn from the result, then test the next idea. Prefer cheap changes. Try combining changes that were accepted.\nUse your experiments: test at least 3 different plans (single changes or combinations) before calling finish, unless the budget runs out.\nMinutes in changes count from the start of the rush. Keep text short. finish.summary must contain no digits."
+          },
+          {
+            "role": "user",
+            "content": "Rush: 90 min from 07:00; orders/hour per 15-min block: 36,36,36,36,36,36.\nOrder mix: drink 50%, food 20%, drinkFood 30%.\nStaff: cashier 1; barista 1; kitchen 1; barista hands over orders.\nTypical task minutes: order 0.8, drink 1.3, food 2.5, handoff 0.3.\nDrink + food orders: made at the same time.\nHiring is allowed. At most 1 changes per plan.\nAllowed options (at most one per group; combine groups freely). Copy the changes exactly:\n- More barista staff: +1 barista = [{\"kind\":\"staff\",\"station\":\"barista\",\"delta\":1}] | +1 barista 07:30–08:15 = [{\"kind\":\"staff\",\"station\":\"barista\",\"delta\":1,\"fromMin\":30,\"toMin\":75}]\n- More cashier staff: +1 cashier = [{\"kind\":\"staff\",\"station\":\"cashier\",\"delta\":1}]\n- More kitchen staff: +1 kitchen = [{\"kind\":\"staff\",\"station\":\"kitchen\",\"delta\":1}]\n- Handoff point: dedicated handoff (1) = [{\"kind\":\"dedicatedHandoff\",\"staff\":1}]\n- Grab-and-go: grab-and-go 20% = [{\"kind\":\"grabGo\",\"shareOfDrinks\":0.2}] | grab-and-go 40% = [{\"kind\":\"grabGo\",\"shareOfDrinks\":0.4}]\nToday (simulated): {\"p90\":15.9,\"median\":9.1,\"byType\":{\"drink\":{\"p90\":13.1,\"median\":7.8},\"food\":{\"p90\":15.2,\"median\":9.9},\"drinkFood\":{\"p90\":16.5,\"median\":11.1}},\"stations\":{\"cashier\":{\"busy\":46.8,\"maxQueue\":3.4},\"barista\":{\"busy\":78.8,\"maxQueue\":9.3},\"kitchen\":{\"busy\":73.5,\"maxQueue\":4.3}}}\nBusiest station: barista (78.8% busy)."
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_fa18d337-24d7-484c-9d7c-e12e7caf3e43",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"delta\":1,\"kind\":\"staff\",\"station\":\"barista\"}],\"hypothesis\":\"adding a barista reduces barista load and p90\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_fa18d337-24d7-484c-9d7c-e12e7caf3e43",
+            "content": "{\"experiment\":1,\"status\":\"accepted\",\"costUsd\":660,\"failed\":[],\"nominal\":{\"p90\":[15.9,10.3],\"improvementPct\":35.2,\"ci\":[4.8,6.4],\"byTypeP90\":{\"drink\":[13.1,2.9],\"food\":[15.2,11.4],\"drinkFood\":[16.5,11.5]}},\"faster30\":[6.5,4.7],\"slower30\":[34,20]}"
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_ce90e7d8-d7f6-4bbf-9024-6cf3ae2c8c6c",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"kind\":\"dedicatedHandoff\",\"staff\":1}],\"hypothesis\":\"dedicated handoff reduces handoff queue\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_ce90e7d8-d7f6-4bbf-9024-6cf3ae2c8c6c",
+            "content": "{\"experiment\":2,\"status\":\"accepted\",\"costUsd\":810,\"failed\":[],\"nominal\":{\"p90\":[15.9,10.5],\"improvementPct\":33.7,\"ci\":[4.6,6.1],\"byTypeP90\":{\"drink\":[13.1,5],\"food\":[15.2,11.3],\"drinkFood\":[16.5,11.6]}},\"faster30\":[6.5,4.8],\"slower30\":[34,20.6]}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "run_simulation",
+              "description": "Simulate the café with some changes. Returns p90 and median waits, staff utilization and queues.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "find_bottleneck",
+              "description": "Busiest station of the café with some changes.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "compare",
+              "description": "Compare two plans on the same simulated customers.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes_a": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  },
+                  "changes_b": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes_a",
+                  "changes_b"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "sensitivity",
+              "description": "Compare a plan with today, with all task times 30% shorter and 30% longer.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "test_change",
+              "description": "Formally test a plan against today. Uses one experiment. Code applies the acceptance rule and records the result.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "hypothesis": {
+                    "type": "string",
+                    "description": "Why you expect this to help, in one sentence."
+                  },
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "hypothesis",
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "finish",
+              "description": "Stop experimenting. The app shows all numbers itself.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "summary": {
+                    "type": "string",
+                    "description": "Two sentences, no numbers."
+                  }
+                },
+                "required": [
+                  "summary"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "toolChoice": "required",
+        "maxTokens": 1024
+      },
+      "response": {
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "type": "function",
+              "index": 0,
+              "id": "fc_562688c5-fade-4795-9d5d-4654dca8820a",
+              "function": {
+                "name": "test_change",
+                "arguments": "{\"changes\":[{\"delta\":1,\"kind\":\"staff\",\"station\":\"barista\"},{\"kind\":\"dedicatedHandoff\",\"staff\":1}],\"hypothesis\":\"both reduce load\"}"
+              }
+            }
+          ]
+        },
+        "usage": {
+          "promptTokens": 3677,
+          "completionTokens": 86,
+          "totalTokens": 3763
+        },
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "costUsd": 0.00035355
+      }
+    },
+    {
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an operations analyst for a small café. Goal: shorten the bad-case wait (90th-percentile wait, \"p90\") without breaking the owner's constraints.\nYou only learn about the café through tools. Call exactly one tool per turn.\nBudget: 6 test_change experiments and 12 tool calls in total. Then you must call finish.\nCode decides acceptance, not you. A plan is accepted only if: overall p90 improves by at least 10%; the paired 95% CI of the improvement excludes zero; it still improves with task times 30% shorter and 30% longer; and no order type's p90 gets more than 10% worse.\nWork like a scientist: look at the bottleneck, form a hypothesis, test it, learn from the result, then test the next idea. Prefer cheap changes. Try combining changes that were accepted.\nUse your experiments: test at least 3 different plans (single changes or combinations) before calling finish, unless the budget runs out.\nMinutes in changes count from the start of the rush. Keep text short. finish.summary must contain no digits."
+          },
+          {
+            "role": "user",
+            "content": "Rush: 90 min from 07:00; orders/hour per 15-min block: 36,36,36,36,36,36.\nOrder mix: drink 50%, food 20%, drinkFood 30%.\nStaff: cashier 1; barista 1; kitchen 1; barista hands over orders.\nTypical task minutes: order 0.8, drink 1.3, food 2.5, handoff 0.3.\nDrink + food orders: made at the same time.\nHiring is allowed. At most 1 changes per plan.\nAllowed options (at most one per group; combine groups freely). Copy the changes exactly:\n- More barista staff: +1 barista = [{\"kind\":\"staff\",\"station\":\"barista\",\"delta\":1}] | +1 barista 07:30–08:15 = [{\"kind\":\"staff\",\"station\":\"barista\",\"delta\":1,\"fromMin\":30,\"toMin\":75}]\n- More cashier staff: +1 cashier = [{\"kind\":\"staff\",\"station\":\"cashier\",\"delta\":1}]\n- More kitchen staff: +1 kitchen = [{\"kind\":\"staff\",\"station\":\"kitchen\",\"delta\":1}]\n- Handoff point: dedicated handoff (1) = [{\"kind\":\"dedicatedHandoff\",\"staff\":1}]\n- Grab-and-go: grab-and-go 20% = [{\"kind\":\"grabGo\",\"shareOfDrinks\":0.2}] | grab-and-go 40% = [{\"kind\":\"grabGo\",\"shareOfDrinks\":0.4}]\nToday (simulated): {\"p90\":15.9,\"median\":9.1,\"byType\":{\"drink\":{\"p90\":13.1,\"median\":7.8},\"food\":{\"p90\":15.2,\"median\":9.9},\"drinkFood\":{\"p90\":16.5,\"median\":11.1}},\"stations\":{\"cashier\":{\"busy\":46.8,\"maxQueue\":3.4},\"barista\":{\"busy\":78.8,\"maxQueue\":9.3},\"kitchen\":{\"busy\":73.5,\"maxQueue\":4.3}}}\nBusiest station: barista (78.8% busy)."
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_fa18d337-24d7-484c-9d7c-e12e7caf3e43",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"delta\":1,\"kind\":\"staff\",\"station\":\"barista\"}],\"hypothesis\":\"adding a barista reduces barista load and p90\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_fa18d337-24d7-484c-9d7c-e12e7caf3e43",
+            "content": "{\"experiment\":1,\"status\":\"accepted\",\"costUsd\":660,\"failed\":[],\"nominal\":{\"p90\":[15.9,10.3],\"improvementPct\":35.2,\"ci\":[4.8,6.4],\"byTypeP90\":{\"drink\":[13.1,2.9],\"food\":[15.2,11.4],\"drinkFood\":[16.5,11.5]}},\"faster30\":[6.5,4.7],\"slower30\":[34,20]}"
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_ce90e7d8-d7f6-4bbf-9024-6cf3ae2c8c6c",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"kind\":\"dedicatedHandoff\",\"staff\":1}],\"hypothesis\":\"dedicated handoff reduces handoff queue\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_ce90e7d8-d7f6-4bbf-9024-6cf3ae2c8c6c",
+            "content": "{\"experiment\":2,\"status\":\"accepted\",\"costUsd\":810,\"failed\":[],\"nominal\":{\"p90\":[15.9,10.5],\"improvementPct\":33.7,\"ci\":[4.6,6.1],\"byTypeP90\":{\"drink\":[13.1,5],\"food\":[15.2,11.3],\"drinkFood\":[16.5,11.6]}},\"faster30\":[6.5,4.8],\"slower30\":[34,20.6]}"
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_562688c5-fade-4795-9d5d-4654dca8820a",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"delta\":1,\"kind\":\"staff\",\"station\":\"barista\"},{\"kind\":\"dedicatedHandoff\",\"staff\":1}],\"hypothesis\":\"both reduce load\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_562688c5-fade-4795-9d5d-4654dca8820a",
+            "content": "{\"experiment\":3,\"status\":\"blocked\",\"violations\":[\"Uses 2 changes; the limit is 1\"]}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "run_simulation",
+              "description": "Simulate the café with some changes. Returns p90 and median waits, staff utilization and queues.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "find_bottleneck",
+              "description": "Busiest station of the café with some changes.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "compare",
+              "description": "Compare two plans on the same simulated customers.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes_a": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  },
+                  "changes_b": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes_a",
+                  "changes_b"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "sensitivity",
+              "description": "Compare a plan with today, with all task times 30% shorter and 30% longer.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "test_change",
+              "description": "Formally test a plan against today. Uses one experiment. Code applies the acceptance rule and records the result.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "hypothesis": {
+                    "type": "string",
+                    "description": "Why you expect this to help, in one sentence."
+                  },
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "hypothesis",
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "finish",
+              "description": "Stop experimenting. The app shows all numbers itself.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "summary": {
+                    "type": "string",
+                    "description": "Two sentences, no numbers."
+                  }
+                },
+                "required": [
+                  "summary"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "toolChoice": "required",
+        "maxTokens": 1024
+      },
+      "response": {
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "type": "function",
+              "index": 0,
+              "id": "fc_0e4b9961-d5c5-47b2-89d6-26a79f42fbd2",
+              "function": {
+                "name": "test_change",
+                "arguments": "{\"changes\":[{\"kind\":\"grabGo\",\"shareOfDrinks\":0.2}],\"hypothesis\":\"grabGo reduces barista load\"}"
+              }
+            }
+          ]
+        },
+        "usage": {
+          "promptTokens": 3756,
+          "completionTokens": 56,
+          "totalTokens": 3812
+        },
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "costUsd": 0.0003858
+      }
+    },
+    {
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an operations analyst for a small café. Goal: shorten the bad-case wait (90th-percentile wait, \"p90\") without breaking the owner's constraints.\nYou only learn about the café through tools. Call exactly one tool per turn.\nBudget: 6 test_change experiments and 12 tool calls in total. Then you must call finish.\nCode decides acceptance, not you. A plan is accepted only if: overall p90 improves by at least 10%; the paired 95% CI of the improvement excludes zero; it still improves with task times 30% shorter and 30% longer; and no order type's p90 gets more than 10% worse.\nWork like a scientist: look at the bottleneck, form a hypothesis, test it, learn from the result, then test the next idea. Prefer cheap changes. Try combining changes that were accepted.\nUse your experiments: test at least 3 different plans (single changes or combinations) before calling finish, unless the budget runs out.\nMinutes in changes count from the start of the rush. Keep text short. finish.summary must contain no digits."
+          },
+          {
+            "role": "user",
+            "content": "Rush: 90 min from 07:00; orders/hour per 15-min block: 36,36,36,36,36,36.\nOrder mix: drink 50%, food 20%, drinkFood 30%.\nStaff: cashier 1; barista 1; kitchen 1; barista hands over orders.\nTypical task minutes: order 0.8, drink 1.3, food 2.5, handoff 0.3.\nDrink + food orders: made at the same time.\nHiring is allowed. At most 1 changes per plan.\nAllowed options (at most one per group; combine groups freely). Copy the changes exactly:\n- More barista staff: +1 barista = [{\"kind\":\"staff\",\"station\":\"barista\",\"delta\":1}] | +1 barista 07:30–08:15 = [{\"kind\":\"staff\",\"station\":\"barista\",\"delta\":1,\"fromMin\":30,\"toMin\":75}]\n- More cashier staff: +1 cashier = [{\"kind\":\"staff\",\"station\":\"cashier\",\"delta\":1}]\n- More kitchen staff: +1 kitchen = [{\"kind\":\"staff\",\"station\":\"kitchen\",\"delta\":1}]\n- Handoff point: dedicated handoff (1) = [{\"kind\":\"dedicatedHandoff\",\"staff\":1}]\n- Grab-and-go: grab-and-go 20% = [{\"kind\":\"grabGo\",\"shareOfDrinks\":0.2}] | grab-and-go 40% = [{\"kind\":\"grabGo\",\"shareOfDrinks\":0.4}]\nToday (simulated): {\"p90\":15.9,\"median\":9.1,\"byType\":{\"drink\":{\"p90\":13.1,\"median\":7.8},\"food\":{\"p90\":15.2,\"median\":9.9},\"drinkFood\":{\"p90\":16.5,\"median\":11.1}},\"stations\":{\"cashier\":{\"busy\":46.8,\"maxQueue\":3.4},\"barista\":{\"busy\":78.8,\"maxQueue\":9.3},\"kitchen\":{\"busy\":73.5,\"maxQueue\":4.3}}}\nBusiest station: barista (78.8% busy)."
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_fa18d337-24d7-484c-9d7c-e12e7caf3e43",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"delta\":1,\"kind\":\"staff\",\"station\":\"barista\"}],\"hypothesis\":\"adding a barista reduces barista load and p90\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_fa18d337-24d7-484c-9d7c-e12e7caf3e43",
+            "content": "{\"experiment\":1,\"status\":\"accepted\",\"costUsd\":660,\"failed\":[],\"nominal\":{\"p90\":[15.9,10.3],\"improvementPct\":35.2,\"ci\":[4.8,6.4],\"byTypeP90\":{\"drink\":[13.1,2.9],\"food\":[15.2,11.4],\"drinkFood\":[16.5,11.5]}},\"faster30\":[6.5,4.7],\"slower30\":[34,20]}"
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_ce90e7d8-d7f6-4bbf-9024-6cf3ae2c8c6c",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"kind\":\"dedicatedHandoff\",\"staff\":1}],\"hypothesis\":\"dedicated handoff reduces handoff queue\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_ce90e7d8-d7f6-4bbf-9024-6cf3ae2c8c6c",
+            "content": "{\"experiment\":2,\"status\":\"accepted\",\"costUsd\":810,\"failed\":[],\"nominal\":{\"p90\":[15.9,10.5],\"improvementPct\":33.7,\"ci\":[4.6,6.1],\"byTypeP90\":{\"drink\":[13.1,5],\"food\":[15.2,11.3],\"drinkFood\":[16.5,11.6]}},\"faster30\":[6.5,4.8],\"slower30\":[34,20.6]}"
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_562688c5-fade-4795-9d5d-4654dca8820a",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"delta\":1,\"kind\":\"staff\",\"station\":\"barista\"},{\"kind\":\"dedicatedHandoff\",\"staff\":1}],\"hypothesis\":\"both reduce load\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_562688c5-fade-4795-9d5d-4654dca8820a",
+            "content": "{\"experiment\":3,\"status\":\"blocked\",\"violations\":[\"Uses 2 changes; the limit is 1\"]}"
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_0e4b9961-d5c5-47b2-89d6-26a79f42fbd2",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"kind\":\"grabGo\",\"shareOfDrinks\":0.2}],\"hypothesis\":\"grabGo reduces barista load\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_0e4b9961-d5c5-47b2-89d6-26a79f42fbd2",
+            "content": "{\"experiment\":4,\"status\":\"accepted\",\"costUsd\":200,\"failed\":[],\"nominal\":{\"p90\":[15.9,13.5],\"improvementPct\":15.1,\"ci\":[1.7,3.1],\"byTypeP90\":{\"drink\":[13.1,9.9],\"food\":[15.2,13.5],\"drinkFood\":[16.5,14.5]}},\"faster30\":[6.5,6],\"slower30\":[34,27.1]}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "run_simulation",
+              "description": "Simulate the café with some changes. Returns p90 and median waits, staff utilization and queues.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "find_bottleneck",
+              "description": "Busiest station of the café with some changes.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "compare",
+              "description": "Compare two plans on the same simulated customers.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes_a": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  },
+                  "changes_b": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes_a",
+                  "changes_b"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "sensitivity",
+              "description": "Compare a plan with today, with all task times 30% shorter and 30% longer.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "test_change",
+              "description": "Formally test a plan against today. Uses one experiment. Code applies the acceptance rule and records the result.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "hypothesis": {
+                    "type": "string",
+                    "description": "Why you expect this to help, in one sentence."
+                  },
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "hypothesis",
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "finish",
+              "description": "Stop experimenting. The app shows all numbers itself.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "summary": {
+                    "type": "string",
+                    "description": "Two sentences, no numbers."
+                  }
+                },
+                "required": [
+                  "summary"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "toolChoice": "required",
+        "maxTokens": 1024
+      },
+      "response": {
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "type": "function",
+              "index": 0,
+              "id": "fc_3e3e6f37-79fe-4c68-b6be-497be65ed66c",
+              "function": {
+                "name": "test_change",
+                "arguments": "{\"changes\":[{\"delta\":1,\"kind\":\"staff\",\"station\":\"kitchen\"}],\"hypothesis\":\"adding kitchen staff reduces kitchen bottleneck\"}"
+              }
+            }
+          ]
+        },
+        "usage": {
+          "promptTokens": 3911,
+          "completionTokens": 81,
+          "totalTokens": 3992
+        },
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "costUsd": 0.00038565
+      }
+    },
+    {
+      "request": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an operations analyst for a small café. Goal: shorten the bad-case wait (90th-percentile wait, \"p90\") without breaking the owner's constraints.\nYou only learn about the café through tools. Call exactly one tool per turn.\nBudget: 6 test_change experiments and 12 tool calls in total. Then you must call finish.\nCode decides acceptance, not you. A plan is accepted only if: overall p90 improves by at least 10%; the paired 95% CI of the improvement excludes zero; it still improves with task times 30% shorter and 30% longer; and no order type's p90 gets more than 10% worse.\nWork like a scientist: look at the bottleneck, form a hypothesis, test it, learn from the result, then test the next idea. Prefer cheap changes. Try combining changes that were accepted.\nUse your experiments: test at least 3 different plans (single changes or combinations) before calling finish, unless the budget runs out.\nMinutes in changes count from the start of the rush. Keep text short. finish.summary must contain no digits."
+          },
+          {
+            "role": "user",
+            "content": "Rush: 90 min from 07:00; orders/hour per 15-min block: 36,36,36,36,36,36.\nOrder mix: drink 50%, food 20%, drinkFood 30%.\nStaff: cashier 1; barista 1; kitchen 1; barista hands over orders.\nTypical task minutes: order 0.8, drink 1.3, food 2.5, handoff 0.3.\nDrink + food orders: made at the same time.\nHiring is allowed. At most 1 changes per plan.\nAllowed options (at most one per group; combine groups freely). Copy the changes exactly:\n- More barista staff: +1 barista = [{\"kind\":\"staff\",\"station\":\"barista\",\"delta\":1}] | +1 barista 07:30–08:15 = [{\"kind\":\"staff\",\"station\":\"barista\",\"delta\":1,\"fromMin\":30,\"toMin\":75}]\n- More cashier staff: +1 cashier = [{\"kind\":\"staff\",\"station\":\"cashier\",\"delta\":1}]\n- More kitchen staff: +1 kitchen = [{\"kind\":\"staff\",\"station\":\"kitchen\",\"delta\":1}]\n- Handoff point: dedicated handoff (1) = [{\"kind\":\"dedicatedHandoff\",\"staff\":1}]\n- Grab-and-go: grab-and-go 20% = [{\"kind\":\"grabGo\",\"shareOfDrinks\":0.2}] | grab-and-go 40% = [{\"kind\":\"grabGo\",\"shareOfDrinks\":0.4}]\nToday (simulated): {\"p90\":15.9,\"median\":9.1,\"byType\":{\"drink\":{\"p90\":13.1,\"median\":7.8},\"food\":{\"p90\":15.2,\"median\":9.9},\"drinkFood\":{\"p90\":16.5,\"median\":11.1}},\"stations\":{\"cashier\":{\"busy\":46.8,\"maxQueue\":3.4},\"barista\":{\"busy\":78.8,\"maxQueue\":9.3},\"kitchen\":{\"busy\":73.5,\"maxQueue\":4.3}}}\nBusiest station: barista (78.8% busy)."
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_fa18d337-24d7-484c-9d7c-e12e7caf3e43",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"delta\":1,\"kind\":\"staff\",\"station\":\"barista\"}],\"hypothesis\":\"adding a barista reduces barista load and p90\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_fa18d337-24d7-484c-9d7c-e12e7caf3e43",
+            "content": "{\"experiment\":1,\"status\":\"accepted\",\"costUsd\":660,\"failed\":[],\"nominal\":{\"p90\":[15.9,10.3],\"improvementPct\":35.2,\"ci\":[4.8,6.4],\"byTypeP90\":{\"drink\":[13.1,2.9],\"food\":[15.2,11.4],\"drinkFood\":[16.5,11.5]}},\"faster30\":[6.5,4.7],\"slower30\":[34,20]}"
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_ce90e7d8-d7f6-4bbf-9024-6cf3ae2c8c6c",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"kind\":\"dedicatedHandoff\",\"staff\":1}],\"hypothesis\":\"dedicated handoff reduces handoff queue\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_ce90e7d8-d7f6-4bbf-9024-6cf3ae2c8c6c",
+            "content": "{\"experiment\":2,\"status\":\"accepted\",\"costUsd\":810,\"failed\":[],\"nominal\":{\"p90\":[15.9,10.5],\"improvementPct\":33.7,\"ci\":[4.6,6.1],\"byTypeP90\":{\"drink\":[13.1,5],\"food\":[15.2,11.3],\"drinkFood\":[16.5,11.6]}},\"faster30\":[6.5,4.8],\"slower30\":[34,20.6]}"
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_562688c5-fade-4795-9d5d-4654dca8820a",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"delta\":1,\"kind\":\"staff\",\"station\":\"barista\"},{\"kind\":\"dedicatedHandoff\",\"staff\":1}],\"hypothesis\":\"both reduce load\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_562688c5-fade-4795-9d5d-4654dca8820a",
+            "content": "{\"experiment\":3,\"status\":\"blocked\",\"violations\":[\"Uses 2 changes; the limit is 1\"]}"
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_0e4b9961-d5c5-47b2-89d6-26a79f42fbd2",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"kind\":\"grabGo\",\"shareOfDrinks\":0.2}],\"hypothesis\":\"grabGo reduces barista load\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_0e4b9961-d5c5-47b2-89d6-26a79f42fbd2",
+            "content": "{\"experiment\":4,\"status\":\"accepted\",\"costUsd\":200,\"failed\":[],\"nominal\":{\"p90\":[15.9,13.5],\"improvementPct\":15.1,\"ci\":[1.7,3.1],\"byTypeP90\":{\"drink\":[13.1,9.9],\"food\":[15.2,13.5],\"drinkFood\":[16.5,14.5]}},\"faster30\":[6.5,6],\"slower30\":[34,27.1]}"
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "type": "function",
+                "index": 0,
+                "id": "fc_3e3e6f37-79fe-4c68-b6be-497be65ed66c",
+                "function": {
+                  "name": "test_change",
+                  "arguments": "{\"changes\":[{\"delta\":1,\"kind\":\"staff\",\"station\":\"kitchen\"}],\"hypothesis\":\"adding kitchen staff reduces kitchen bottleneck\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "fc_3e3e6f37-79fe-4c68-b6be-497be65ed66c",
+            "content": "{\"experiment\":5,\"status\":\"accepted\",\"costUsd\":660,\"failed\":[],\"nominal\":{\"p90\":[15.9,13.4],\"improvementPct\":15.8,\"ci\":[2,3],\"byTypeP90\":{\"drink\":[13.1,13.4],\"food\":[15.2,9.6],\"drinkFood\":[16.5,13.3]}},\"faster30\":[6.5,5.4],\"slower30\":[34,30]}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "run_simulation",
+              "description": "Simulate the café with some changes. Returns p90 and median waits, staff utilization and queues.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "find_bottleneck",
+              "description": "Busiest station of the café with some changes.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "compare",
+              "description": "Compare two plans on the same simulated customers.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes_a": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  },
+                  "changes_b": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes_a",
+                  "changes_b"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "sensitivity",
+              "description": "Compare a plan with today, with all task times 30% shorter and 30% longer.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "test_change",
+              "description": "Formally test a plan against today. Uses one experiment. Code applies the acceptance rule and records the result.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "hypothesis": {
+                    "type": "string",
+                    "description": "Why you expect this to help, in one sentence."
+                  },
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "staff",
+                            "prepMode",
+                            "foodBatching",
+                            "dedicatedHandoff",
+                            "expressDrinks",
+                            "grabGo"
+                          ]
+                        },
+                        "station": {
+                          "type": "string",
+                          "enum": [
+                            "cashier",
+                            "barista",
+                            "kitchen",
+                            "handoff",
+                            "express"
+                          ],
+                          "description": "staff: which station"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -3,
+                          "maximum": 3,
+                          "description": "staff: people to add (negative removes)"
+                        },
+                        "fromMin": {
+                          "type": "number",
+                          "description": "staff: start minute of the rush (optional)"
+                        },
+                        "toMin": {
+                          "type": "number",
+                          "description": "staff: end minute of the rush (optional)"
+                        },
+                        "mode": {
+                          "type": "string",
+                          "enum": [
+                            "parallel",
+                            "sequential"
+                          ],
+                          "description": "prepMode"
+                        },
+                        "intervalMin": {
+                          "type": "number",
+                          "minimum": 5,
+                          "maximum": 60,
+                          "description": "foodBatching: minutes between batches"
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "description": "foodBatching: items per batch"
+                        },
+                        "cookMin": {
+                          "type": "number",
+                          "description": "foodBatching: minutes to cook a batch (optional)"
+                        },
+                        "staff": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 3,
+                          "description": "dedicatedHandoff / expressDrinks: people at the new station"
+                        },
+                        "shareOfDrinks": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 0.8,
+                          "description": "grabGo: share of drink-only orders sold ready-made"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Changes applied to the current café, in order. [] = no change."
+                  }
+                },
+                "required": [
+                  "hypothesis",
+                  "changes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "finish",
+              "description": "Stop experimenting. The app shows all numbers itself.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "summary": {
+                    "type": "string",
+                    "description": "Two sentences, no numbers."
+                  }
+                },
+                "required": [
+                  "summary"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "toolChoice": "required",
+        "maxTokens": 1024
+      },
+      "response": {
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "type": "function",
+              "index": 0,
+              "id": "fc_f2ea6e18-a58d-4f3e-b258-0d858d7699e5",
+              "function": {
+                "name": "test_change",
+                "arguments": "{\"changes\":[{\"delta\":1,\"kind\":\"staff\",\"station\":\"cashier\"}],\"hypothesis\":\"adding cashier reduces queue and improves p90\"}"
+              }
+            }
+          ]
+        },
+        "usage": {
+          "promptTokens": 4062,
+          "completionTokens": 368,
+          "totalTokens": 4430
+        },
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "costUsd": 0.0006189
+      }
+    }
+  ]
+}

@@ -185,3 +185,12 @@ describe('rule-based baseline agent', () => {
     expect(r.experiments.every((e) => e.violations.length === 0)).toBe(true);
   });
 });
+
+describe('tool name normalisation', () => {
+  it('accepts "functions.finish" and "name=functions.finish"', async () => {
+    const { normalizeToolName } = await import('../../src/agent/agent');
+    expect(normalizeToolName('name=functions.finish')).toBe('finish');
+    expect(normalizeToolName('functions.test_change')).toBe('test_change');
+    expect(normalizeToolName('finish')).toBe('finish');
+  });
+});

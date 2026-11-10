@@ -1,0 +1,87 @@
+[
+  {
+    "searcher": "llm-agent",
+    "scenario": "I1",
+    "recommendedKey": "0,0,-1,-1",
+    "recommendedLabel": "+1 barista + +1 kitchen",
+    "recommendedP90": 2.9070674576134747,
+    "optimalKey": "0,0,-1,-1",
+    "foundOptimal": true,
+    "within5": true,
+    "simulations": 19,
+    "experiments": 3,
+    "acceptedTested": 3,
+    "notes": [
+      "stop: no_tool_call",
+      "5 LLM calls, 18122 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "I2",
+    "recommendedKey": "0,0,-1,0",
+    "recommendedLabel": "cashier → barista + cashier → kitchen + grab-and-go 30%",
+    "recommendedP90": 2.997553259934002,
+    "optimalKey": "0,0,-1,-1",
+    "foundOptimal": false,
+    "within5": true,
+    "simulations": 29,
+    "experiments": 4,
+    "acceptedTested": 3,
+    "notes": [
+      "stop: no_tool_call",
+      "12 LLM calls, 48583 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "I3",
+    "recommendedKey": "0,-1,-1,-1",
+    "recommendedLabel": "+1 barista 07:30–08:00",
+    "recommendedP90": 8.843991512785784,
+    "optimalKey": "0,0,-1,-1",
+    "foundOptimal": false,
+    "within5": false,
+    "simulations": 20,
+    "experiments": 3,
+    "acceptedTested": 2,
+    "notes": [
+      "stop: no_tool_call",
+      "7 LLM calls, 27056 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "I4",
+    "recommendedKey": "0,-1,-1,-1",
+    "recommendedLabel": "+1 barista whole rush",
+    "recommendedP90": 5.842651288457431,
+    "optimalKey": "1,0,0,-1",
+    "foundOptimal": false,
+    "within5": false,
+    "simulations": 25,
+    "experiments": 5,
+    "acceptedTested": 3,
+    "notes": [
+      "stop: no_tool_call",
+      "11 LLM calls, 42629 tokens"
+    ]
+  },
+  {
+    "searcher": "llm-agent",
+    "scenario": "I5",
+    "recommendedKey": "0,-1,-1",
+    "recommendedLabel": "+1 barista whole rush",
+    "recommendedP90": 8.65955878726089,
+    "optimalKey": "1,1,-1",
+    "foundOptimal": false,
+    "within5": false,
+    "simulations": 13,
+    "experiments": 2,
+    "acceptedTested": 2,
+    "notes": [
+      "stop: no_tool_call",
+      "6 LLM calls, 22506 tokens"
+    ]
+  }
+]

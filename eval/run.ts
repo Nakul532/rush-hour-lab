@@ -8,14 +8,23 @@ import { LimitedLlm, RecordingLlm, TokenBudget } from '../src/agent/llm';
 import { buildModelFromDescription, type CafeDraft } from '../src/agent/modelBuilder';
 import { loadEnvKey, OpenRouterLlm, OPENROUTER_MODEL, PINNED_PROVIDER } from '../src/agent/openrouter';
 import { choiceKey, type Choice } from '../src/agent/space';
-import { BUILDER_CASES } from './modelBuilderCases';
-import { SCENARIOS } from './scenarios';
+import { BUILDER_CASES, BUILDER_HELDOUT } from './modelBuilderCases';
+import { SCENARIOS as ORIGINAL } from './scenarios';
+import { INTERACTING } from './scenariosInteracting';
+
+const arg = (name: string) => {
+  const i = process.argv.indexOf(name);
+  return i > 0 ? process.argv[i + 1] : undefined;
+};
+/** --set original | interacting */
+const SCENARIOS = arg('--set') === 'interacting' ? INTERACTING : ORIGINAL;
 import {
   agentRecommendationKey, allChoices, EVAL_SIM, evaluateChoice, freshCheck, pickOptimal, scoreBuilder, scoreRecommendation,
   type BuilderScore, type GroundTruth, type PlanRow, type SearcherScore,
 } from './scoring';
 
-const DIR = 'eval/results';
+/** --out <dir>: keeps post-lock runs apart from the original results. */
+const DIR = arg('--out') ?? 'eval/results';
 const SPEND_CAP_USD = 1.0;
 const TOKEN_CAP = 600_000;
 /** Per-call cost fields under-reported account usage ~6.5× in the live test; budget against the higher figure. */
@@ -83,7 +92,7 @@ function greedy() {
     scores.push(scoreRecommendation('greedy', gt, best?.key ?? null, sims, experiments, accepted.size));
   }
   save('greedy.json', scores);
-  log(`greedy: optimal ${scores.filter((x) => x.foundOptimal).length}/15, within 5% ${scores.filter((x) => x.within5).length}/15`);
+  log(`greedy: optimal ${scores.filter((x) => x.foundOptimal).length}/${scores.length}, within 5% ${scores.filter((x) => x.within5).length}/${scores.length}`);
 }
 
 // ---------------------------------------------------------------- LLM agent
@@ -122,14 +131,14 @@ async function agent() {
     const accepted = r.experiments.filter((e) => e.status === 'accepted').length;
     const score = scoreRecommendation('llm-agent', gt, recKey, simulationCounter.count, r.experiments.length, accepted, notes);
     scores.push(score);
-    runs.push({ scenario: s.id, stopReason: r.stopReason, llmCalls: r.llmCalls, tokens: r.tokens, summary: r.summary, experiments: r.experiments.map((e) => ({ status: e.status, plan: e.descriptions, hypothesis: e.hypothesis, failed: e.decision?.checks.filter((c) => !c.passed).map((c) => c.name) ?? e.violations })), errors: r.steps.filter((x) => x.kind === 'error').map((x) => (x as { message: string }).message) });
+    runs.push({ scenario: s.id, stopReason: r.stopReason, emptyRetries: r.emptyRetries, llmCalls: r.llmCalls, tokens: r.tokens, summary: r.summary, experiments: r.experiments.map((e) => ({ status: e.status, plan: e.descriptions, hypothesis: e.hypothesis, failed: e.decision?.checks.filter((c) => !c.passed).map((c) => c.name) ?? e.violations })), errors: r.steps.filter((x) => x.kind === 'error').map((x) => (x as { message: string }).message) });
     writeFileSync(`${DIR}/agent-transcripts/${s.id}.json`, JSON.stringify({ model: OPENROUTER_MODEL, provider: PINNED_PROVIDER, calls: rec.log }, null, 2) + '\n');
     log(`${s.id}: ${score.foundOptimal ? 'OPTIMAL' : score.within5 ? 'within 5%' : 'miss'} — agent: ${score.recommendedLabel}; ${r.experiments.length} experiments, ${r.llmCalls} calls, ${r.tokens} tokens, ${((Date.now() - t0) / 1000).toFixed(0)} s`);
   }
   const endCredits = await llmClient.credits();
   save('agent.json', scores);
   save('agent-runs.json', { model: OPENROUTER_MODEL, provider: PINNED_PROVIDER, tokens: budget.used, reportedCostUsd: llmClient.costUsd, creditsUsedUsd: endCredits.usage - startCredits.usage, creditsRemainingUsd: endCredits.remaining, runs });
-  log(`agent: optimal ${scores.filter((x) => x.foundOptimal).length}/15, within 5% ${scores.filter((x) => x.within5).length}/15; ${budget.used} tokens`);
+  log(`agent: optimal ${scores.filter((x) => x.foundOptimal).length}/${scores.length}, within 5% ${scores.filter((x) => x.within5).length}/${scores.length}; ${budget.used} tokens`);
 }
 
 // ---------------------------------------------------------------- false positives
@@ -157,7 +166,8 @@ async function builder() {
   const before = await llmClient.credits();
   const scores: BuilderScore[] = [];
   const raw: unknown[] = [];
-  for (const c of BUILDER_CASES) {
+  const cases = process.argv.includes('--heldout') ? [...BUILDER_CASES, ...BUILDER_HELDOUT] : BUILDER_CASES;
+  for (const c of cases) {
     const rec = new RecordingLlm(llmClient);
     const r = await buildModelFromDescription(c.description, rec);
     const draft: CafeDraft | null = r.ok ? r.model.draft : null;

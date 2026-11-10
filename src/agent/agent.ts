@@ -75,6 +75,11 @@ export interface AnalysisResult {
   emptyRetries: number;
 }
 
+/** gpt-oss occasionally writes tool names as "functions.finish" or "name=functions.finish". */
+export function normalizeToolName(name: string): string {
+  return name.replace(/^name=/, '').replace(/^functions\./, '').trim();
+}
+
 /** LLM text shown to users must not carry numbers: those come from code. */
 export function numberFree(text: unknown): string | null {
   if (typeof text !== 'string' || text.trim() === '') return null;
@@ -184,7 +189,7 @@ export async function runAnalysis(base: CafeSpec, llm: LlmClient, opts: Analysis
     } catch {
       throw new ChangeError(`Arguments for ${call.function.name} were not valid JSON`);
     }
-    const name = call.function.name;
+    const name = normalizeToolName(call.function.name);
     const needsSim = ['run_simulation', 'find_bottleneck', 'compare', 'sensitivity'].includes(name);
     if (needsSim && simulations >= maxSimulations) throw new ChangeError(`Simulation limit (${maxSimulations}) reached; use test_change or finish`);
     switch (name) {

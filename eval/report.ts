@@ -1,5 +1,5 @@
 // npm run eval:report — writes eval/README.md and eval/chart.svg from eval/results/.
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { SCENARIOS } from './scenarios';
 import type { BuilderScore, GroundTruth, SearcherScore } from './scoring';
 
@@ -141,10 +141,89 @@ P('## Changes after locking');
 P();
 P('None to scenarios, scoring or the agent. One observation: **S05 did not behave as designed.** It was meant as "nothing should pass", but its bad-case wait is short (5.6 min), so a 10% cut is about half a minute and 15 plans passed. It is scored against the brute-force truth like every other scenario.');
 P();
+// ---------------------------------------------------------------- post-lock addendum
+{
+  const has = (f: string) => existsSync(f);
+  if (has('eval/results-postlock/agent.json') && has('eval/results-interacting/agent.json')) {
+    const J = (f: string) => JSON.parse(readFileSync(f, 'utf8'));
+    const pl: SearcherScore[] = J('eval/results-postlock/agent.json');
+    const plRuns = J('eval/results-postlock/agent-runs.json');
+    const iAgent: SearcherScore[] = J('eval/results-interacting/agent.json');
+    const iGreedy: SearcherScore[] = J('eval/results-interacting/greedy.json');
+    const iGt: GroundTruth[] = J('eval/results-interacting/ground-truth.json');
+    const iFresh: Array<{ holds: boolean; scenario: string; label: string; improvementEval: number; improvementFresh: number; ciLowFresh: number }> = J('eval/results-interacting/fresh-check.json');
+    const pb = J('eval/results-postlock/builder.json');
+    const tic = J('eval/results-postlock/time-in-cafe.json');
+    const { INTERACTING } = await import('./scenariosInteracting');
+
+    P('## Post-lock run (Addendum 1)');
+    P();
+    P('Run after the results above, with the changes committed beforehand in [PROTOCOL.md](PROTOCOL.md) Addendum 1. Results above are unchanged.');
+    P();
+    P('### 1. Agent loop retries empty replies (same 15 scenarios)');
+    P();
+    P('| | Best plan found | Within 5% | Simulations | Tokens |');
+    P('|---|---|---|---|---|');
+    P(`| Original run | ${count(agent, 'foundOptimal')} of 15 | ${count(agent, 'within5')} of 15 | ${sum(agent.map((a) => a.simulations))} | ${runs.tokens.toLocaleString('en-US')} |`);
+    P(`| Post-lock run (retries) | **${count(pl, 'foundOptimal')} of 15** | ${count(pl, 'within5')} of 15 | ${sum(pl.map((a) => a.simulations))} | ${plRuns.tokens.toLocaleString('en-US')} |`);
+    P(`| Greedy (no LLM) | ${count(greedy, 'foundOptimal')} of 15 | ${count(greedy, 'within5')} of 15 | ${greedySims} | — |`);
+    P();
+    const plStops: Record<string, number> = {};
+    for (const r of plRuns.runs) plStops[r.stopReason] = (plStops[r.stopReason] ?? 0) + 1;
+    P(`Retries helped a little (one more scenario solved). Empty replies retried: ${sum(plRuns.runs.map((r: { emptyRetries?: number }) => r.emptyRetries ?? 0))}. Stop reasons: ${Object.entries(plStops).map(([k, v]) => `${k} ${v}`).join(', ')}. The agent still mostly misses by stopping one or two changes short of the best combination.`);
+    P();
+    P('### 2. Five interacting-changes scenarios (locked before running)');
+    P();
+    P('| Scenario | Mechanism | Plans | Best plan (brute force) | Greedy | LLM agent |');
+    P('|---|---|---|---|---|---|');
+    const res = (x: SearcherScore) => (x.foundOptimal ? 'best' : x.within5 ? 'within 5%' : 'miss');
+    for (const s of INTERACTING) {
+      const g = iGt.find((x) => x.scenario === s.id)!;
+      const gr = iGreedy.find((x) => x.scenario === s.id)!;
+      const ag = iAgent.find((x) => x.scenario === s.id)!;
+      P(`| ${s.id} ${s.title} | ${s.mechanism} | ${g.plans.length} | ${g.optimal?.label ?? 'nothing'} (p90 ${f1(g.optimal?.candidateP90)}, today ${f1(g.baseP90)}) | ${gr.recommendedLabel}: ${res(gr)} | ${ag.recommendedLabel}: ${res(ag)} |`);
+    }
+    P();
+    P(`- **Greedy: ${count(iGreedy, 'foundOptimal')} of 5.** It solved the three superadditive scenarios (each single fix still clears 10% on its own, so greedy takes it and then adds the other) and fell into both budget traps, as designed.`);
+    P(`- **LLM agent: ${count(iAgent, 'foundOptimal')} of 5 (within 5%: ${count(iAgent, 'within5')}).** It also fell into both budget traps and never tested the winning pair (peak barista + peak cook) in I3, I4 or I5. Simulations: agent ${sum(iAgent.map((a) => a.simulations))}, greedy ${sum(iGreedy.map((a) => a.simulations))}, brute force ${sum(iGt.map((g) => g.simulations))}.`);
+    P(`- **The LLM did not beat greedy anywhere in this evaluation** (20 scenarios). Brute force is cheap at this size (${sum(iGt.map((g) => g.plans.length))} plans in seconds), which is why the Stage 4 design uses it.`);
+    const iFp = iFresh.filter((r) => !r.holds);
+    P(`- **Acceptance-rule false positives: ${iFp.length} of ${iFresh.length} accepted plans** here (0 of 130 on the original set). All are borderline: accepted at 10–13% and re-measured at 6–10% on the fresh seed, with the CI still above zero (real improvements just under the bar). None is a best plan. One is the LLM agent's I3 recommendation (peak barista alone). Fix in Stage 4: re-check the final recommendation on a fresh seed with 1,000 replications before showing it.`);
+    P();
+    P('| Scenario | Plan | Improvement (search) | Improvement (fresh check) |');
+    P('|---|---|---|---|');
+    for (const r of iFp) P(`| ${r.scenario} | ${r.label} | ${(r.improvementEval * 100).toFixed(1)}% | ${(r.improvementFresh * 100).toFixed(1)}% |`);
+    P();
+    P('### 3. Model builder after the stated-zeros fix');
+    P();
+    const part = (pref: string) => {
+      const ss: BuilderScore[] = pb.scores.filter((s: BuilderScore) => s.id.startsWith(pref));
+      const t = sum(ss.map((s) => s.fields));
+      const c = sum(ss.map((s) => s.correct));
+      return { t, c, inv: sum(ss.map((s) => s.invented.length)), pct: ((c / t) * 100).toFixed(1) };
+    };
+    const seen = part('B');
+    const held = part('H');
+    P('| Cases | Before fix | After fix | Invented |');
+    P('|---|---|---|---|');
+    P(`| B01–B10 (seen while writing the fix) | ${bCorrect} / ${bFields} (${((bCorrect / bFields) * 100).toFixed(1)}%) | ${seen.c} / ${seen.t} (${seen.pct}%) | ${seen.inv} |`);
+    P(`| H01–H05 (held out, the fair test) | not run | **${held.c} / ${held.t} (${held.pct}%)** | ${held.inv} |`);
+    P();
+    P('Remaining errors: the model often gives a handoff head count but leaves out the handoff mode (now inferred in code: a stated handoff person means a dedicated handoff point; scores above are unchanged), and in H03 it filled in a handoff head count nobody stated.');
+    P();
+    P('### 4. Diagnostic: wait vs time in café');
+    P();
+    P(`"Wait" starts when the order is placed (matching how the 18 observed orders were timed), so a plan could shorten it by holding customers longer in the order line. Checked after locking: of ${tic.of} accepted plans across both sets, **${tic.worse} made time in café (arrival → order received) worse**. The flip side shows up in display, not decisions: in S06, adding a cashier makes "wait" about 67% longer but time in café about 7% shorter, because people leave the order line sooner and wait at pickup instead. Stage 4 shows both numbers.`);
+    P();
+    P(`Post-lock LLM cost: OpenRouter account usage after all runs $0.158 of $5 (this addendum about $0.06).`);
+    P();
+  }
+}
+
 P('## Limitations');
 P();
-P('- **Synthetic scenarios.** 13 of 15 cafés are invented; real cafés may have larger or messier option spaces.');
-P('- **Small n.** 15 scenarios, one LLM run each. The model runs at temperature 0, but outputs can still vary run to run; no repeat runs were made.');
+P('- **Synthetic scenarios.** 18 of 20 cafés are invented; real cafés may have larger or messier option spaces.');
+P('- **Small n.** 20 scenarios, one LLM run each per configuration. The model runs at temperature 0, but outputs can still vary run to run; no repeat runs were made.');
 P('- **Small change spaces favour greedy.** With 24–288 plans and mostly independent levers, step-by-step search is close to exhaustive. The comparison says little about large or tightly coupled spaces.');
 P('- **Calibration on 18 orders.** The only real-data café (S10) is calibrated on 18 observed orders from one session, and its drink + food waits run about 5.6 min short of what was observed.');
 P('- **False-positive check is within the model.** It tests whether accepted plans survive simulation noise, not whether they work in a real café.');

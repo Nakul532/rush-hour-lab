@@ -1,0 +1,1176 @@
+{
+  "rows": [
+    {
+      "scenario": "S01",
+      "plan": "+1 barista",
+      "optimal": true,
+      "waitImprovement": 0.3523247906754754,
+      "timeInCafeChange": -0.3293695165170766
+    },
+    {
+      "scenario": "S01",
+      "plan": "+1 barista 07:30–08:15",
+      "optimal": false,
+      "waitImprovement": 0.2474086449682158,
+      "timeInCafeChange": -0.22925298118364662
+    },
+    {
+      "scenario": "S01",
+      "plan": "+1 kitchen",
+      "optimal": false,
+      "waitImprovement": 0.15767621244778254,
+      "timeInCafeChange": -0.13963549254480753
+    },
+    {
+      "scenario": "S01",
+      "plan": "dedicated handoff (1)",
+      "optimal": false,
+      "waitImprovement": 0.337007570244917,
+      "timeInCafeChange": -0.3136194944121351
+    },
+    {
+      "scenario": "S01",
+      "plan": "grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.15070551014159753,
+      "timeInCafeChange": -0.13536455212086787
+    },
+    {
+      "scenario": "S01",
+      "plan": "grab-and-go 40%",
+      "optimal": false,
+      "waitImprovement": 0.24650114485473934,
+      "timeInCafeChange": -0.22272862897392584
+    },
+    {
+      "scenario": "S02",
+      "plan": "cashier → barista",
+      "optimal": false,
+      "waitImprovement": 0.378633332409483,
+      "timeInCafeChange": -0.3271027506381957
+    },
+    {
+      "scenario": "S02",
+      "plan": "grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.1491100143486561,
+      "timeInCafeChange": -0.14076962816002142
+    },
+    {
+      "scenario": "S02",
+      "plan": "cashier → barista + grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.39101090571942565,
+      "timeInCafeChange": -0.3347006511823615
+    },
+    {
+      "scenario": "S02",
+      "plan": "grab-and-go 40%",
+      "optimal": false,
+      "waitImprovement": 0.24528452851903404,
+      "timeInCafeChange": -0.23255236685493066
+    },
+    {
+      "scenario": "S02",
+      "plan": "cashier → barista + grab-and-go 40%",
+      "optimal": false,
+      "waitImprovement": 0.39718382081912995,
+      "timeInCafeChange": -0.34074855762242395
+    },
+    {
+      "scenario": "S02",
+      "plan": "cashier → barista + batches of 6 every 20 min",
+      "optimal": false,
+      "waitImprovement": 0.6033893601488935,
+      "timeInCafeChange": -0.5254068602268632
+    },
+    {
+      "scenario": "S02",
+      "plan": "cashier → barista + grab-and-go 20% + batches of 6 every 20 min",
+      "optimal": false,
+      "waitImprovement": 0.6277528200708475,
+      "timeInCafeChange": -0.5460122387165908
+    },
+    {
+      "scenario": "S02",
+      "plan": "cashier → barista + grab-and-go 40% + batches of 6 every 20 min",
+      "optimal": true,
+      "waitImprovement": 0.6428779175484305,
+      "timeInCafeChange": -0.5552172615737112
+    },
+    {
+      "scenario": "S03",
+      "plan": "+1 kitchen 07:15–08:00",
+      "optimal": false,
+      "waitImprovement": 0.4688512638041615,
+      "timeInCafeChange": -0.44449713898311094
+    },
+    {
+      "scenario": "S03",
+      "plan": "parallel prep + +1 kitchen 07:15–08:00",
+      "optimal": true,
+      "waitImprovement": 0.5265927184155849,
+      "timeInCafeChange": -0.4995164897508427
+    },
+    {
+      "scenario": "S04",
+      "plan": "grab-and-go 30%",
+      "optimal": true,
+      "waitImprovement": 0.34127399337806197,
+      "timeInCafeChange": -0.3088904513173339
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 barista",
+      "optimal": false,
+      "waitImprovement": 0.15191029331270725,
+      "timeInCafeChange": -0.13182149526396236
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 barista + +1 cashier",
+      "optimal": false,
+      "waitImprovement": 0.12960554150941123,
+      "timeInCafeChange": -0.14153945838552473
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 kitchen",
+      "optimal": false,
+      "waitImprovement": 0.11460452181870319,
+      "timeInCafeChange": -0.09450485863098804
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 barista + +1 kitchen",
+      "optimal": false,
+      "waitImprovement": 0.3173431133705646,
+      "timeInCafeChange": -0.26528343242769825
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 barista + +1 cashier + +1 kitchen",
+      "optimal": false,
+      "waitImprovement": 0.3131563279395565,
+      "timeInCafeChange": -0.2885945327557099
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 barista + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.15639972589613246,
+      "timeInCafeChange": -0.13248316114507216
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 barista + +1 cashier + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.14095336839991685,
+      "timeInCafeChange": -0.1498526617793193
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 kitchen + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.18385567026742153,
+      "timeInCafeChange": -0.14854463043053387
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 barista + +1 kitchen + grab-and-go 30%",
+      "optimal": true,
+      "waitImprovement": 0.33020414019962724,
+      "timeInCafeChange": -0.27581003107467994
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 cashier + +1 kitchen + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.16338933420239923,
+      "timeInCafeChange": -0.16451325337439204
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 barista + +1 cashier + +1 kitchen + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.3251806553268636,
+      "timeInCafeChange": -0.29809505755633153
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 barista + +1 kitchen + sequential prep",
+      "optimal": false,
+      "waitImprovement": 0.1366184199761608,
+      "timeInCafeChange": -0.12189569476619823
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 barista + +1 cashier + +1 kitchen + sequential prep",
+      "optimal": false,
+      "waitImprovement": 0.1368681506263015,
+      "timeInCafeChange": -0.14436240033036213
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 barista + +1 kitchen + grab-and-go 30% + sequential prep",
+      "optimal": false,
+      "waitImprovement": 0.14482463472999668,
+      "timeInCafeChange": -0.12244500979394102
+    },
+    {
+      "scenario": "S05",
+      "plan": "+1 barista + +1 cashier + +1 kitchen + grab-and-go 30% + sequential prep",
+      "optimal": false,
+      "waitImprovement": 0.1448889124054633,
+      "timeInCafeChange": -0.15113219556980645
+    },
+    {
+      "scenario": "S06",
+      "plan": "+1 barista",
+      "optimal": true,
+      "waitImprovement": 0.27453250078208713,
+      "timeInCafeChange": -0.14014733349056172
+    },
+    {
+      "scenario": "S06",
+      "plan": "+1 barista + grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.1857991596615812,
+      "timeInCafeChange": -0.04801496239293568
+    },
+    {
+      "scenario": "S06",
+      "plan": "express drinks (1)",
+      "optimal": false,
+      "waitImprovement": 0.24153295537413189,
+      "timeInCafeChange": -0.11764270074751956
+    },
+    {
+      "scenario": "S06",
+      "plan": "+1 barista + express drinks (1)",
+      "optimal": false,
+      "waitImprovement": 0.2616701974025045,
+      "timeInCafeChange": -0.12650493327195822
+    },
+    {
+      "scenario": "S06",
+      "plan": "grab-and-go 20% + express drinks (1)",
+      "optimal": false,
+      "waitImprovement": 0.16595669809264169,
+      "timeInCafeChange": -0.03538469674022592
+    },
+    {
+      "scenario": "S06",
+      "plan": "+1 barista + grab-and-go 20% + express drinks (1)",
+      "optimal": false,
+      "waitImprovement": 0.18229846344250886,
+      "timeInCafeChange": -0.042437348463135155
+    },
+    {
+      "scenario": "S07",
+      "plan": "dedicated handoff (1)",
+      "optimal": false,
+      "waitImprovement": 0.6899824247271917,
+      "timeInCafeChange": -0.6584024419030629
+    },
+    {
+      "scenario": "S07",
+      "plan": "+1 barista",
+      "optimal": false,
+      "waitImprovement": 0.6982752769000694,
+      "timeInCafeChange": -0.666403101653631
+    },
+    {
+      "scenario": "S07",
+      "plan": "dedicated handoff (1) + +1 barista",
+      "optimal": false,
+      "waitImprovement": 0.6939647034511961,
+      "timeInCafeChange": -0.6641478592519515
+    },
+    {
+      "scenario": "S07",
+      "plan": "express drinks (1)",
+      "optimal": false,
+      "waitImprovement": 0.637456853815154,
+      "timeInCafeChange": -0.6105512119491828
+    },
+    {
+      "scenario": "S07",
+      "plan": "dedicated handoff (1) + express drinks (1)",
+      "optimal": false,
+      "waitImprovement": 0.6462774280675102,
+      "timeInCafeChange": -0.6178334282948139
+    },
+    {
+      "scenario": "S07",
+      "plan": "+1 barista + express drinks (1)",
+      "optimal": false,
+      "waitImprovement": 0.6462980510483495,
+      "timeInCafeChange": -0.6179627430661238
+    },
+    {
+      "scenario": "S07",
+      "plan": "grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.3700510404301315,
+      "timeInCafeChange": -0.35372567819705697
+    },
+    {
+      "scenario": "S07",
+      "plan": "dedicated handoff (1) + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.7088228716610849,
+      "timeInCafeChange": -0.6767105676678455
+    },
+    {
+      "scenario": "S07",
+      "plan": "+1 barista + grab-and-go 30%",
+      "optimal": true,
+      "waitImprovement": 0.7158065126659751,
+      "timeInCafeChange": -0.6823896835507253
+    },
+    {
+      "scenario": "S07",
+      "plan": "express drinks (1) + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.6944263230713994,
+      "timeInCafeChange": -0.6611687428368462
+    },
+    {
+      "scenario": "S07",
+      "plan": "dedicated handoff (1) + sequential prep",
+      "optimal": false,
+      "waitImprovement": 0.6501587673330093,
+      "timeInCafeChange": -0.620738554635111
+    },
+    {
+      "scenario": "S07",
+      "plan": "+1 barista + sequential prep",
+      "optimal": false,
+      "waitImprovement": 0.6665444742557355,
+      "timeInCafeChange": -0.6377609843933465
+    },
+    {
+      "scenario": "S07",
+      "plan": "express drinks (1) + sequential prep",
+      "optimal": false,
+      "waitImprovement": 0.6170206880262636,
+      "timeInCafeChange": -0.5908628131163564
+    },
+    {
+      "scenario": "S07",
+      "plan": "grab-and-go 30% + sequential prep",
+      "optimal": false,
+      "waitImprovement": 0.3364625912851501,
+      "timeInCafeChange": -0.31763864030551026
+    },
+    {
+      "scenario": "S08",
+      "plan": "+1 barista",
+      "optimal": true,
+      "waitImprovement": 0.7750172065850155,
+      "timeInCafeChange": -0.7140797731942864
+    },
+    {
+      "scenario": "S08",
+      "plan": "grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.3766332625908418,
+      "timeInCafeChange": -0.34354306971678306
+    },
+    {
+      "scenario": "S08",
+      "plan": "grab-and-go 40%",
+      "optimal": false,
+      "waitImprovement": 0.5750502425087917,
+      "timeInCafeChange": -0.5214077766491112
+    },
+    {
+      "scenario": "S09",
+      "plan": "parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.13047606920452057,
+      "timeInCafeChange": -0.03276540516210292
+    },
+    {
+      "scenario": "S09",
+      "plan": "+1 kitchen",
+      "optimal": false,
+      "waitImprovement": 0.16866695171073995,
+      "timeInCafeChange": -0.05248003474259377
+    },
+    {
+      "scenario": "S09",
+      "plan": "parallel prep + +1 kitchen",
+      "optimal": false,
+      "waitImprovement": 0.24682668364140842,
+      "timeInCafeChange": -0.07201440056627953
+    },
+    {
+      "scenario": "S09",
+      "plan": "+1 barista",
+      "optimal": false,
+      "waitImprovement": 0.3535529133317629,
+      "timeInCafeChange": -0.14863169855839525
+    },
+    {
+      "scenario": "S09",
+      "plan": "parallel prep + +1 barista",
+      "optimal": true,
+      "waitImprovement": 0.44302497451812606,
+      "timeInCafeChange": -0.17230499581863257
+    },
+    {
+      "scenario": "S09",
+      "plan": "grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.23244132847822466,
+      "timeInCafeChange": -0.03235217619429518
+    },
+    {
+      "scenario": "S09",
+      "plan": "parallel prep + grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.3443867261903071,
+      "timeInCafeChange": -0.06265670954759175
+    },
+    {
+      "scenario": "S10",
+      "plan": "parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.10390054386266472,
+      "timeInCafeChange": -0.09012777509837881
+    },
+    {
+      "scenario": "S10",
+      "plan": "+1 barista",
+      "optimal": false,
+      "waitImprovement": 0.23206060537850898,
+      "timeInCafeChange": -0.2092890784420583
+    },
+    {
+      "scenario": "S10",
+      "plan": "parallel prep + +1 barista",
+      "optimal": false,
+      "waitImprovement": 0.3467215907533883,
+      "timeInCafeChange": -0.3035934263444655
+    },
+    {
+      "scenario": "S10",
+      "plan": "+1 kitchen",
+      "optimal": false,
+      "waitImprovement": 0.16503703827430352,
+      "timeInCafeChange": -0.13935260233847296
+    },
+    {
+      "scenario": "S10",
+      "plan": "parallel prep + +1 kitchen",
+      "optimal": false,
+      "waitImprovement": 0.24881794858684136,
+      "timeInCafeChange": -0.211969927617682
+    },
+    {
+      "scenario": "S10",
+      "plan": "+1 barista + +1 kitchen",
+      "optimal": true,
+      "waitImprovement": 0.5063498411472889,
+      "timeInCafeChange": -0.444994687633738
+    },
+    {
+      "scenario": "S10",
+      "plan": "parallel prep + grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.17941188705035266,
+      "timeInCafeChange": -0.15554962321662
+    },
+    {
+      "scenario": "S10",
+      "plan": "+1 barista + grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.2266670255926401,
+      "timeInCafeChange": -0.20551349633269148
+    },
+    {
+      "scenario": "S10",
+      "plan": "+1 kitchen + grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.2702034305017183,
+      "timeInCafeChange": -0.23487659860210722
+    },
+    {
+      "scenario": "S10",
+      "plan": "dedicated handoff (1)",
+      "optimal": false,
+      "waitImprovement": 0.20301015258908225,
+      "timeInCafeChange": -0.18587261490700677
+    },
+    {
+      "scenario": "S10",
+      "plan": "parallel prep + dedicated handoff (1)",
+      "optimal": false,
+      "waitImprovement": 0.3337442174572857,
+      "timeInCafeChange": -0.2918462493918361
+    },
+    {
+      "scenario": "S10",
+      "plan": "+1 barista + dedicated handoff (1)",
+      "optimal": false,
+      "waitImprovement": 0.23594705401069793,
+      "timeInCafeChange": -0.2142776415343539
+    },
+    {
+      "scenario": "S10",
+      "plan": "+1 kitchen + dedicated handoff (1)",
+      "optimal": false,
+      "waitImprovement": 0.4449077103363022,
+      "timeInCafeChange": -0.38869732157492953
+    },
+    {
+      "scenario": "S10",
+      "plan": "grab-and-go 20% + dedicated handoff (1)",
+      "optimal": false,
+      "waitImprovement": 0.20860098734700208,
+      "timeInCafeChange": -0.1909774306280996
+    },
+    {
+      "scenario": "S11",
+      "plan": "+1 barista first peak (07:00–07:45)",
+      "optimal": false,
+      "waitImprovement": 0.14230374234164736,
+      "timeInCafeChange": -0.1341972344610154
+    },
+    {
+      "scenario": "S11",
+      "plan": "grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.16916485577811127,
+      "timeInCafeChange": -0.1523431221164825
+    },
+    {
+      "scenario": "S11",
+      "plan": "+1 barista first peak (07:00–07:45) + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.23892217863975562,
+      "timeInCafeChange": -0.21675929222810178
+    },
+    {
+      "scenario": "S11",
+      "plan": "+1 barista second peak (08:15–09:00) + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.22132289711667938,
+      "timeInCafeChange": -0.20045819427426748
+    },
+    {
+      "scenario": "S11",
+      "plan": "+1 kitchen second peak + grab-and-go 30%",
+      "optimal": true,
+      "waitImprovement": 0.2957318215759892,
+      "timeInCafeChange": -0.2594219887329607
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista",
+      "optimal": false,
+      "waitImprovement": 0.21854237308593116,
+      "timeInCafeChange": -0.2082580799305126
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15",
+      "optimal": false,
+      "waitImprovement": 0.16874355468108498,
+      "timeInCafeChange": -0.16161553594825306
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 kitchen",
+      "optimal": false,
+      "waitImprovement": 0.3210782426899797,
+      "timeInCafeChange": -0.2998327397700316
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15 + +1 kitchen",
+      "optimal": false,
+      "waitImprovement": 0.65646223865129,
+      "timeInCafeChange": -0.615839403190824
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 kitchen 07:30–08:15",
+      "optimal": false,
+      "waitImprovement": 0.270899698154912,
+      "timeInCafeChange": -0.25331187800744276
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista + +1 kitchen 07:30–08:15",
+      "optimal": false,
+      "waitImprovement": 0.6555190197568459,
+      "timeInCafeChange": -0.618050012713677
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15 + +1 kitchen 07:30–08:15",
+      "optimal": false,
+      "waitImprovement": 0.5758751677430933,
+      "timeInCafeChange": -0.5405935691424847
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15 + +1 cashier",
+      "optimal": false,
+      "waitImprovement": 0.15288988406836584,
+      "timeInCafeChange": -0.1685055307153131
+    },
+    {
+      "scenario": "S13",
+      "plan": "dedicated handoff (1)",
+      "optimal": false,
+      "waitImprovement": 0.19219746377826552,
+      "timeInCafeChange": -0.18395414498087867
+    },
+    {
+      "scenario": "S13",
+      "plan": "grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.11274499750235031,
+      "timeInCafeChange": -0.10659386205934142
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista + grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.2272340349350216,
+      "timeInCafeChange": -0.2147680022923828
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15 + grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.19327066869395657,
+      "timeInCafeChange": -0.18200007013418912
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 kitchen + grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.4993740891302193,
+      "timeInCafeChange": -0.4668089433571026
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 kitchen 07:30–08:15 + grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.43054892183648086,
+      "timeInCafeChange": -0.40220628204170994
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15 + +1 kitchen 07:30–08:15 + grab-and-go 20%",
+      "optimal": false,
+      "waitImprovement": 0.6052360629074071,
+      "timeInCafeChange": -0.5681871963029892
+    },
+    {
+      "scenario": "S13",
+      "plan": "grab-and-go 40%",
+      "optimal": false,
+      "waitImprovement": 0.18541539263402018,
+      "timeInCafeChange": -0.16997735557482366
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista + grab-and-go 40%",
+      "optimal": false,
+      "waitImprovement": 0.23730035490569307,
+      "timeInCafeChange": -0.2221039079066079
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15 + grab-and-go 40%",
+      "optimal": false,
+      "waitImprovement": 0.21657302352008354,
+      "timeInCafeChange": -0.20236555254933727
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 kitchen + grab-and-go 40%",
+      "optimal": false,
+      "waitImprovement": 0.6189970188333831,
+      "timeInCafeChange": -0.5750736128384415
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 kitchen 07:30–08:15 + grab-and-go 40%",
+      "optimal": false,
+      "waitImprovement": 0.5306937134846154,
+      "timeInCafeChange": -0.4926509568606073
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15 + +1 kitchen 07:30–08:15 + grab-and-go 40%",
+      "optimal": false,
+      "waitImprovement": 0.6297513623731181,
+      "timeInCafeChange": -0.5883040631038445
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 cashier + grab-and-go 40%",
+      "optimal": false,
+      "waitImprovement": 0.1671171096982832,
+      "timeInCafeChange": -0.18320395730670608
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.2493885251144586,
+      "timeInCafeChange": -0.23823976090789034
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15 + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.21700521567629558,
+      "timeInCafeChange": -0.20556782233208343
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 kitchen + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.35480139169528313,
+      "timeInCafeChange": -0.331907457004438
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15 + +1 kitchen + parallel prep",
+      "optimal": true,
+      "waitImprovement": 0.6860577469641662,
+      "timeInCafeChange": -0.642596793244608
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 kitchen 07:30–08:15 + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.3163341777875124,
+      "timeInCafeChange": -0.29634532689400744
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista + +1 kitchen 07:30–08:15 + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.684685728728499,
+      "timeInCafeChange": -0.6458092355837816
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15 + +1 kitchen 07:30–08:15 + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.6044261220409188,
+      "timeInCafeChange": -0.5685162723308758
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15 + +1 cashier + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.1992073755278625,
+      "timeInCafeChange": -0.21198388896961431
+    },
+    {
+      "scenario": "S13",
+      "plan": "dedicated handoff (1) + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.2468924403674653,
+      "timeInCafeChange": -0.23547318408994855
+    },
+    {
+      "scenario": "S13",
+      "plan": "grab-and-go 20% + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.17104222794051227,
+      "timeInCafeChange": -0.16016701201007247
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista + grab-and-go 20% + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.2611332660062355,
+      "timeInCafeChange": -0.24590827668079096
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15 + grab-and-go 20% + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.23724890113540412,
+      "timeInCafeChange": -0.22251748129545135
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 kitchen + grab-and-go 20% + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.5339752768328442,
+      "timeInCafeChange": -0.49985926630609107
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 kitchen 07:30–08:15 + grab-and-go 20% + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.47921533982976,
+      "timeInCafeChange": -0.44815336176565895
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 cashier + grab-and-go 20% + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.15186160947023636,
+      "timeInCafeChange": -0.16731415595241753
+    },
+    {
+      "scenario": "S13",
+      "plan": "grab-and-go 40% + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.2363684452827839,
+      "timeInCafeChange": -0.22017950041563225
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista + grab-and-go 40% + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.270632963746535,
+      "timeInCafeChange": -0.25358989178713015
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 barista 07:30–08:15 + grab-and-go 40% + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.2578843339785383,
+      "timeInCafeChange": -0.24057999176754313
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 kitchen + grab-and-go 40% + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.6581832950981322,
+      "timeInCafeChange": -0.612020212606353
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 kitchen 07:30–08:15 + grab-and-go 40% + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.5803907111739186,
+      "timeInCafeChange": -0.5392880973748312
+    },
+    {
+      "scenario": "S13",
+      "plan": "+1 cashier + grab-and-go 40% + parallel prep",
+      "optimal": false,
+      "waitImprovement": 0.21809523941099787,
+      "timeInCafeChange": -0.23023684515456863
+    },
+    {
+      "scenario": "S14",
+      "plan": "+1 barista 07:30–08:00",
+      "optimal": false,
+      "waitImprovement": 0.27587410859018047,
+      "timeInCafeChange": -0.25801044823059366
+    },
+    {
+      "scenario": "S14",
+      "plan": "grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.28772242588773544,
+      "timeInCafeChange": -0.2619147517149807
+    },
+    {
+      "scenario": "S14",
+      "plan": "grab-and-go 50%",
+      "optimal": true,
+      "waitImprovement": 0.37137372556854903,
+      "timeInCafeChange": -0.3379498010928506
+    },
+    {
+      "scenario": "S14",
+      "plan": "+1 barista 07:30–08:00 + sequential prep",
+      "optimal": false,
+      "waitImprovement": 0.2314649945203144,
+      "timeInCafeChange": -0.21569643550611897
+    },
+    {
+      "scenario": "S14",
+      "plan": "grab-and-go 30% + sequential prep",
+      "optimal": false,
+      "waitImprovement": 0.2269385729590593,
+      "timeInCafeChange": -0.20587214395635192
+    },
+    {
+      "scenario": "S14",
+      "plan": "grab-and-go 50% + sequential prep",
+      "optimal": false,
+      "waitImprovement": 0.3179438866603371,
+      "timeInCafeChange": -0.29005230196726456
+    },
+    {
+      "scenario": "I1",
+      "plan": "+1 barista",
+      "optimal": false,
+      "waitImprovement": 0.15124892881105437,
+      "timeInCafeChange": -0.12604204062603386
+    },
+    {
+      "scenario": "I1",
+      "plan": "+1 barista 07:30–08:00",
+      "optimal": false,
+      "waitImprovement": 0.10940053060495411,
+      "timeInCafeChange": -0.09027685376993204
+    },
+    {
+      "scenario": "I1",
+      "plan": "+1 kitchen",
+      "optimal": false,
+      "waitImprovement": 0.11391477381138941,
+      "timeInCafeChange": -0.0982350553736076
+    },
+    {
+      "scenario": "I1",
+      "plan": "+1 barista + +1 kitchen",
+      "optimal": true,
+      "waitImprovement": 0.7513239008646551,
+      "timeInCafeChange": -0.6078404505628668
+    },
+    {
+      "scenario": "I1",
+      "plan": "+1 barista 07:30–08:00 + +1 kitchen",
+      "optimal": false,
+      "waitImprovement": 0.44454681278134967,
+      "timeInCafeChange": -0.36747865396393575
+    },
+    {
+      "scenario": "I1",
+      "plan": "+1 barista + +1 kitchen 07:30–08:00",
+      "optimal": false,
+      "waitImprovement": 0.46384755587112786,
+      "timeInCafeChange": -0.38384376809869303
+    },
+    {
+      "scenario": "I1",
+      "plan": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00",
+      "optimal": false,
+      "waitImprovement": 0.376137066584536,
+      "timeInCafeChange": -0.31271699149807564
+    },
+    {
+      "scenario": "I1",
+      "plan": "+1 barista + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.15124892881105437,
+      "timeInCafeChange": -0.12604204062603386
+    },
+    {
+      "scenario": "I1",
+      "plan": "+1 barista 07:30–08:00 + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.10940053060495411,
+      "timeInCafeChange": -0.09027685376993204
+    },
+    {
+      "scenario": "I1",
+      "plan": "+1 kitchen + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.11391477381138941,
+      "timeInCafeChange": -0.0982350553736076
+    },
+    {
+      "scenario": "I2",
+      "plan": "cashier → barista",
+      "optimal": false,
+      "waitImprovement": 0.14877260693593602,
+      "timeInCafeChange": -0.1340039736737849
+    },
+    {
+      "scenario": "I2",
+      "plan": "cashier → kitchen",
+      "optimal": false,
+      "waitImprovement": 0.11224451559926933,
+      "timeInCafeChange": -0.10058178474465013
+    },
+    {
+      "scenario": "I2",
+      "plan": "cashier → barista + cashier → kitchen",
+      "optimal": true,
+      "waitImprovement": 0.7465368244553344,
+      "timeInCafeChange": -0.5938751444765323
+    },
+    {
+      "scenario": "I2",
+      "plan": "cashier → barista + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.14877260693593602,
+      "timeInCafeChange": -0.1340039736737849
+    },
+    {
+      "scenario": "I2",
+      "plan": "cashier → kitchen + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.11224451559926933,
+      "timeInCafeChange": -0.10058178474465013
+    },
+    {
+      "scenario": "I2",
+      "plan": "cashier → barista + cashier → kitchen + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.7465368244553344,
+      "timeInCafeChange": -0.5938751444765323
+    },
+    {
+      "scenario": "I3",
+      "plan": "+1 barista 07:30–08:00",
+      "optimal": false,
+      "waitImprovement": 0.13049121663856633,
+      "timeInCafeChange": -0.10878184306777561
+    },
+    {
+      "scenario": "I3",
+      "plan": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00",
+      "optimal": true,
+      "waitImprovement": 0.45505506069268864,
+      "timeInCafeChange": -0.38411328569210873
+    },
+    {
+      "scenario": "I3",
+      "plan": "+1 barista 07:30–08:00 + +1 cashier 07:30–08:00",
+      "optimal": false,
+      "waitImprovement": 0.10155506583325502,
+      "timeInCafeChange": -0.12144336759586655
+    },
+    {
+      "scenario": "I3",
+      "plan": "+1 barista 07:30–08:00 + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.13049121663856633,
+      "timeInCafeChange": -0.10878184306777561
+    },
+    {
+      "scenario": "I4",
+      "plan": "+1 barista whole rush",
+      "optimal": false,
+      "waitImprovement": 0.30024825994551846,
+      "timeInCafeChange": -0.24332095081623298
+    },
+    {
+      "scenario": "I4",
+      "plan": "+1 barista 07:30–08:00",
+      "optimal": false,
+      "waitImprovement": 0.25534610884002945,
+      "timeInCafeChange": -0.2062751418306482
+    },
+    {
+      "scenario": "I4",
+      "plan": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00",
+      "optimal": false,
+      "waitImprovement": 0.4570319088808965,
+      "timeInCafeChange": -0.3738227563877572
+    },
+    {
+      "scenario": "I4",
+      "plan": "grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.1352112191115743,
+      "timeInCafeChange": -0.1001784208075996
+    },
+    {
+      "scenario": "I4",
+      "plan": "+1 barista 07:30–08:00 + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.26588888652941545,
+      "timeInCafeChange": -0.2089049158285456
+    },
+    {
+      "scenario": "I4",
+      "plan": "+1 kitchen 07:30–08:00 + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.20974161167667618,
+      "timeInCafeChange": -0.1611307346069497
+    },
+    {
+      "scenario": "I4",
+      "plan": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + grab-and-go 30%",
+      "optimal": true,
+      "waitImprovement": 0.4864248526588586,
+      "timeInCafeChange": -0.38658948606955346
+    },
+    {
+      "scenario": "I4",
+      "plan": "+1 barista 07:30–08:00 + +1 cashier 07:30–08:00",
+      "optimal": false,
+      "waitImprovement": 0.22009874646157707,
+      "timeInCafeChange": -0.2271323678589797
+    },
+    {
+      "scenario": "I4",
+      "plan": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + +1 cashier 07:30–08:00",
+      "optimal": false,
+      "waitImprovement": 0.45982582520954357,
+      "timeInCafeChange": -0.41198334556785327
+    },
+    {
+      "scenario": "I4",
+      "plan": "+1 barista 07:30–08:00 + grab-and-go 30% + +1 cashier 07:30–08:00",
+      "optimal": false,
+      "waitImprovement": 0.2342903980267271,
+      "timeInCafeChange": -0.23522615800754176
+    },
+    {
+      "scenario": "I4",
+      "plan": "+1 kitchen 07:30–08:00 + grab-and-go 30% + +1 cashier 07:30–08:00",
+      "optimal": false,
+      "waitImprovement": 0.16185194898193128,
+      "timeInCafeChange": -0.1783598520303797
+    },
+    {
+      "scenario": "I5",
+      "plan": "+1 barista whole rush",
+      "optimal": false,
+      "waitImprovement": 0.14862396524549817,
+      "timeInCafeChange": -0.12451238418030713
+    },
+    {
+      "scenario": "I5",
+      "plan": "+1 barista 07:30–08:00",
+      "optimal": false,
+      "waitImprovement": 0.13049121663856633,
+      "timeInCafeChange": -0.10878184306777561
+    },
+    {
+      "scenario": "I5",
+      "plan": "+1 kitchen whole rush",
+      "optimal": false,
+      "waitImprovement": 0.11145516405002934,
+      "timeInCafeChange": -0.09466669586317356
+    },
+    {
+      "scenario": "I5",
+      "plan": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00",
+      "optimal": true,
+      "waitImprovement": 0.45505506069268864,
+      "timeInCafeChange": -0.38411328569210873
+    },
+    {
+      "scenario": "I5",
+      "plan": "+1 barista 07:30–08:00 + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.13049121663856633,
+      "timeInCafeChange": -0.10878184306777561
+    },
+    {
+      "scenario": "I5",
+      "plan": "+1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + grab-and-go 30%",
+      "optimal": false,
+      "waitImprovement": 0.45505506069268864,
+      "timeInCafeChange": -0.38411328569210873
+    }
+  ],
+  "worse": 0,
+  "worseBy10pct": 0,
+  "of": 167
+}

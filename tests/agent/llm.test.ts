@@ -72,3 +72,32 @@ describe('Groq client (fake fetch)', () => {
     expect(() => new GroqLlm({ apiKey: '' })).toThrow();
   });
 });
+
+describe('OpenRouter client', () => {
+  it('retries a 429 rate limit with backoff, then succeeds', async () => {
+    const { OpenRouterLlm } = await import('../../src/agent/openrouter');
+    let calls = 0;
+    const fetchImpl = (async () => {
+      calls++;
+      if (calls < 3) return new Response('{"error":{"message":"rate-limited upstream"}}', { status: 429 });
+      return new Response(JSON.stringify({ model: 'openai/gpt-oss-120b', provider: 'Groq', choices: [{ message: { content: 'ok' } }], usage: { total_tokens: 5, cost: 0.00001 } }), { status: 200 });
+    }) as unknown as typeof fetch;
+    const llm = new OpenRouterLlm({ apiKey: 'k', fetchImpl, retryDelaysMs: [1, 1, 1] });
+    const res = await llm.complete({ messages: [] });
+    expect(res.message.content).toBe('ok');
+    expect(llm.retries).toBe(2);
+  });
+
+  it('gives up after the last retry and reports the status', async () => {
+    const { OpenRouterLlm } = await import('../../src/agent/openrouter');
+    const fetchImpl = (async () => new Response('busy', { status: 429 })) as unknown as typeof fetch;
+    const llm = new OpenRouterLlm({ apiKey: 'k', fetchImpl, retryDelaysMs: [1, 1] });
+    await expect(llm.complete({ messages: [] })).rejects.toMatchObject({ status: 429 });
+  });
+
+  it('refuses a response served by a provider other than Groq', async () => {
+    const { OpenRouterLlm } = await import('../../src/agent/openrouter');
+    const fetchImpl = (async () => new Response(JSON.stringify({ model: 'm', provider: 'Other', choices: [{ message: { content: 'x' } }] }), { status: 200 })) as unknown as typeof fetch;
+    await expect(new OpenRouterLlm({ apiKey: 'k', fetchImpl }).complete({ messages: [] })).rejects.toThrow(/not Groq/);
+  });
+});

@@ -38,3 +38,12 @@ Three changes after the first results, each run as a separately labelled post-lo
 3. **Model builder prompt fix for stated zeros.** The fix was written after seeing B01–B10 failures, so B01–B10 are reported but are no longer a fair test. Five held-out cases (H01–H05) were committed before the fix ran (commit `31f3b71`) and are the fair test.
 
 Spending cap for this addendum: $1.00 of OpenRouter credit.
+
+## Addendum 1b (committed before running)
+
+The Addendum 1 re-run of the 15 original scenarios was contaminated: 4 runs (S07, S08, S10, S11) were cut short by Groq rate limits (HTTP 429), because Groq is pinned with fallbacks disabled. Two fixes, then a second re-run into `eval/results-postlock-b/` (Addendum 1 results are kept as they are):
+
+1. The OpenRouter client retries 429 and 5xx responses after 2, 4 and 8 seconds before giving up.
+2. Tool names written as `functions.finish` or `name=functions.finish` are accepted (seen once, in S02).
+
+Nothing else changes. The interacting-scenario run had no rate-limit errors and is not re-run.

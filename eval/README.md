@@ -67,10 +67,64 @@ LLM agent: 450,172 tokens; OpenRouter reported $0.0408 per call in total (accoun
 
 None to scenarios, scoring or the agent. One observation: **S05 did not behave as designed.** It was meant as "nothing should pass", but its bad-case wait is short (5.6 min), so a 10% cut is about half a minute and 15 plans passed. It is scored against the brute-force truth like every other scenario.
 
+## Post-lock run (Addendum 1)
+
+Run after the results above, with the changes committed beforehand in [PROTOCOL.md](PROTOCOL.md) Addendum 1. Results above are unchanged.
+
+### 1. Agent loop retries empty replies (same 15 scenarios)
+
+| | Best plan found | Within 5% | Simulations | Tokens |
+|---|---|---|---|---|
+| Original run | 6 of 15 | 7 of 15 | 365 | 450,172 |
+| Post-lock run (retries) | **7 of 15** | 8 of 15 | 331 | 428,144 |
+| Greedy (no LLM) | 15 of 15 | 15 of 15 | 714 | — |
+
+Retries helped a little (one more scenario solved). Empty replies retried: 18. Stop reasons: experiment_budget 7, llm_call_limit 2, finished 1, llm_error 4, no_tool_call 1. The agent still mostly misses by stopping one or two changes short of the best combination.
+
+### 2. Five interacting-changes scenarios (locked before running)
+
+| Scenario | Mechanism | Plans | Best plan (brute force) | Greedy | LLM agent |
+|---|---|---|---|---|---|
+| I1 Twin bottleneck, max 2 changes | superadditive | 36 | +1 barista + +1 kitchen (p90 2.9, today 11.7) | +1 barista + +1 kitchen: best | +1 barista + +1 kitchen: best |
+| I2 Twin bottleneck, no new hires, three on the register | superadditive | 24 | cashier → barista + cashier → kitchen (p90 3.0, today 11.8) | cashier → barista + cashier → kitchen: best | cashier → barista + cashier → kitchen + grab-and-go 30%: within 5% |
+| I3 Twin bottleneck at the peak, $500 budget | superadditive | 16 | +1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 (p90 5.5, today 10.2) | +1 barista 07:30–08:00 + +1 kitchen 07:30–08:00: best | +1 barista 07:30–08:00: miss |
+| I4 Budget trap: whole-rush barista vs two peak extras, $700 | budget trap | 24 | +1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 + grab-and-go 30% (p90 4.3, today 8.3) | +1 barista whole rush: miss | +1 barista whole rush: miss |
+| I5 Budget trap at a twin peak, $660 | budget trap | 18 | +1 barista 07:30–08:00 + +1 kitchen 07:30–08:00 (p90 5.5, today 10.2) | +1 barista whole rush: miss | +1 barista whole rush: miss |
+
+- **Greedy: 3 of 5.** It solved the three superadditive scenarios (each single fix still clears 10% on its own, so greedy takes it and then adds the other) and fell into both budget traps, as designed.
+- **LLM agent: 1 of 5 (within 5%: 2).** It also fell into both budget traps and never tested the winning pair (peak barista + peak cook) in I3, I4 or I5. Simulations: agent 106, greedy 198, brute force 360.
+- **The LLM did not beat greedy anywhere in this evaluation** (20 scenarios). Brute force is cheap at this size (118 plans in seconds), which is why the Stage 4 design uses it.
+- **Acceptance-rule false positives: 7 of 37 accepted plans** here (0 of 130 on the original set). All are borderline: accepted at 10–13% and re-measured at 6–10% on the fresh seed, with the CI still above zero (real improvements just under the bar). None is a best plan. One is the LLM agent's I3 recommendation (peak barista alone). Fix in Stage 4: re-check the final recommendation on a fresh seed with 1,000 replications before showing it.
+
+| Scenario | Plan | Improvement (search) | Improvement (fresh check) |
+|---|---|---|---|
+| I1 | +1 barista 07:30–08:00 | 10.9% | 9.0% |
+| I1 | +1 barista 07:30–08:00 + grab-and-go 30% | 10.9% | 9.0% |
+| I3 | +1 barista 07:30–08:00 | 13.0% | 9.8% |
+| I3 | +1 barista 07:30–08:00 + +1 cashier 07:30–08:00 | 10.2% | 6.3% |
+| I3 | +1 barista 07:30–08:00 + grab-and-go 30% | 13.0% | 9.8% |
+| I5 | +1 barista 07:30–08:00 | 13.0% | 9.8% |
+| I5 | +1 barista 07:30–08:00 + grab-and-go 30% | 13.0% | 9.8% |
+
+### 3. Model builder after the stated-zeros fix
+
+| Cases | Before fix | After fix | Invented |
+|---|---|---|---|
+| B01–B10 (seen while writing the fix) | 57 / 70 (81.4%) | 67 / 70 (95.7%) | 0 |
+| H01–H05 (held out, the fair test) | not run | **36 / 38 (94.7%)** | 1 |
+
+Remaining errors: the model often gives a handoff head count but leaves out the handoff mode (now inferred in code: a stated handoff person means a dedicated handoff point; scores above are unchanged), and in H03 it filled in a handoff head count nobody stated.
+
+### 4. Diagnostic: wait vs time in café
+
+"Wait" starts when the order is placed (matching how the 18 observed orders were timed), so a plan could shorten it by holding customers longer in the order line. Checked after locking: of 167 accepted plans across both sets, **0 made time in café (arrival → order received) worse**. The flip side shows up in display, not decisions: in S06, adding a cashier makes "wait" about 67% longer but time in café about 7% shorter, because people leave the order line sooner and wait at pickup instead. Stage 4 shows both numbers.
+
+Post-lock LLM cost: OpenRouter account usage after all runs $0.158 of $5 (this addendum about $0.06).
+
 ## Limitations
 
-- **Synthetic scenarios.** 13 of 15 cafés are invented; real cafés may have larger or messier option spaces.
-- **Small n.** 15 scenarios, one LLM run each. The model runs at temperature 0, but outputs can still vary run to run; no repeat runs were made.
+- **Synthetic scenarios.** 18 of 20 cafés are invented; real cafés may have larger or messier option spaces.
+- **Small n.** 20 scenarios, one LLM run each per configuration. The model runs at temperature 0, but outputs can still vary run to run; no repeat runs were made.
 - **Small change spaces favour greedy.** With 24–288 plans and mostly independent levers, step-by-step search is close to exhaustive. The comparison says little about large or tightly coupled spaces.
 - **Calibration on 18 orders.** The only real-data café (S10) is calibrated on 18 observed orders from one session, and its drink + food waits run about 5.6 min short of what was observed.
 - **False-positive check is within the model.** It tests whether accepted plans survive simulation noise, not whether they work in a real café.

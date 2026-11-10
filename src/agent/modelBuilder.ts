@@ -106,7 +106,8 @@ export function draftToSpec(draft: CafeDraft): BuiltModel {
   else assumptions.push('Drink + food orders made at the same time (ASSUMPTION)');
 
   let handoff: CafeSpec['handoff'] = 'barista';
-  if (draft.handoff === 'dedicated') {
+  // A stated handoff head count means a dedicated handoff point, even if the mode was left out.
+  if (draft.handoff === 'dedicated' || (draft.handoff === undefined && typeof draft.staff?.handoff === 'number' && draft.staff.handoff >= 1)) {
     handoff = 'dedicated';
     staff.handoff = Math.round(pick('Handoff staff', draft.staff?.handoff, 1, 5, 1, 'ASSUMPTION'));
   } else if (draft.handoff !== 'barista') assumptions.push('The barista hands over orders (ASSUMPTION)');
