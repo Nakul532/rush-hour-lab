@@ -1,0 +1,1018 @@
+{
+  "seed": 20261109,
+  "gridReps": 300,
+  "finalReps": 1000,
+  "baseRate": 0.36,
+  "targets": {
+    "byType": {
+      "drink": {
+        "n": 9,
+        "median": 4,
+        "p90": 10.400000000000002
+      },
+      "food": {
+        "n": 4,
+        "median": 8,
+        "p90": 13.7
+      },
+      "drinkFood": {
+        "n": 5,
+        "median": 17,
+        "p90": 18.6
+      }
+    }
+  },
+  "bootstrap": {
+    "drink": {
+      "n": 9,
+      "median": 4,
+      "low": 1,
+      "high": 9
+    },
+    "food": {
+      "n": 4,
+      "median": 8,
+      "low": 2,
+      "high": 14
+    },
+    "drinkFood": {
+      "n": 5,
+      "median": 17,
+      "low": 7,
+      "high": 19
+    }
+  },
+  "models": [
+    {
+      "key": "base",
+      "mix": {
+        "drink": 9,
+        "food": 4,
+        "drinkFood": 5,
+        "grabGo": 0
+      },
+      "fitted": {
+        "params": {
+          "drinkMedian": 1.5,
+          "foodMedian": 3.25,
+          "sigma": 0.4,
+          "prepMode": "sequential"
+        },
+        "sim": {
+          "drink": {
+            "n": 4899,
+            "p05": 1.538404481836551,
+            "median": 4.401375130340774,
+            "p90": 11.069136704505146,
+            "p95": 13.81374646879204
+          },
+          "food": {
+            "n": 2167,
+            "p05": 3.0029141262700807,
+            "median": 7.393118746927584,
+            "p90": 15.94903561596261,
+            "p95": 20.46208011471106
+          },
+          "drinkFood": {
+            "n": 2756,
+            "p05": 4.775529032873622,
+            "median": 10.415388329887111,
+            "p90": 20.831671956640356,
+            "p95": 24.560695634999163
+          }
+        },
+        "utilization": {
+          "barista": 0.6241459720610109,
+          "kitchen": 0.6057098050737525
+        }
+      },
+      "score": 268.87283039115414,
+      "edges": [],
+      "final": {
+        "drink": {
+          "median": {
+            "mean": 4.860621487370387,
+            "low": 4.698625164914546,
+            "high": 5.022617809826228,
+            "n": 1000
+          },
+          "p90": {
+            "mean": 8.744212137585379,
+            "low": 8.481500544599546,
+            "high": 9.006923730571211,
+            "n": 1000
+          }
+        },
+        "food": {
+          "median": {
+            "mean": 8.094154275777468,
+            "low": 7.839248966360665,
+            "high": 8.349059585194272,
+            "n": 999
+          },
+          "p90": {
+            "mean": 11.969546797640946,
+            "low": 11.635951091469199,
+            "high": 12.303142503812694,
+            "n": 999
+          }
+        },
+        "drinkFood": {
+          "median": {
+            "mean": 10.943870352823557,
+            "low": 10.65790318344467,
+            "high": 11.229837522202445,
+            "n": 1000
+          },
+          "p90": {
+            "mean": 15.409281057177012,
+            "low": 15.0306053198845,
+            "high": 15.787956794469522,
+            "n": 1000
+          }
+        }
+      },
+      "leaveOneOut": {
+        "inside": 12,
+        "of": 18,
+        "meanRangeWidth": 14.974751299295674,
+        "meanAbsError": 4.927037471687552,
+        "rows": [
+          {
+            "id": 1,
+            "type": "drink",
+            "observed": 4,
+            "predictedMedian": 4.950085251906067,
+            "low": 2.138130624682802,
+            "high": 14.575720817430062,
+            "inside": true,
+            "naiveMedian": 4,
+            "fit": {
+              "drinkMedian": 1.75,
+              "foodMedian": 3.5,
+              "sigma": 0.1,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 2,
+            "type": "drink",
+            "observed": 3,
+            "predictedMedian": 4.950085251906067,
+            "low": 2.138130624682802,
+            "high": 14.575720817430062,
+            "inside": true,
+            "naiveMedian": 4.5,
+            "fit": {
+              "drinkMedian": 1.75,
+              "foodMedian": 3.5,
+              "sigma": 0.1,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 3,
+            "type": "drinkFood",
+            "observed": 7,
+            "predictedMedian": 10.655186335013653,
+            "low": 6.040634959190844,
+            "high": 25.368466768731032,
+            "inside": true,
+            "naiveMedian": 17.5,
+            "fit": {
+              "drinkMedian": 1.75,
+              "foodMedian": 3.75,
+              "sigma": 0.1,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 4,
+            "type": "drink",
+            "observed": 8,
+            "predictedMedian": 4.950085251906067,
+            "low": 2.138130624682802,
+            "high": 14.575720817430062,
+            "inside": true,
+            "naiveMedian": 3.5,
+            "fit": {
+              "drinkMedian": 1.75,
+              "foodMedian": 3.5,
+              "sigma": 0.1,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 5,
+            "type": "drink",
+            "observed": 9,
+            "predictedMedian": 4.950085251906067,
+            "low": 2.138130624682802,
+            "high": 14.575720817430062,
+            "inside": true,
+            "naiveMedian": 3.5,
+            "fit": {
+              "drinkMedian": 1.75,
+              "foodMedian": 3.5,
+              "sigma": 0.1,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 6,
+            "type": "drink",
+            "observed": 1,
+            "predictedMedian": 4.950085251906067,
+            "low": 2.138130624682802,
+            "high": 14.575720817430062,
+            "inside": false,
+            "naiveMedian": 4.5,
+            "fit": {
+              "drinkMedian": 1.75,
+              "foodMedian": 3.5,
+              "sigma": 0.1,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 7,
+            "type": "food",
+            "observed": 3,
+            "predictedMedian": 8.213343228588599,
+            "low": 3.811367793381487,
+            "high": 23.04872471211322,
+            "inside": false,
+            "naiveMedian": 13,
+            "fit": {
+              "drinkMedian": 1.5,
+              "foodMedian": 3.75,
+              "sigma": 0.3,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 8,
+            "type": "food",
+            "observed": 2,
+            "predictedMedian": 8.213343228588599,
+            "low": 3.811367793381487,
+            "high": 23.04872471211322,
+            "inside": false,
+            "naiveMedian": 13,
+            "fit": {
+              "drinkMedian": 1.5,
+              "foodMedian": 3.75,
+              "sigma": 0.3,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 9,
+            "type": "food",
+            "observed": 13,
+            "predictedMedian": 6.656644200993448,
+            "low": 3.1961105482080057,
+            "high": 17.026173942093102,
+            "inside": true,
+            "naiveMedian": 3,
+            "fit": {
+              "drinkMedian": 1.5,
+              "foodMedian": 3.25,
+              "sigma": 0.3,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 10,
+            "type": "food",
+            "observed": 14,
+            "predictedMedian": 6.656644200993448,
+            "low": 3.1961105482080057,
+            "high": 17.026173942093102,
+            "inside": true,
+            "naiveMedian": 3,
+            "fit": {
+              "drinkMedian": 1.5,
+              "foodMedian": 3.25,
+              "sigma": 0.3,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 11,
+            "type": "drink",
+            "observed": 5,
+            "predictedMedian": 4.950085251906067,
+            "low": 2.138130624682802,
+            "high": 14.575720817430062,
+            "inside": true,
+            "naiveMedian": 3.5,
+            "fit": {
+              "drinkMedian": 1.75,
+              "foodMedian": 3.5,
+              "sigma": 0.1,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 12,
+            "type": "drink",
+            "observed": 16,
+            "predictedMedian": 3.88719304920928,
+            "low": 1.7128403899303546,
+            "high": 10.531663697461749,
+            "inside": false,
+            "naiveMedian": 3.5,
+            "fit": {
+              "drinkMedian": 1.5,
+              "foodMedian": 3.5,
+              "sigma": 0.2,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 13,
+            "type": "drinkFood",
+            "observed": 17,
+            "predictedMedian": 10.024145478832416,
+            "low": 4.7010031867859485,
+            "high": 23.96914415601623,
+            "inside": true,
+            "naiveMedian": 13,
+            "fit": {
+              "drinkMedian": 1.5,
+              "foodMedian": 3.25,
+              "sigma": 0.4,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 14,
+            "type": "drinkFood",
+            "observed": 18,
+            "predictedMedian": 10.024145478832416,
+            "low": 4.7010031867859485,
+            "high": 23.96914415601623,
+            "inside": true,
+            "naiveMedian": 12.5,
+            "fit": {
+              "drinkMedian": 1.5,
+              "foodMedian": 3.25,
+              "sigma": 0.4,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 15,
+            "type": "drinkFood",
+            "observed": 19,
+            "predictedMedian": 9.701782731779716,
+            "low": 5.059108873228295,
+            "high": 22.95830122826636,
+            "inside": true,
+            "naiveMedian": 12.5,
+            "fit": {
+              "drinkMedian": 1.5,
+              "foodMedian": 3.5,
+              "sigma": 0.3,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 16,
+            "type": "drinkFood",
+            "observed": 8,
+            "predictedMedian": 10.655186335013653,
+            "low": 6.040634959190844,
+            "high": 25.368466768731032,
+            "inside": true,
+            "naiveMedian": 17.5,
+            "fit": {
+              "drinkMedian": 1.75,
+              "foodMedian": 3.75,
+              "sigma": 0.1,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 17,
+            "type": "drink",
+            "observed": 1,
+            "predictedMedian": 4.950085251906067,
+            "low": 2.138130624682802,
+            "high": 14.575720817430062,
+            "inside": false,
+            "naiveMedian": 4.5,
+            "fit": {
+              "drinkMedian": 1.75,
+              "foodMedian": 3.5,
+              "sigma": 0.1,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 18,
+            "type": "drink",
+            "observed": 2,
+            "predictedMedian": 4.950085251906067,
+            "low": 2.138130624682802,
+            "high": 14.575720817430062,
+            "inside": false,
+            "naiveMedian": 4.5,
+            "fit": {
+              "drinkMedian": 1.75,
+              "foodMedian": 3.5,
+              "sigma": 0.1,
+              "prepMode": "sequential"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "key": "grab",
+      "mix": {
+        "drink": 5,
+        "food": 4,
+        "drinkFood": 5,
+        "grabGo": 4
+      },
+      "fitted": {
+        "params": {
+          "drinkMedian": 2.25,
+          "foodMedian": 3.5,
+          "sigma": 0.2,
+          "prepMode": "sequential"
+        },
+        "sim": {
+          "drink": {
+            "n": 4982,
+            "p05": 0.20607790668917544,
+            "median": 3.008159418522453,
+            "p90": 9.961793960207205,
+            "p95": 13.015486281722858
+          },
+          "food": {
+            "n": 2134,
+            "p05": 3.580689350987435,
+            "median": 7.301711404681363,
+            "p90": 14.186357264030617,
+            "p95": 17.35083936389139
+          },
+          "drinkFood": {
+            "n": 2706,
+            "p05": 5.986395336356679,
+            "median": 10.959756470643988,
+            "p90": 20.03755211045962,
+            "p95": 22.99151709398317
+          }
+        },
+        "utilization": {
+          "barista": 0.5851086413325942,
+          "kitchen": 0.6000071814304481
+        }
+      },
+      "score": 206.23404167496952,
+      "edges": [],
+      "final": {
+        "drink": {
+          "median": {
+            "mean": 3.40061468126646,
+            "low": 3.277343306779777,
+            "high": 3.5238860557531435,
+            "n": 1000
+          },
+          "p90": {
+            "mean": 8.619300486530602,
+            "low": 8.354319448607269,
+            "high": 8.884281524453934,
+            "n": 1000
+          }
+        },
+        "food": {
+          "median": {
+            "mean": 7.723840218489454,
+            "low": 7.536470460788988,
+            "high": 7.91120997618992,
+            "n": 1000
+          },
+          "p90": {
+            "mean": 11.271554468237348,
+            "low": 11.003037160817428,
+            "high": 11.540071775657267,
+            "n": 1000
+          }
+        },
+        "drinkFood": {
+          "median": {
+            "mean": 11.426437234450985,
+            "low": 11.173364107766627,
+            "high": 11.679510361135343,
+            "n": 1000
+          },
+          "p90": {
+            "mean": 15.536616231549656,
+            "low": 15.200982993478759,
+            "high": 15.872249469620554,
+            "n": 1000
+          }
+        }
+      },
+      "leaveOneOut": {
+        "inside": 15,
+        "of": 18,
+        "meanRangeWidth": 14.97279270186804,
+        "meanAbsError": 4.79147941120236,
+        "rows": [
+          {
+            "id": 1,
+            "type": "drink",
+            "observed": 4,
+            "predictedMedian": 2.9898686350990573,
+            "low": 0.19806742640492842,
+            "high": 13.847869728982245,
+            "inside": true,
+            "naiveMedian": 4,
+            "fit": {
+              "drinkMedian": 2.5,
+              "foodMedian": 3.5,
+              "sigma": 0.1,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 2,
+            "type": "drink",
+            "observed": 3,
+            "predictedMedian": 3.236931238027438,
+            "low": 0.2173096800513612,
+            "high": 14.55534288959176,
+            "inside": true,
+            "naiveMedian": 4.5,
+            "fit": {
+              "drinkMedian": 2,
+              "foodMedian": 3,
+              "sigma": 0.4,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 3,
+            "type": "drinkFood",
+            "observed": 7,
+            "predictedMedian": 11.357899464437303,
+            "low": 5.79430596665563,
+            "high": 24.470497156330048,
+            "inside": true,
+            "naiveMedian": 17.5,
+            "fit": {
+              "drinkMedian": 2.25,
+              "foodMedian": 3.5,
+              "sigma": 0.3,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 4,
+            "type": "drink",
+            "observed": 8,
+            "predictedMedian": 2.903037810946259,
+            "low": 0.19806742640492842,
+            "high": 14.60696437778935,
+            "inside": true,
+            "naiveMedian": 3.5,
+            "fit": {
+              "drinkMedian": 2.5,
+              "foodMedian": 3.25,
+              "sigma": 0.2,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 5,
+            "type": "drink",
+            "observed": 9,
+            "predictedMedian": 2.9898686350990573,
+            "low": 0.19806742640492842,
+            "high": 13.847869728982245,
+            "inside": true,
+            "naiveMedian": 3.5,
+            "fit": {
+              "drinkMedian": 2.5,
+              "foodMedian": 3.5,
+              "sigma": 0.1,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 6,
+            "type": "drink",
+            "observed": 1,
+            "predictedMedian": 3.236931238027438,
+            "low": 0.2173096800513612,
+            "high": 14.55534288959176,
+            "inside": true,
+            "naiveMedian": 4.5,
+            "fit": {
+              "drinkMedian": 2,
+              "foodMedian": 3,
+              "sigma": 0.4,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 7,
+            "type": "food",
+            "observed": 3,
+            "predictedMedian": 7.776136424232433,
+            "low": 3.82084505365418,
+            "high": 17.935771915044,
+            "inside": false,
+            "naiveMedian": 13,
+            "fit": {
+              "drinkMedian": 2.25,
+              "foodMedian": 3.75,
+              "sigma": 0.2,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 8,
+            "type": "food",
+            "observed": 2,
+            "predictedMedian": 7.776136424232433,
+            "low": 3.82084505365418,
+            "high": 17.935771915044,
+            "inside": false,
+            "naiveMedian": 13,
+            "fit": {
+              "drinkMedian": 2.25,
+              "foodMedian": 3.75,
+              "sigma": 0.2,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 9,
+            "type": "food",
+            "observed": 13,
+            "predictedMedian": 7.0582554807067694,
+            "low": 3.5492171091471967,
+            "high": 16.460264081074754,
+            "inside": true,
+            "naiveMedian": 3,
+            "fit": {
+              "drinkMedian": 2.25,
+              "foodMedian": 3.5,
+              "sigma": 0.2,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 10,
+            "type": "food",
+            "observed": 14,
+            "predictedMedian": 7.0582554807067694,
+            "low": 3.5492171091471967,
+            "high": 16.460264081074754,
+            "inside": true,
+            "naiveMedian": 3,
+            "fit": {
+              "drinkMedian": 2.25,
+              "foodMedian": 3.5,
+              "sigma": 0.2,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 11,
+            "type": "drink",
+            "observed": 5,
+            "predictedMedian": 2.903037810946259,
+            "low": 0.19806742640492842,
+            "high": 14.60696437778935,
+            "inside": true,
+            "naiveMedian": 3.5,
+            "fit": {
+              "drinkMedian": 2.5,
+              "foodMedian": 3.25,
+              "sigma": 0.2,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 12,
+            "type": "drink",
+            "observed": 16,
+            "predictedMedian": 2.650626059499828,
+            "low": 0.19806742640492842,
+            "high": 11.528378447536609,
+            "inside": false,
+            "naiveMedian": 3.5,
+            "fit": {
+              "drinkMedian": 2.25,
+              "foodMedian": 3.5,
+              "sigma": 0.2,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 13,
+            "type": "drinkFood",
+            "observed": 17,
+            "predictedMedian": 11.357899464437303,
+            "low": 5.79430596665563,
+            "high": 24.470497156330048,
+            "inside": true,
+            "naiveMedian": 13,
+            "fit": {
+              "drinkMedian": 2.25,
+              "foodMedian": 3.5,
+              "sigma": 0.3,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 14,
+            "type": "drinkFood",
+            "observed": 18,
+            "predictedMedian": 10.529158975182725,
+            "low": 5.476264496982255,
+            "high": 22.791217012357237,
+            "inside": true,
+            "naiveMedian": 12.5,
+            "fit": {
+              "drinkMedian": 2.25,
+              "foodMedian": 3.25,
+              "sigma": 0.3,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 15,
+            "type": "drinkFood",
+            "observed": 19,
+            "predictedMedian": 10.529158975182725,
+            "low": 5.476264496982255,
+            "high": 22.791217012357237,
+            "inside": true,
+            "naiveMedian": 12.5,
+            "fit": {
+              "drinkMedian": 2.25,
+              "foodMedian": 3.25,
+              "sigma": 0.3,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 16,
+            "type": "drinkFood",
+            "observed": 8,
+            "predictedMedian": 11.357899464437303,
+            "low": 5.79430596665563,
+            "high": 24.470497156330048,
+            "inside": true,
+            "naiveMedian": 17.5,
+            "fit": {
+              "drinkMedian": 2.25,
+              "foodMedian": 3.5,
+              "sigma": 0.3,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 17,
+            "type": "drink",
+            "observed": 1,
+            "predictedMedian": 3.236931238027438,
+            "low": 0.2173096800513612,
+            "high": 14.55534288959176,
+            "inside": true,
+            "naiveMedian": 4.5,
+            "fit": {
+              "drinkMedian": 2,
+              "foodMedian": 3,
+              "sigma": 0.4,
+              "prepMode": "sequential"
+            }
+          },
+          {
+            "id": 18,
+            "type": "drink",
+            "observed": 2,
+            "predictedMedian": 3.236931238027438,
+            "low": 0.2173096800513612,
+            "high": 14.55534288959176,
+            "inside": true,
+            "naiveMedian": 4.5,
+            "fit": {
+              "drinkMedian": 2,
+              "foodMedian": 3,
+              "sigma": 0.4,
+              "prepMode": "sequential"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "kept": "grab",
+  "startingGuess": {
+    "params": {
+      "drinkMedian": 4.5,
+      "foodMedian": 6.5,
+      "sigma": 0.5,
+      "prepMode": "parallel"
+    },
+    "sim": {
+      "drink": {
+        "n": 4899,
+        "p05": 27.221519044807202,
+        "median": 98.28345834578646,
+        "p90": 164.52484717293564,
+        "p95": 179.1188292519353
+      },
+      "food": {
+        "n": 2167,
+        "p05": 29.747493355164167,
+        "median": 87.36490235406322,
+        "p90": 148.56024752878787,
+        "p95": 161.64722726330768
+      },
+      "drinkFood": {
+        "n": 2756,
+        "p05": 39.94789682129829,
+        "median": 106.45826732166928,
+        "p90": 165.17565408961153,
+        "p95": 179.94380085088943
+      }
+    },
+    "utilization": {
+      "barista": 0.940408135940498,
+      "kitchen": 0.7788878373474485
+    }
+  },
+  "medianOnlyVariant": {
+    "params": {
+      "drinkMedian": 2.75,
+      "foodMedian": 2,
+      "sigma": 0.6,
+      "prepMode": "sequential"
+    },
+    "sim": {
+      "drink": {
+        "n": 4982,
+        "p05": 0.20607790668917544,
+        "median": 4.0090263149986285,
+        "p90": 30.228428263288276,
+        "p95": 40.0193833747345
+      },
+      "food": {
+        "n": 2134,
+        "p05": 1.941057750168414,
+        "median": 8.322885370218685,
+        "p90": 21.339205980505366,
+        "p95": 26.999913967252546
+      },
+      "drinkFood": {
+        "n": 2706,
+        "p05": 4.90258055457743,
+        "median": 16.98370860364008,
+        "p90": 41.92988716174909,
+        "p95": 52.3134908179467
+      }
+    },
+    "utilization": {
+      "barista": 0.744348811619928,
+      "kitchen": 0.38734678541435136
+    }
+  },
+  "sensitivity": [
+    {
+      "factor": 0.8,
+      "rate": 0.288,
+      "fit": {
+        "params": {
+          "drinkMedian": 2.75,
+          "foodMedian": 4.25,
+          "sigma": 0.1,
+          "prepMode": "sequential"
+        },
+        "sim": {
+          "drink": {
+            "n": 4005,
+            "p05": 0.19073142519127514,
+            "median": 3.3450835231098353,
+            "p90": 10.611281726125748,
+            "p95": 14.380207417264723
+          },
+          "food": {
+            "n": 1704,
+            "p05": 4.458186665277131,
+            "median": 7.855004103666737,
+            "p90": 15.000534143941625,
+            "p95": 17.702756679729866
+          },
+          "drinkFood": {
+            "n": 2178,
+            "p05": 7.275825270386223,
+            "median": 11.718127368766062,
+            "p90": 21.13110213080459,
+            "p95": 25.157941687746497
+          }
+        },
+        "utilization": {
+          "barista": 0.5391250789426609,
+          "kitchen": 0.5729405429235238
+        }
+      },
+      "score": 182.63493395922617,
+      "edges": [
+        "sigma"
+      ]
+    },
+    {
+      "factor": 1,
+      "rate": 0.36,
+      "fit": {
+        "params": {
+          "drinkMedian": 2.25,
+          "foodMedian": 3.5,
+          "sigma": 0.2,
+          "prepMode": "sequential"
+        },
+        "sim": {
+          "drink": {
+            "n": 4982,
+            "p05": 0.20607790668917544,
+            "median": 3.008159418522453,
+            "p90": 9.961793960207205,
+            "p95": 13.015486281722858
+          },
+          "food": {
+            "n": 2134,
+            "p05": 3.580689350987435,
+            "median": 7.301711404681363,
+            "p90": 14.186357264030617,
+            "p95": 17.35083936389139
+          },
+          "drinkFood": {
+            "n": 2706,
+            "p05": 5.986395336356679,
+            "median": 10.959756470643988,
+            "p90": 20.03755211045962,
+            "p95": 22.99151709398317
+          }
+        },
+        "utilization": {
+          "barista": 0.5851086413325942,
+          "kitchen": 0.6000071814304481
+        }
+      },
+      "score": 206.23404167496952,
+      "edges": []
+    },
+    {
+      "factor": 1.2,
+      "rate": 0.432,
+      "fit": {
+        "params": {
+          "drinkMedian": 2,
+          "foodMedian": 3.25,
+          "sigma": 0.2,
+          "prepMode": "sequential"
+        },
+        "sim": {
+          "drink": {
+            "n": 5910,
+            "p05": 0.21548640222441762,
+            "median": 3.0564438925522026,
+            "p90": 10.279172170227389,
+            "p95": 13.71351837873606
+          },
+          "food": {
+            "n": 2567,
+            "p05": 3.464794593050064,
+            "median": 7.471861972634642,
+            "p90": 15.804046571835446,
+            "p95": 18.81515541820065
+          },
+          "drinkFood": {
+            "n": 3237,
+            "p05": 5.7402660236097685,
+            "median": 11.211576039278157,
+            "p90": 20.992546991670416,
+            "p95": 24.658262934470773
+          }
+        },
+        "utilization": {
+          "barista": 0.6354793237745409,
+          "kitchen": 0.6605217215834998
+        }
+      },
+      "score": 223.11850972280337,
+      "edges": []
+    }
+  ],
+  "presetMatches": true
+}

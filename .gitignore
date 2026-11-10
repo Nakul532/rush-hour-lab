@@ -1,0 +1,14 @@
+# Dependencies and build output
+node_modules/
+dist/
+coverage/
+
+# Secrets (GROQ_API_KEY lives in Vercel env vars only)
+.env
+.env.*
+!.env.example
+
+# Vercel and editor/OS files
+.vercel/
+.DS_Store
+*.log
