@@ -310,7 +310,16 @@ export async function answerWhatIf(
   let changes: Change[] = [];
   let invalidReason: string | null = null;
 
+  // With no rush start time, clock times can't be placed: use the whole rush (and say so below).
+  const clockTimeWithoutStart = !spec.startsAt && /\d{1,2}(:\d{2})?\s*(am|pm)?\s*(-|–|to|till|until)\s*\d/i.test(question);
   const tryRaw = (raw: unknown): Change[] | null => {
+    if (clockTimeWithoutStart && Array.isArray(raw))
+      raw = (raw as RawChange[]).map((c) => {
+        const { fromMin: _f, toMin: _t, ...rest } = c;
+        void _f;
+        void _t;
+        return rest;
+      });
     const n = normalizeChanges(raw, spec);
     if (n.changes.length === 0) return null;
     try {
@@ -372,8 +381,8 @@ export async function answerWhatIf(
     return { ...base, ok: false, answer: `${lead} ${WHAT_IF_HELP}` };
   }
 
-  if (!spec.startsAt && /\d{1,2}(:\d{2})?\s*(am|pm)?\s*(-|–|to|till|until)\s*\d/i.test(question))
-    notes.push("Your rush has no start time set, so I couldn't place that time and applied the change to the whole rush.");
+  if (clockTimeWithoutStart)
+    notes.push("Your rush has no start time set, so I couldn't place that time and applied the change to the whole rush. You can set the start time in step 2.");
   const comparison = compare(spec, applyChanges(spec, changes), sim);
   let answer = formatWhatIfAnswer(spec, changes, comparison);
   if (notes.length) answer += ` ${notes.join(' ')}`;

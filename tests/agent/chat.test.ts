@@ -66,6 +66,14 @@ describe('what-if chat', () => {
     expect(r.answer).toMatch(/This breaks your limit: needs 1 more person.*Nearest change within your limits: remove 1 cashier/);
   });
 
+  it('a clock time on a café with no start time applies to the whole rush, and says so', async () => {
+    const noStart = syntheticCafe({ startsAt: undefined });
+    const llm = new MockLlm([{ toolCalls: [{ name: 'what_if', args: { changes: [{ kind: 'staff', station: 'kitchen', delta: 2, fromMin: 0, toMin: 60 }], explanation: 'More cooks.' } }] }]);
+    const r = await answerWhatIf(noStart, '2 more cooks 8-9am', llm, SIM);
+    expect(r.changes).toEqual([{ kind: 'staff', station: 'kitchen', delta: 2 }]);
+    expect(r.answer).toMatch(/no start time set/);
+  });
+
   it('nothing readable: lists what can be asked, never a generic error', async () => {
     const r = await answerWhatIf(cafe, 'what if it rains', null, SIM);
     expect(r.ok).toBe(false);

@@ -277,6 +277,7 @@ function Confirm({ setup, onChange, onRun }: { setup: Setup; onChange: (s: Setup
   const perHour = (spec.arrivals.ratePerMin.reduce((a, b) => a + b, 0) / spec.arrivals.ratePerMin.length) * 60;
   const total = Object.values(spec.mix).reduce((a, b) => a + (b ?? 0), 0) || 1;
   const mix = (Object.entries(spec.mix) as Array<[OrderType, number]>).filter(([, v]) => v > 0);
+  const sellsFood = (spec.mix.food ?? 0) + (spec.mix.drinkFood ?? 0) > 0;
 
   return (
     <section className="stack-lg">
@@ -296,7 +297,7 @@ function Confirm({ setup, onChange, onRun }: { setup: Setup; onChange: (s: Setup
       <div className="grid-2">
         <fieldset className="panel stack">
           <legend className="h3">Staff on shift</legend>
-          {STATIONS.filter((s) => s.key !== 'handoff' || spec.handoff === 'dedicated').map((s) => {
+          {STATIONS.filter((s) => (s.key !== 'handoff' || spec.handoff === 'dedicated') && (s.key !== 'kitchen' || sellsFood)).map((s) => {
             const w = spec.staff[s.key] === undefined ? null : toWindows(spec.staff[s.key]!);
             const id = `staff-${s.key}`;
             return (
@@ -328,9 +329,13 @@ function Confirm({ setup, onChange, onRun }: { setup: Setup; onChange: (s: Setup
               if (f > 0) edit((x) => (x.arrivals = { ...x.arrivals, ratePerMin: x.arrivals.ratePerMin.map((r) => r * f) }));
             }} />
           </div>
-          <p className="hint">{windowMinutes(spec.arrivals)}-minute rush{spec.startsAt ? ` from ${spec.startsAt}` : ''}. Orders: {mix.map(([k, v]) => `${ORDER_TYPE_LABEL[k].toLowerCase()} ${Math.round((v / total) * 100)}%`).join(', ')}.</p>
+          <div className="field">
+            <label htmlFor="startsat">Rush starts at</label>
+            <input id="startsat" type="time" value={spec.startsAt ?? ''} onChange={(e) => edit((x) => (e.target.value ? (x.startsAt = e.target.value) : delete x.startsAt))} />
+          </div>
+          <p className="hint">{windowMinutes(spec.arrivals)}-minute rush{spec.startsAt ? ` from ${spec.startsAt}` : ' (set a start time to ask about clock times like 8–9am)'}. Orders: {mix.map(([k, v]) => `${ORDER_TYPE_LABEL[k].toLowerCase()} ${Math.round((v / total) * 100)}%`).join(', ')}.</p>
           <p className="h4">Typical minutes per task</p>
-          {TASKS.map((t) => {
+          {TASKS.filter((t) => t.key !== 'food' || sellsFood).map((t) => {
             const d = spec.times[t.key];
             const v = d.kind === 'lognormal' ? d.median : d.kind === 'exponential' ? d.mean : d.value;
             const id = `time-${t.key}`;

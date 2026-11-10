@@ -79,9 +79,15 @@ export function draftToSpec(draft: CafeDraft): BuiltModel {
     (given ? problems : assumptions).push(`Order mix: drink 50%, food 22%, drink + food 28% (${DEFAULTS.mixPercent.why})`);
   }
 
+  // A drinks-only café has no kitchen work, so its kitchen and food time are never assumed or shown.
+  const sellsFood = (mix.food ?? 0) + (mix.drinkFood ?? 0) > 0;
   const staffCount = (k: 'cashier' | 'barista' | 'kitchen') =>
     Math.round(pick(`${k[0].toUpperCase()}${k.slice(1)} staff`, draft.staff?.[k], 0, 10, DEFAULTS.staff.value, DEFAULTS.staff.why));
-  const staff: CafeSpec['staff'] = { cashier: staffCount('cashier'), barista: staffCount('barista'), kitchen: staffCount('kitchen') };
+  const staff: CafeSpec['staff'] = {
+    cashier: staffCount('cashier'),
+    barista: staffCount('barista'),
+    kitchen: sellsFood ? staffCount('kitchen') : (draft.staff?.kitchen ?? 1),
+  };
   if (staff.cashier === 0) {
     staff.cashier = 1;
     assumptions.push('No cashier: modelled as 1 person taking orders (ASSUMPTION; the simulator needs someone to take each order)');
@@ -96,7 +102,7 @@ export function draftToSpec(draft: CafeDraft): BuiltModel {
   const times = {
     order: lognormal(minutes('order'), SPREAD_DEFAULT),
     drink: lognormal(minutes('drink'), SPREAD_DEFAULT),
-    food: lognormal(minutes('food'), SPREAD_DEFAULT),
+    food: lognormal(sellsFood ? minutes('food') : (draft.minutes?.food ?? DEFAULTS.minutes.food.value), SPREAD_DEFAULT),
     handoff: lognormal(minutes('handoff'), SPREAD_DEFAULT),
   };
   assumptions.push(`Task-time spread: lognormal sigma ${SPREAD_DEFAULT} (ASSUMPTION)`);
