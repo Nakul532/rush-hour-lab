@@ -1,8 +1,7 @@
 // npm run live-run -- --live
 //
-// One-off live test of the agent against Groq (gpt-oss-120b), capped at
-// 40,000 tokens in total so the shared Groq quota keeps headroom for
-// SearchIQ's live site.
+// One-off live test of the agent: gpt-oss-120b through OpenRouter, pinned to
+// the Groq provider with fallbacks disabled, capped at 40,000 tokens in total.
 //
 //  1. Runs analysis 1 (observed café).
 //  2. Runs analysis 2, then 3, only if the tokens left exceed 1.25× the most
@@ -10,12 +9,12 @@
 //  3. No single call starts unless its worst case fits in what is left.
 //
 // Every request/response is saved to tests/fixtures/live/ so the mocked
-// tests can replay real model output. The key is read from GROQ_API_KEY or
-// a git-ignored .env.local, and never printed or saved.
+// tests can replay real model output. The key is read from OPENROUTER_API_KEY
+// (environment, .env.local or .env), and never printed or saved.
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { runAnalysis, type AnalysisResult } from '../src/agent/agent';
-import { GroqLlm, GROQ_MODEL } from '../src/agent/groq';
+import { loadEnvKey, OpenRouterLlm, OPENROUTER_MODEL, PINNED_PROVIDER } from '../src/agent/openrouter';
 import { LimitedLlm, RecordingLlm, TokenBudget } from '../src/agent/llm';
 import { buildModelFromDescription } from '../src/agent/modelBuilder';
 import { answerWhatIf } from '../src/agent/whatIf';
@@ -24,7 +23,9 @@ import { lognormal } from '../src/sim/distributions';
 import type { CafeSpec } from '../src/sim/cafe';
 import { observedCafePreset } from '../src/presets/observedCafe';
 
-const TOKEN_CAP = 40_000;
+// --cap N overrides the cap (e.g. what is left of the 40K after an earlier run).
+const capArg = process.argv.indexOf("--cap");
+const TOKEN_CAP = capArg > 0 ? Number(process.argv[capArg + 1]) : 40_000;
 const HEADROOM = 1.25;
 const SIM = { reps: 300, seed: 20261109 };
 const AGENT_LIMITS = { maxLlmCalls: 10, maxExperiments: 4, maxTokensPerCall: 1024 };
@@ -34,15 +35,9 @@ if (!process.argv.includes('--live')) {
   process.exit(1);
 }
 
-function loadKey(): string {
-  if (process.env.GROQ_API_KEY) return process.env.GROQ_API_KEY;
-  if (existsSync('.env.local')) {
-    for (const line of readFileSync('.env.local', 'utf8').split('\n')) {
-      const m = line.match(/^\s*GROQ_API_KEY\s*=\s*"?([^"\s]+)"?\s*$/);
-      if (m) return m[1];
-    }
-  }
-  console.log('No GROQ_API_KEY found (environment or .env.local). Nothing was sent.');
+const key = await loadEnvKey('OPENROUTER_API_KEY');
+if (!key) {
+  console.log('No OPENROUTER_API_KEY found. Nothing was sent.');
   process.exit(1);
 }
 
@@ -59,7 +54,8 @@ const synthetic: CafeSpec = {
 };
 
 const budget = new TokenBudget(TOKEN_CAP);
-const groq = new GroqLlm({ apiKey: loadKey(), reasoningEffort: 'low' });
+const groq = new OpenRouterLlm({ apiKey: key, reasoningEffort: 'low' });
+const creditsBefore = await groq.credits();
 const log: Array<Record<string, unknown>> = [];
 let maxUsed = 0;
 
@@ -84,7 +80,7 @@ async function analysis(n: number, name: string, run: (llm: LimitedLlm) => Promi
   console.log(`[live] analysis ${n} (${name}): ${llm.calls} calls, ${used} tokens, ${((Date.now() - t0) / 1000).toFixed(0)} s; ${budget.remaining} left`);
   log.push({ n, name, calls: llm.calls, tokens: used, outcome });
   mkdirSync('tests/fixtures/live', { recursive: true });
-  writeFileSync(`tests/fixtures/live/analysis-${n}.json`, JSON.stringify({ model: GROQ_MODEL, name, calls: rec.log }, null, 2) + '\n');
+  writeFileSync(`tests/fixtures/live/analysis-${n}.json`, JSON.stringify({ model: OPENROUTER_MODEL, provider: PINNED_PROVIDER, name, calls: rec.log }, null, 2) + '\n');
 }
 
 const summarize = (r: AnalysisResult) => ({
@@ -109,8 +105,14 @@ await analysis(3, 'Model builder + what-if', async (llm) => {
   return { built: true, staff: built.model.spec.staff, assumptions: built.model.assumptions, whatIf: { ok: whatIf.ok, answer: whatIf.answer, explanation: whatIf.explanation } };
 });
 
+const creditsAfter = await groq.credits();
+const creditsUsed = creditsAfter.usage - creditsBefore.usage;
 writeFileSync(
   'tests/fixtures/live/RESULTS.json',
-  JSON.stringify({ model: GROQ_MODEL, tokenCap: TOKEN_CAP, tokensUsed: budget.used, ranAt: new Date().toISOString(), analyses: log }, null, 2) + '\n',
+  JSON.stringify(
+    { model: OPENROUTER_MODEL, provider: PINNED_PROVIDER, tokenCap: TOKEN_CAP, tokensUsed: budget.used, reportedCostUsd: groq.costUsd, creditsUsedUsd: creditsUsed, ranAt: new Date().toISOString(), analyses: log },
+    null,
+    2,
+  ) + '\n',
 );
-console.log(`[live] done: ${budget.used} of ${TOKEN_CAP} tokens used. Results in tests/fixtures/live/.`);
+console.log(`[live] done: ${budget.used} of ${TOKEN_CAP} tokens used; cost reported per call $${groq.costUsd.toFixed(4)}; credits used $${creditsUsed.toFixed(4)}, $${creditsAfter.remaining?.toFixed(4)} left.`);

@@ -8,15 +8,30 @@ import type { Constraints, CostTable } from './plan';
 
 export const r1 = (x: number) => (Number.isFinite(x) ? Math.round(x * 10) / 10 : null);
 
-const CHANGE_SCHEMA = {
+/**
+ * One change. Every field any kind uses is declared here: models that follow
+ * the schema strictly will not send undeclared fields (found in the first live run).
+ */
+export const CHANGE_SCHEMA = {
   type: 'object',
   description:
-    'One change. kinds: staff {station: cashier|barista|kitchen|handoff|express, delta: -3..3, fromMin?, toMin?}; ' +
-    'prepMode {mode: parallel|sequential}; foodBatching {intervalMin: 5-60, batchSize: 1-50, cookMin?}; ' +
-    'dedicatedHandoff {staff: 1-3}; expressDrinks {staff: 1-3}; grabGo {shareOfDrinks: 0-0.8}',
-  properties: { kind: { type: 'string', enum: ['staff', 'prepMode', 'foodBatching', 'dedicatedHandoff', 'expressDrinks', 'grabGo'] } },
+    'Fill the fields for the chosen kind. staff: station, delta (fromMin, toMin optional). prepMode: mode. ' +
+    'foodBatching: intervalMin, batchSize (cookMin optional). dedicatedHandoff / expressDrinks: staff. grabGo: shareOfDrinks.',
+  properties: {
+    kind: { type: 'string', enum: ['staff', 'prepMode', 'foodBatching', 'dedicatedHandoff', 'expressDrinks', 'grabGo'] },
+    station: { type: 'string', enum: ['cashier', 'barista', 'kitchen', 'handoff', 'express'], description: 'staff: which station' },
+    delta: { type: 'integer', minimum: -3, maximum: 3, description: 'staff: people to add (negative removes)' },
+    fromMin: { type: 'number', description: 'staff: start minute of the rush (optional)' },
+    toMin: { type: 'number', description: 'staff: end minute of the rush (optional)' },
+    mode: { type: 'string', enum: ['parallel', 'sequential'], description: 'prepMode' },
+    intervalMin: { type: 'number', minimum: 5, maximum: 60, description: 'foodBatching: minutes between batches' },
+    batchSize: { type: 'integer', minimum: 1, maximum: 50, description: 'foodBatching: items per batch' },
+    cookMin: { type: 'number', description: 'foodBatching: minutes to cook a batch (optional)' },
+    staff: { type: 'integer', minimum: 1, maximum: 3, description: 'dedicatedHandoff / expressDrinks: people at the new station' },
+    shareOfDrinks: { type: 'number', minimum: 0, maximum: 0.8, description: 'grabGo: share of drink-only orders sold ready-made' },
+  },
   required: ['kind'],
-  additionalProperties: true,
+  additionalProperties: false,
 };
 const CHANGES = { type: 'array', items: CHANGE_SCHEMA, description: 'Changes applied to the current café, in order. [] = no change.' };
 
@@ -128,6 +143,7 @@ export function agentSystemPrompt(maxExperiments: number, maxCalls: number): str
     `Budget: ${maxExperiments} test_change experiments and ${maxCalls} tool calls in total. Then you must call finish.`,
     'Code decides acceptance, not you. A plan is accepted only if: overall p90 improves by at least 10%; the paired 95% CI of the improvement excludes zero; it still improves with task times 30% shorter and 30% longer; and no order type\'s p90 gets more than 10% worse.',
     'Work like a scientist: look at the bottleneck, form a hypothesis, test it, learn from the result, then test the next idea. Prefer cheap changes. Try combining changes that were accepted.',
+    `Use your experiments: test at least ${Math.min(3, maxExperiments)} different plans (single changes or combinations) before calling finish, unless the budget runs out.`,
     'Minutes in changes count from the start of the rush. Keep text short. finish.summary must contain no digits.',
   ].join('\n');
 }

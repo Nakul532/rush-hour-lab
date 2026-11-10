@@ -72,7 +72,8 @@ describe('experiment loop (mock LLM)', () => {
   it('stops cleanly when the shared token budget runs low', async () => {
     const budget = new TokenBudget(3000);
     const inner = new MockLlm([{ toolCalls: [{ name: 'run_simulation', args: { changes: [] } }] }], true);
-    const llm = new LimitedLlm(inner, { budget, reserveTokens: 1500 });
+    // Per-call worst-case estimate (what the live run uses): the budget must never go negative.
+    const llm = new LimitedLlm(inner, { budget, estimatePerCall: true });
     const r = await runAnalysis(syntheticCafe(), llm, { sim: { reps: 20, seed: 1 } });
     expect(r.stopReason).toBe('token_budget');
     expect(budget.remaining).toBeGreaterThanOrEqual(0);
@@ -144,6 +145,8 @@ describe('numberFree', () => {
   it('keeps text without digits and drops text with them', () => {
     expect(numberFree('Add a barista.')).toBe('Add a barista.');
     expect(numberFree('Cuts waits 3 min')).toBeNull();
+    expect(numberFree('The p90 wait improves.')).toBe('The p90 wait improves.');
+    expect(numberFree('The p90 wait improves 20%.')).toBeNull();
   });
 });
 

@@ -36,7 +36,10 @@ export type AgentStep =
   | { kind: 'error'; message: string }
   | { kind: 'stop'; reason: StopReason; message: string };
 
-export type StopReason = 'finished' | 'experiment_budget' | 'llm_call_limit' | 'token_budget' | 'llm_error' | 'no_tool_call';
+export type StopReason = 'finished' | 'experiment_budget' | 'llm_call_limit' | 'token_budget' | 'llm_error' | 'no_tool_call' | 'repeated_error';
+
+/** Stop after the model sends the same failing call this many times in a row. */
+export const MAX_REPEATED_ERRORS = 3;
 
 export interface AnalysisOptions {
   constraints?: Constraints;
@@ -67,7 +70,9 @@ export interface AnalysisResult {
 /** LLM text shown to users must not carry numbers: those come from code. */
 export function numberFree(text: unknown): string | null {
   if (typeof text !== 'string' || text.trim() === '') return null;
-  return /\d/.test(text) ? null : text.trim();
+  // Metric names like "p90" are words, not figures.
+  const withoutMetricNames = text.replace(/\bp\d{2}\b/gi, '');
+  return /\d/.test(withoutMetricNames) ? null : text.trim();
 }
 
 function compactSummary(s: ResultSummary) {
@@ -139,6 +144,8 @@ export async function runAnalysis(base: CafeSpec, llm: LlmClient, opts: Analysis
   let summary: string | null = null;
   let stopReason: StopReason | null = null;
   let silentTurns = 0;
+  let lastFailed = '';
+  let repeatedFailures = 0;
 
   const messages: ChatMessage[] = [
     { role: 'system', content: agentSystemPrompt(maxExperiments, maxCalls) },
@@ -247,19 +254,26 @@ export async function runAnalysis(base: CafeSpec, llm: LlmClient, opts: Analysis
     silentTurns = 0;
     // One tool per turn: answer extra calls with an error so the history stays valid.
     calls.forEach((call, k) => {
+      if (stopReason !== null && k > 0) return;
       let content: unknown;
       if (k > 0) content = { error: 'Only one tool call per turn; this one was ignored' };
       else {
         try {
           content = execute(call);
+          repeatedFailures = 0;
+          lastFailed = '';
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err);
           steps.push({ kind: 'error', message });
-          content = { error: message };
+          const signature = `${call.function.name}:${call.function.arguments}`;
+          repeatedFailures = signature === lastFailed ? repeatedFailures + 1 : 1;
+          lastFailed = signature;
+          content = repeatedFailures >= 2 ? { error: message, note: 'You sent the same failing call again. Change the arguments.' } : { error: message };
         }
       }
       messages.push({ role: 'tool', tool_call_id: call.id, content: JSON.stringify(content) });
     });
+    if (repeatedFailures >= MAX_REPEATED_ERRORS && stopReason === null) stopReason = 'repeated_error';
   }
 
   const final = stopReason as StopReason;
@@ -270,6 +284,7 @@ export async function runAnalysis(base: CafeSpec, llm: LlmClient, opts: Analysis
     token_budget: 'Stopped: the token budget is nearly used up.',
     llm_error: 'Stopped: the language model returned an error.',
     no_tool_call: 'Stopped: the model kept replying without calling a tool.',
+    repeated_error: `Stopped: the model sent the same invalid call ${MAX_REPEATED_ERRORS} times in a row.`,
   };
   steps.push({ kind: 'stop', reason: final, message: stopMessages[final] });
   return { baseline, bottleneck, experiments, recommended: pickRecommended(experiments), steps, stopReason: final, summary, llmCalls, tokens };

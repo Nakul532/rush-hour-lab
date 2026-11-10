@@ -1,0 +1,48 @@
+{
+  "model": "openai/gpt-oss-120b",
+  "provider": "Groq",
+  "tokenCap": 40000,
+  "tokensUsed": 22169,
+  "reportedCostUsd": 0.0033553500000000004,
+  "creditsUsedUsd": 0,
+  "ranAt": "2026-11-10T06:42:12.652Z",
+  "analyses": [
+    {
+      "n": 1,
+      "name": "Observed café, max 2 changes",
+      "calls": 10,
+      "tokens": 22169,
+      "outcome": {
+        "stopReason": "llm_call_limit",
+        "experiments": [],
+        "recommended": null,
+        "improvementPct": null,
+        "summary": null,
+        "errors": [
+          "Unknown station \"undefined\". Stations: cashier, barista, kitchen, handoff, express",
+          "Unknown station \"undefined\". Stations: cashier, barista, kitchen, handoff, express",
+          "Unknown station \"undefined\". Stations: cashier, barista, kitchen, handoff, express",
+          "Unknown station \"undefined\". Stations: cashier, barista, kitchen, handoff, express",
+          "Unknown station \"undefined\". Stations: cashier, barista, kitchen, handoff, express",
+          "Unknown station \"undefined\". Stations: cashier, barista, kitchen, handoff, express",
+          "Unknown station \"undefined\". Stations: cashier, barista, kitchen, handoff, express",
+          "Unknown station \"undefined\". Stations: cashier, barista, kitchen, handoff, express",
+          "Unknown station \"undefined\". Stations: cashier, barista, kitchen, handoff, express",
+          "Unknown station \"undefined\". Stations: cashier, barista, kitchen, handoff, express"
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "name": "Synthetic café, no new hires, $500 budget",
+      "skipped": true,
+      "remaining": 17831
+    },
+    {
+      "n": 3,
+      "name": "Model builder + what-if",
+      "skipped": true,
+      "remaining": 17831
+    }
+  ]
+}

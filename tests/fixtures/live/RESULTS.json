@@ -1,0 +1,50 @@
+{
+  "model": "openai/gpt-oss-120b",
+  "provider": "Groq",
+  "tokenCap": 17831,
+  "tokensUsed": 10031,
+  "reportedCostUsd": 0.0010935,
+  "creditsUsedUsd": 0.006752999999999999,
+  "ranAt": "2026-11-10T06:43:46.930Z",
+  "analyses": [
+    {
+      "n": 1,
+      "name": "Observed café, max 2 changes",
+      "calls": 3,
+      "tokens": 10031,
+      "outcome": {
+        "stopReason": "finished",
+        "experiments": [
+          {
+            "status": "accepted",
+            "changes": [
+              "Add 1 kitchen staff for the whole rush"
+            ],
+            "hypothesis": "Adding a kitchen staff reduces kitchen bottleneck and overall p90",
+            "failed": []
+          }
+        ],
+        "recommended": [
+          "Add 1 kitchen staff for the whole rush"
+        ],
+        "improvementPct": 16.5,
+        "summary": null,
+        "errors": [
+          "The model replied without calling a tool"
+        ]
+      }
+    },
+    {
+      "n": 2,
+      "name": "Synthetic café, no new hires, $500 budget",
+      "skipped": true,
+      "remaining": 7800
+    },
+    {
+      "n": 3,
+      "name": "Model builder + what-if",
+      "skipped": true,
+      "remaining": 7800
+    }
+  ]
+}

@@ -42,6 +42,8 @@ export function parseChange(raw: unknown, spec: CafeSpec): Change {
   const rush = windowMinutes(spec.arrivals);
   switch (c.kind) {
     case 'staff': {
+      if (c.station === undefined || c.delta === undefined)
+        throw new ChangeError('A staff change needs "station" (cashier, barista, kitchen, handoff or express) and "delta" (e.g. 1), e.g. {"kind":"staff","station":"kitchen","delta":1}');
       if (!STATION_NAMES.includes(c.station as StationName))
         throw new ChangeError(`Unknown station "${String(c.station)}". Stations: ${STATION_NAMES.join(', ')}`);
       const station = c.station as StationName;
