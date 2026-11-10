@@ -34,12 +34,14 @@ export interface CafeSpec {
   drinkOnlyStation?: 'barista' | 'express';
   /** Warm-up: ignore customers who arrive before this minute in wait statistics. */
   measureFromMin?: number;
+  /** Clock time the rush window starts, "HH:MM" (used to read times like "8–10" in questions). */
+  startsAt?: string;
 }
 
 /** Near-zero time to hand over a ready item. ASSUMPTION. */
 export const DEFAULT_GRAB_TIME: Dist = lognormal(0.3, 0.5);
 
-function toWindows(s: Staffing): StaffWindow[] {
+export function toWindows(s: Staffing): StaffWindow[] {
   return typeof s === 'number' ? [{ fromMin: 0, servers: s }] : s;
 }
 

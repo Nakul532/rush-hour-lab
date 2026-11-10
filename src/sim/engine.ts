@@ -339,6 +339,7 @@ export function runOnce(config: SimConfig, seed: number, options: RunOptions = {
   return {
     arrivals: customers.length,
     served: records.length,
+    unserved: customers.length - records.length,
     servedInWindow: records.filter((r) => r.done <= windowMin).length,
     windowMin,
     endMin,

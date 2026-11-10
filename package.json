@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Café rush simulator and experiment agent",
+  "description": "Caf\u00e9 rush simulator and experiment agent",
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "calibrate": "tsx scripts/calibrate.ts"
+    "calibrate": "tsx scripts/calibrate.ts",
+    "live-run": "tsx scripts/live-run.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

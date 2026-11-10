@@ -99,6 +99,8 @@ export interface CustomerRecord {
 export interface RunResult {
   arrivals: number;
   served: number;
+  /** Orders never handed over (a station had no staff left). Should be 0. */
+  unserved: number;
   /** Orders finished before the rush window ended. */
   servedInWindow: number;
   windowMin: number;
