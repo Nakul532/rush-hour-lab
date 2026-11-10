@@ -1,0 +1,514 @@
+{
+  "passed": 23,
+  "of": 25,
+  "rows": [
+    {
+      "id": "W01",
+      "question": "what if i add 4 barista",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "barista",
+          "delta": 4
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Add 4 barista staff for the whole rush. Bad-case (90th percentile) wait goes from 40.3 min to 26.0 min, 35% shorter (paired 95% CI of the change: 12.4 min to 16.2 min). By order type: Drink only 30.8 min → 2.4 min, Food only 31.8 min → 27.0 min, Drink + food 45.0 min → 28.2 min. Time in café: 41.2 min → 27.0 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W02",
+      "question": "2 more cooks 8-9am",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "kitchen",
+          "delta": 2,
+          "fromMin": 60,
+          "toMin": 120
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Add 2 kitchen staff from 08:00 to 09:00. Bad-case (90th percentile) wait goes from 40.3 min to 34.3 min, 15% shorter (paired 95% CI of the change: 4.7 min to 7.2 min). By order type: Drink only 30.8 min → 33.0 min, Food only 31.8 min → 22.9 min, Drink + food 45.0 min → 35.8 min. Time in café: 41.2 min → 35.3 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W03",
+      "question": "what if we batch waffles",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "foodBatching",
+          "intervalMin": 15,
+          "batchSize": 6
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Cook food in batches of 6 every 15 min. Bad-case (90th percentile) wait goes from 40.3 min to 32.7 min, 19% shorter (paired 95% CI of the change: 6.3 min to 8.9 min). By order type: Drink only 30.8 min → 32.7 min, Food only 31.8 min → 17.7 min, Drink + food 45.0 min → 33.4 min. Time in café: 41.2 min → 33.7 min. This is a simulation, not a guarantee. I assumed batches of 6 every 15 minutes.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W04",
+      "question": "add a barsita",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "barista",
+          "delta": 1
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Add 1 barista staff for the whole rush. Bad-case (90th percentile) wait goes from 40.3 min to 26.1 min, 35% shorter (paired 95% CI of the change: 12.3 min to 16.0 min). By order type: Drink only 30.8 min → 4.0 min, Food only 31.8 min → 26.9 min, Drink + food 45.0 min → 28.5 min. Time in café: 41.2 min → 27.2 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W05",
+      "question": "extra cahsier from 7:30 to 8",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "cashier",
+          "delta": 1,
+          "fromMin": 30,
+          "toMin": 60
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Add 1 cashier staff from 07:30 to 08:00. Bad-case (90th percentile) wait goes from 40.3 min to 40.3 min, 0% shorter (paired 95% CI of the change: -0.0 min to 0.1 min). By order type: Drink only 30.8 min → 30.7 min, Food only 31.8 min → 31.8 min, Drink + food 45.0 min → 45.1 min. Time in café: 41.2 min → 41.2 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W06",
+      "question": "what if we had another person on the till",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "cashier",
+          "delta": 1
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Add 1 cashier staff for the whole rush. Bad-case (90th percentile) wait goes from 40.3 min to 40.3 min, 0% longer (paired 95% CI of the change: -0.1 min to 0.0 min). By order type: Drink only 30.8 min → 30.8 min, Food only 31.8 min → 31.7 min, Drink + food 45.0 min → 45.1 min. Time in café: 41.2 min → 41.2 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W07",
+      "question": "hire 2 baristas",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "barista",
+          "delta": 2
+        }
+      ],
+      "limits": {
+        "breaks": [
+          {
+            "key": "noNewHires",
+            "message": "Needs 2 more people on shift than you have today (your limit: no new hires)"
+          }
+        ],
+        "suggestion": [
+          {
+            "kind": "staff",
+            "station": "cashier",
+            "delta": -1
+          },
+          {
+            "kind": "staff",
+            "station": "barista",
+            "delta": 1
+          }
+        ]
+      },
+      "answer": "SIMULATED: Add 2 barista staff for the whole rush. Bad-case (90th percentile) wait goes from 40.3 min to 26.0 min, 36% shorter (paired 95% CI of the change: 12.4 min to 16.2 min). By order type: Drink only 30.8 min → 2.5 min, Food only 31.8 min → 27.0 min, Drink + food 45.0 min → 28.2 min. Time in café: 41.2 min → 27.0 min. This is a simulation, not a guarantee. This breaks your limit: needs 2 more people on shift than you have today (your limit: no new hires). Nearest change within your limits: remove 1 cashier staff for the whole rush, and add 1 barista staff for the whole rush. Bad-case wait 40.3 min → 25.8 min (36% shorter).",
+      "llmCalls": 1
+    },
+    {
+      "id": "W08",
+      "question": "put someone on pickup",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "dedicatedHandoff",
+          "staff": 1
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Add a dedicated handoff point with 1 staff. Bad-case (90th percentile) wait goes from 40.3 min to 27.7 min, 31% shorter (paired 95% CI of the change: 10.9 min to 14.3 min). By order type: Drink only 30.8 min → 10.1 min, Food only 31.8 min → 23.9 min, Drink + food 45.0 min → 32.2 min. Time in café: 41.2 min → 28.6 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W09",
+      "question": "sell drip coffee ready to go",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "grabGo",
+          "shareOfDrinks": 0.8
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Sell 80% of drink-only orders as grab-and-go items. Bad-case (90th percentile) wait goes from 40.3 min to 26.5 min, 34% shorter (paired 95% CI of the change: 10.8 min to 16.7 min). By order type: Drink only 30.8 min → 6.5 min, Food only 31.8 min → 26.3 min, Drink + food 45.0 min → 29.1 min. Time in café: 41.2 min → 27.4 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W10",
+      "question": "what if 30% of drinks were grab and go",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "grabGo",
+          "shareOfDrinks": 0.3
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Sell 30% of drink-only orders as grab-and-go items. Bad-case (90th percentile) wait goes from 40.3 min to 31.7 min, 21% shorter (paired 95% CI of the change: 6.3 min to 10.8 min). By order type: Drink only 30.8 min → 18.4 min, Food only 31.8 min → 26.6 min, Drink + food 45.0 min → 35.1 min. Time in café: 41.2 min → 32.7 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W11",
+      "question": "make drinks and food at the same time",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "prepMode",
+          "mode": "parallel"
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Make drinks and food at the same time. Bad-case (90th percentile) wait goes from 40.3 min to 37.8 min, 6% shorter (paired 95% CI of the change: 2.0 min to 3.0 min). By order type: Drink only 30.8 min → 31.1 min, Food only 31.8 min → 37.7 min, Drink + food 45.0 min → 38.7 min. Time in café: 41.2 min → 38.7 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W12",
+      "question": "move one cashier to the bar",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "cashier",
+          "delta": -1
+        },
+        {
+          "kind": "staff",
+          "station": "barista",
+          "delta": 1
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Remove 1 cashier staff for the whole rush, and add 1 barista staff for the whole rush. Bad-case (90th percentile) wait goes from 40.3 min to 25.8 min, 36% shorter (paired 95% CI of the change: 12.6 min to 16.2 min). By order type: Drink only 30.8 min → 3.2 min, Food only 31.8 min → 26.7 min, Drink + food 45.0 min → 28.0 min. Time in café: 41.2 min → 27.7 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W13",
+      "question": "move a cashier to the kitchen 8-9",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "cashier",
+          "delta": -1,
+          "fromMin": 60,
+          "toMin": 120
+        },
+        {
+          "kind": "staff",
+          "station": "kitchen",
+          "delta": 1,
+          "fromMin": 60,
+          "toMin": 120
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Remove 1 cashier staff from 08:00 to 09:00, and add 1 kitchen staff from 08:00 to 09:00. Bad-case (90th percentile) wait goes from 40.3 min to 33.5 min, 17% shorter (paired 95% CI of the change: 5.5 min to 8.1 min). By order type: Drink only 30.8 min → 31.6 min, Food only 31.8 min → 23.0 min, Drink + food 45.0 min → 35.4 min. Time in café: 41.2 min → 35.2 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W14",
+      "question": "add a cook for the busiest half hour",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "kitchen",
+          "delta": 1,
+          "fromMin": 30,
+          "toMin": 60
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Add 1 kitchen staff from 07:30 to 08:00. Bad-case (90th percentile) wait goes from 40.3 min to 36.1 min, 10% shorter (paired 95% CI of the change: 3.2 min to 5.1 min). By order type: Drink only 30.8 min → 31.8 min, Food only 31.8 min → 25.1 min, Drink + food 45.0 min → 40.1 min. Time in café: 41.2 min → 37.1 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W15",
+      "question": "what if we cook waffles in batches of 6 every 10 minutes",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "foodBatching",
+          "intervalMin": 10,
+          "batchSize": 6
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Cook food in batches of 6 every 10 min. Bad-case (90th percentile) wait goes from 40.3 min to 32.6 min, 19% shorter (paired 95% CI of the change: 6.4 min to 9.0 min). By order type: Drink only 30.8 min → 32.8 min, Food only 31.8 min → 17.0 min, Drink + food 45.0 min → 32.9 min. Time in café: 41.2 min → 33.5 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W16",
+      "question": "one more barista and one more cook",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "barista",
+          "delta": 1
+        },
+        {
+          "kind": "staff",
+          "station": "kitchen",
+          "delta": 1
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Add 1 barista staff for the whole rush, and add 1 kitchen staff for the whole rush. Bad-case (90th percentile) wait goes from 40.3 min to 7.1 min, 82% shorter (paired 95% CI of the change: 30.7 min to 35.7 min). By order type: Drink only 30.8 min → 4.2 min, Food only 31.8 min → 6.2 min, Drink + food 45.0 min → 8.4 min. Time in café: 41.2 min → 8.1 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W17",
+      "question": "fewer cashiers",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "cashier",
+          "delta": -1
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Remove 1 cashier staff for the whole rush. Bad-case (90th percentile) wait goes from 40.3 min to 39.1 min, 3% shorter (paired 95% CI of the change: 0.8 min to 1.5 min). By order type: Drink only 30.8 min → 29.5 min, Food only 31.8 min → 31.2 min, Drink + food 45.0 min → 43.6 min. Time in café: 41.2 min → 41.4 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W18",
+      "question": "2 extra baristas from 8am to 9am",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "barista",
+          "delta": 2,
+          "fromMin": 60,
+          "toMin": 120
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Add 2 barista staff from 08:00 to 09:00. Bad-case (90th percentile) wait goes from 40.3 min to 28.1 min, 30% shorter (paired 95% CI of the change: 10.5 min to 13.9 min). By order type: Drink only 30.8 min → 12.4 min, Food only 31.8 min → 28.0 min, Drink + food 45.0 min → 30.5 min. Time in café: 41.2 min → 29.0 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W19",
+      "question": "what if i add a barista",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "barista",
+          "delta": 1
+        }
+      ],
+      "limits": {
+        "breaks": [
+          {
+            "key": "noNewHires",
+            "message": "Needs 1 more person on shift than you have today (your limit: no new hires)"
+          }
+        ],
+        "suggestion": [
+          {
+            "kind": "staff",
+            "station": "cashier",
+            "delta": -1
+          },
+          {
+            "kind": "staff",
+            "station": "barista",
+            "delta": 1
+          }
+        ]
+      },
+      "answer": "SIMULATED: Add 1 barista staff for the whole rush. Bad-case (90th percentile) wait goes from 40.3 min to 26.1 min, 35% shorter (paired 95% CI of the change: 12.3 min to 16.0 min). By order type: Drink only 30.8 min → 4.0 min, Food only 31.8 min → 26.9 min, Drink + food 45.0 min → 28.5 min. Time in café: 41.2 min → 27.2 min. This is a simulation, not a guarantee. This breaks your limit: needs 1 more person on shift than you have today (your limit: no new hires). Nearest change within your limits: remove 1 cashier staff for the whole rush, and add 1 barista staff for the whole rush. Bad-case wait 40.3 min → 25.8 min (36% shorter).",
+      "llmCalls": 1
+    },
+    {
+      "id": "W20",
+      "question": "add three cooks",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "kitchen",
+          "delta": 3
+        }
+      ],
+      "limits": {
+        "breaks": [
+          {
+            "key": "budget",
+            "message": "Costs about $2,640 in the first month; the budget is $500"
+          }
+        ],
+        "suggestion": [
+          {
+            "kind": "staff",
+            "station": "kitchen",
+            "delta": 1,
+            "fromMin": 30,
+            "toMin": 60
+          }
+        ]
+      },
+      "answer": "SIMULATED: Add 3 kitchen staff for the whole rush. Bad-case (90th percentile) wait goes from 40.3 min to 33.5 min, 17% shorter (paired 95% CI of the change: 5.5 min to 8.1 min). By order type: Drink only 30.8 min → 32.8 min, Food only 31.8 min → 19.7 min, Drink + food 45.0 min → 34.9 min. Time in café: 41.2 min → 34.4 min. This is a simulation, not a guarantee. This breaks your limit: costs about $2,640 in the first month; the budget is $500. Nearest change within your limits: add 1 kitchen staff from 07:30 to 08:00. Bad-case wait 40.3 min → 36.1 min (10% shorter).",
+      "llmCalls": 1
+    },
+    {
+      "id": "W21",
+      "question": "what if we had an express lane for drinks",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "expressDrinks",
+          "staff": 1
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Add an express drink station for drink-only orders with 1 staff. Bad-case (90th percentile) wait goes from 40.3 min to 26.5 min, 34% shorter (paired 95% CI of the change: 11.9 min to 15.7 min). By order type: Drink only 30.8 min → 7.6 min, Food only 31.8 min → 26.7 min, Drink + food 45.0 min → 28.9 min. Time in café: 41.2 min → 27.5 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W22",
+      "question": "add a barista at 7:45 till 8:15",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "barista",
+          "delta": 1,
+          "fromMin": 45,
+          "toMin": 75
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Add 1 barista staff from 07:45 to 08:15. Bad-case (90th percentile) wait goes from 40.3 min to 28.8 min, 29% shorter (paired 95% CI of the change: 9.7 min to 13.3 min). By order type: Drink only 30.8 min → 11.0 min, Food only 31.8 min → 28.2 min, Drink + food 45.0 min → 31.7 min. Time in café: 41.2 min → 29.7 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W23",
+      "question": "what about a second barista during the rush",
+      "pass": true,
+      "why": "read by AI",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "barista",
+          "delta": 1
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Add 1 barista staff for the whole rush. Bad-case (90th percentile) wait goes from 40.3 min to 26.1 min, 35% shorter (paired 95% CI of the change: 12.3 min to 16.0 min). By order type: Drink only 30.8 min → 4.0 min, Food only 31.8 min → 26.9 min, Drink + food 45.0 min → 28.5 min. Time in café: 41.2 min → 27.2 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W24",
+      "question": "what if we batch brew coffee",
+      "pass": false,
+      "why": "read as [{\"kind\":\"foodBatching\",\"intervalMin\":15,\"batchSize\":6}]",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "foodBatching",
+          "intervalMin": 15,
+          "batchSize": 6
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Cook food in batches of 6 every 15 min. Bad-case (90th percentile) wait goes from 40.3 min to 32.7 min, 19% shorter (paired 95% CI of the change: 6.3 min to 8.9 min). By order type: Drink only 30.8 min → 32.7 min, Food only 31.8 min → 17.7 min, Drink + food 45.0 min → 33.4 min. Time in café: 41.2 min → 33.7 min. This is a simulation, not a guarantee. I assumed batches of 6 every 15 minutes.",
+      "llmCalls": 1
+    },
+    {
+      "id": "W25",
+      "question": "Wat if we hav 2 cooks n 2 baristas",
+      "pass": false,
+      "why": "read as [{\"kind\":\"staff\",\"station\":\"kitchen\",\"delta\":2},{\"kind\":\"staff\",\"station\":\"barista\",\"delta\":2}]",
+      "readBy": "ai",
+      "changes": [
+        {
+          "kind": "staff",
+          "station": "kitchen",
+          "delta": 2
+        },
+        {
+          "kind": "staff",
+          "station": "barista",
+          "delta": 2
+        }
+      ],
+      "limits": null,
+      "answer": "SIMULATED: Add 2 kitchen staff for the whole rush, and add 2 barista staff for the whole rush. Bad-case (90th percentile) wait goes from 40.3 min to 5.3 min, 87% shorter (paired 95% CI of the change: 32.3 min to 37.7 min). By order type: Drink only 30.8 min → 2.6 min, Food only 31.8 min → 4.5 min, Drink + food 45.0 min → 6.2 min. Time in café: 41.2 min → 6.2 min. This is a simulation, not a guarantee.",
+      "llmCalls": 1
+    }
+  ]
+}

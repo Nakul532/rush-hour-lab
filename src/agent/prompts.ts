@@ -20,7 +20,7 @@ export const CHANGE_SCHEMA = {
   properties: {
     kind: { type: 'string', enum: ['staff', 'prepMode', 'foodBatching', 'dedicatedHandoff', 'expressDrinks', 'grabGo'] },
     station: { type: 'string', enum: ['cashier', 'barista', 'kitchen', 'handoff', 'express'], description: 'staff: which station' },
-    delta: { type: 'integer', minimum: -3, maximum: 3, description: 'staff: people to add (negative removes)' },
+    delta: { type: 'integer', minimum: -6, maximum: 6, description: 'staff: people to add (negative removes)' },
     fromMin: { type: 'number', description: 'staff: start minute of the rush (optional)' },
     toMin: { type: 'number', description: 'staff: end minute of the rush (optional)' },
     mode: { type: 'string', enum: ['parallel', 'sequential'], description: 'prepMode' },

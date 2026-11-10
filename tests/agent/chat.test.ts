@@ -44,11 +44,33 @@ describe('what-if chat', () => {
     expect(r.answer).toMatch(/not something this simulator models/);
   });
 
-  it('shows a friendly message at the call limit (never an error)', async () => {
+  it('at the AI call limit, the rule-based reader answers instead (never an error)', async () => {
     const llm = new LimitedLlm(new MockLlm([]), { maxCalls: 0 });
     const r = await answerWhatIf(cafe, 'Add a barista?', llm, SIM);
+    expect(r.ok).toBe(true);
+    expect(r.readBy).toBe('rules');
+    expect(r.answer).toMatch(/today's limit/);
+  });
+
+  it('with no AI at all, casual phrasing still works', async () => {
+    const r = await answerWhatIf(cafe, 'what if i add 4 barista', null, SIM);
+    expect(r.ok).toBe(true);
+    expect(r.changes).toEqual([{ kind: 'staff', station: 'barista', delta: 4 }]);
+  });
+
+  it('a request that breaks a limit says which one and simulates the nearest allowed change', async () => {
+    const twoCashiers = syntheticCafe({ staff: { cashier: 2, barista: 1, kitchen: 1 } });
+    const r = await answerWhatIf(twoCashiers, 'what if i add a barista', null, SIM, { constraints: { noNewHires: true } });
+    expect(r.limits?.breaks.map((b) => b.key)).toEqual(['noNewHires']);
+    expect(r.limits?.suggestion?.changes).toEqual([{ kind: 'staff', station: 'cashier', delta: -1 }, { kind: 'staff', station: 'barista', delta: 1 }]);
+    expect(r.answer).toMatch(/This breaks your limit: needs 1 more person.*Nearest change within your limits: remove 1 cashier/);
+  });
+
+  it('nothing readable: lists what can be asked, never a generic error', async () => {
+    const r = await answerWhatIf(cafe, 'what if it rains', null, SIM);
     expect(r.ok).toBe(false);
-    expect(r.answer).toMatch(/daily limit/);
+    expect(r.answer).toMatch(/You can ask about: adding or moving staff/);
+    expect(r.answer).not.toMatch(/could not turn/);
   });
 });
 

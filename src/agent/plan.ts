@@ -88,20 +88,35 @@ export function planCost(base: CafeSpec, changes: Change[], costs: CostTable): n
   return setup + hours * costs.staffHourly * costs.rushDaysPerMonth;
 }
 
-/** Every constraint the plan breaks, in plain English. Empty means the plan is allowed. */
-export function constraintViolations(base: CafeSpec, changes: Change[], constraints: Constraints, costs: CostTable): string[] {
-  const out: string[] = [];
+export type ConstraintKey = 'maxChanges' | 'noNewHires' | 'budget';
+
+export interface ConstraintBreak {
+  key: ConstraintKey;
+  /** Plain English, e.g. "Needs 2 more people on shift than you have today (your limit: no new hires)". */
+  message: string;
+}
+
+/** Every constraint the plan breaks, with which limit it is. Empty means the plan is allowed. */
+export function constraintBreaks(base: CafeSpec, changes: Change[], constraints: Constraints, costs: CostTable): ConstraintBreak[] {
+  const out: ConstraintBreak[] = [];
   if (constraints.maxChanges !== undefined && changes.length > constraints.maxChanges)
-    out.push(`Uses ${changes.length} changes; the limit is ${constraints.maxChanges}`);
+    out.push({ key: 'maxChanges', message: `Uses ${changes.length} changes; the limit is ${constraints.maxChanges}` });
   if (constraints.noNewHires) {
     const after = applyChanges(base, changes);
     const cuts = [...new Set([...staffBoundaries(base), ...staffBoundaries(after)])];
-    const over = cuts.find((t) => totalStaffAt(after, t) > totalStaffAt(base, t));
-    if (over !== undefined) out.push(`Needs more staff on shift than today (from minute ${over}); the constraint is no new hires`);
+    const extra = Math.max(...cuts.map((t) => totalStaffAt(after, t) - totalStaffAt(base, t)));
+    if (extra > 0)
+      out.push({ key: 'noNewHires', message: `Needs ${extra} more ${extra === 1 ? 'person' : 'people'} on shift than you have today (your limit: no new hires)` });
   }
   if (constraints.budgetUsd !== undefined) {
     const cost = planCost(base, changes, costs);
-    if (cost > constraints.budgetUsd) out.push(`Costs about $${Math.round(cost)} (first month); the budget is $${constraints.budgetUsd}`);
+    if (cost > constraints.budgetUsd)
+      out.push({ key: 'budget', message: `Costs about $${Math.round(cost).toLocaleString('en-US')} in the first month; the budget is $${constraints.budgetUsd.toLocaleString('en-US')}` });
   }
   return out;
+}
+
+/** Every constraint the plan breaks, in plain English. Empty means the plan is allowed. */
+export function constraintViolations(base: CafeSpec, changes: Change[], constraints: Constraints, costs: CostTable): string[] {
+  return constraintBreaks(base, changes, constraints, costs).map((b) => b.message);
 }

@@ -29,6 +29,9 @@ export const CHANGE_KINDS = ['staff', 'prepMode', 'foodBatching', 'dedicatedHand
 
 export class ChangeError extends Error {}
 
+/** Most people one staff change can add or remove. */
+export const MAX_STAFF_DELTA = 6;
+
 const isInt = (x: unknown): x is number => typeof x === 'number' && Number.isInteger(x);
 const isNum = (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x);
 
@@ -51,7 +54,7 @@ export function parseChange(raw: unknown, spec: CafeSpec): Change {
         throw new ChangeError('This café has no dedicated handoff station; use a dedicatedHandoff change first');
       if (station === 'express' && spec.drinkOnlyStation !== 'express')
         throw new ChangeError('This café has no express drink station; use an expressDrinks change first');
-      if (!isInt(c.delta) || c.delta === 0 || Math.abs(c.delta) > 3) throw new ChangeError('delta must be a whole number from -3 to 3, not 0');
+      if (!isInt(c.delta) || c.delta === 0 || Math.abs(c.delta) > MAX_STAFF_DELTA) throw new ChangeError(`delta must be a whole number from -${MAX_STAFF_DELTA} to ${MAX_STAFF_DELTA}, not 0`);
       const fromMin = c.fromMin === undefined ? undefined : c.fromMin;
       const toMin = c.toMin === undefined ? undefined : c.toMin;
       if (fromMin !== undefined && (!isNum(fromMin) || fromMin < 0 || fromMin >= rush)) throw new ChangeError(`fromMin must be between 0 and ${rush}`);
