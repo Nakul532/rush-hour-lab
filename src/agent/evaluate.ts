@@ -48,7 +48,11 @@ function summarizeRuns(runs: RunResult[]): ResultSummary {
   };
 }
 
+/** Counts simulate() calls (each = one batch of replications). Used by the evaluation. */
+export const simulationCounter = { count: 0 };
+
 export function simulate(spec: CafeSpec, sim: SimSettings = DEFAULT_SIM): { summary: ResultSummary; runs: RunResult[] } {
+  simulationCounter.count++;
   const runs = runReplications(buildConfig(spec), sim.reps, sim.seed);
   return { summary: summarizeRuns(runs), runs };
 }

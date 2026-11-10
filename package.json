@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "calibrate": "tsx scripts/calibrate.ts",
     "live-run": "tsx scripts/live-run.ts",
-    "calibrate:curio": "tsx scripts/calibrate-curio.ts"
+    "calibrate:curio": "tsx scripts/calibrate-curio.ts",
+    "eval": "tsx eval/run.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

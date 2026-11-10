@@ -12,6 +12,7 @@ import { compare, decide, DEFAULT_SIM, findBottleneck, sensitivity, simulate, ty
 import { LlmLimitError, type ChatMessage, type LlmClient, type ToolCall } from './llm';
 import { DEFAULT_COSTS, constraintViolations, planCost, type Constraints, type CostTable } from './plan';
 import { AGENT_TOOLS, agentSystemPrompt, describeCafe, describeConstraints, r1 } from './prompts';
+import { describeSpace, matchPlan, type ChangeSpace } from './space';
 
 export const MAX_LLM_CALLS = 15;
 
@@ -51,6 +52,8 @@ export interface AnalysisOptions {
   maxSimulations?: number;
   /** Max completion tokens per LLM call. */
   maxTokensPerCall?: number;
+  /** Evaluation only: plans must come from this fixed set of options (enforced by code). */
+  changeSpace?: ChangeSpace;
 }
 
 export interface AnalysisResult {
@@ -154,13 +157,18 @@ export async function runAnalysis(base: CafeSpec, llm: LlmClient, opts: Analysis
       content: [
         describeCafe(base),
         describeConstraints(constraints, costs),
+        ...(opts.changeSpace ? [describeSpace(opts.changeSpace)] : []),
         `Today (simulated): ${JSON.stringify(compactSummary(baseline))}`,
         `Busiest station: ${bottleneck.station} (${r1(bottleneck.utilization * 100)}% busy).`,
       ].join('\n'),
     },
   ];
 
-  const changesArg = (raw: unknown, spec: CafeSpec) => parseChanges(raw ?? [], spec);
+  const changesArg = (raw: unknown, spec: CafeSpec) => {
+    const changes = parseChanges(raw ?? [], spec);
+    if (opts.changeSpace) matchPlan(opts.changeSpace, changes, spec);
+    return changes;
+  };
 
   const execute = (call: ToolCall): unknown => {
     let args: Record<string, unknown>;

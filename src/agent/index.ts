@@ -8,3 +8,5 @@ export * from './agent';
 export * from './whatIf';
 export * from './modelBuilder';
 export * from './heuristic';
+export * from './space';
+export * from './openrouter';
