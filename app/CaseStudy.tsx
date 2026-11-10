@@ -1,4 +1,4 @@
-import { EVAL } from './evalNumbers';
+import { EVAL, TOTAL as T } from './evalNumbers';
 
 const REPO = 'https://github.com/Nakul532/rush-hour-lab';
 
@@ -28,32 +28,47 @@ export function CaseStudy() {
         <li><strong>Search.</strong> Code tests every combination of options (brute force) when that fits in about 20 seconds, and a step-by-step greedy search otherwise. An AI analyst (gpt-oss-120b) proposes and tests its own ideas in the same option space. Whichever passing plan is best is recommended, and the page says which method found it.</li>
       </ol>
 
-      <h2>Evaluation</h2>
-      <p>20 test cafés (18 synthetic), each with a small enough option space that brute force finds the truly best plan. Scenarios and scoring were committed before any agent ran.</p>
-      <table>
-        <thead><tr><th></th><th>AI agent</th><th>Greedy search</th><th>Brute force</th></tr></thead>
-        <tbody>
-          <tr><td>Best plan found, 15 original scenarios</td><td>{o.agent.best} of 15 (re-run: {o.agentRerun.best})</td><td>{o.greedy.best} of 15</td><td>15 of 15</td></tr>
-          <tr><td>Best plan found, 5 interacting-changes scenarios</td><td>{i.agent.best} of 5</td><td>{i.greedy.best} of 5</td><td>5 of 5</td></tr>
-          <tr><td>Simulations used (original 15)</td><td>{o.agent.sims}</td><td>{o.greedy.sims}</td><td>—</td></tr>
-        </tbody>
-      </table>
-      <p><strong>The AI agent never beat plain search.</strong> It found the best plan in {o.agent.best} of 15 scenarios against greedy's {o.greedy.best}, and fell into the same budget traps greedy did in the interacting scenarios. That is why the product uses code to search and the AI to read descriptions, answer what-if questions and explain results. The AI's ideas are still tested and credited when they win.</p>
-      <p><strong>False positives:</strong> {o.falsePositives} of {o.accepted} accepted plans failed a fresh re-check on the original scenarios, but {i.falsePositives} of {i.accepted} did in the interacting ones. All of those were borderline (passing at 10–13%, re-measured just under 10%) and none was a best plan. That is why the final recommendation is always re-checked before it is shown.</p>
-      <p><strong>Turning descriptions into cafés:</strong> {b.before.pct}% of stated fields correct at first; {b.heldOut.pct}% on five held-out descriptions after fixing how stated zeros ("no kitchen staff") are read.</p>
+      <h2>Evaluation: brute force vs greedy vs the AI agent</h2>
+      <p>{T.scenarios} test cafés ({T.scenarios - 2} synthetic, plus the calibrated observed café and the reconstructed Curio café), each with a small enough option space ({T.plans.toLocaleString('en-US')} plans in all) that brute force finds the truly best plan. Scenarios and scoring were committed before any agent ran; later changes were committed as labelled addenda before they ran.</p>
+      <div className="tablewrap">
+        <table>
+          <thead><tr><th>Best plan found</th><th>Brute force</th><th>Greedy search</th><th>AI agent</th></tr></thead>
+          <tbody>
+            <tr><td>15 original scenarios</td><td>15 of 15</td><td>{o.greedy.best} of 15</td><td>{o.agent.best} of 15 (clean re-run: {o.agentRerun.best})</td></tr>
+            <tr><td>5 interacting-changes scenarios</td><td>5 of 5</td><td>{i.greedy.best} of 5</td><td>{i.agent.best} of 5</td></tr>
+            <tr><td><strong>All {T.scenarios}</strong></td><td><strong>{T.scenarios} of {T.scenarios}</strong></td><td><strong>{T.greedyBest} of {T.scenarios}</strong></td><td><strong>{T.agentBest} of {T.scenarios}</strong></td></tr>
+            <tr><td>Simulations used</td><td>{T.bruteSims.toLocaleString('en-US')}</td><td>{T.greedySims.toLocaleString('en-US')}</td><td>{T.agentSims.toLocaleString('en-US')}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul>
+        <li><strong>Brute force</strong> is the ground truth and, at this size, cheap: every plan for a café in seconds in the browser.</li>
+        <li><strong>Greedy search</strong> (try every single change, keep the best, repeat) solved all 15 original scenarios and the 3 interacting scenarios where each fix still helps a little on its own. It fell into both budget traps, where the best single change uses up the budget.</li>
+        <li><strong>The AI agent never beat plain search.</strong> It used the fewest simulations but mostly stopped one or two changes short of the best combination, and fell into the same budget traps. Retrying its empty replies did not change a single outcome. So the product lets code search (brute force, or greedy when brute force would be too slow) and uses the AI to read café descriptions, answer what-if questions and propose extra ideas, which are tested and credited when they win.</li>
+      </ul>
 
-      <h2>Three things that went wrong, and what they taught us</h2>
-      <h3>1. The metric was gameable: testing caught it before an agent could</h3>
-      <p>While testing the acceptance rule we tried "move the cook to the drinks station". It passed every check with an 82% shorter bad-case wait and no cost. It was too good to be true: with nobody in the kitchen, food orders never finished, and the simulator only measured orders that did. The rule was rewarding a café that stops serving food. Fix: the simulator reports unserved orders, plans that leave a station empty are refused, and the rule gained a check that every order gets served. Lesson: an optimizer will find the cheapest way to move the number it is judged by, so report what a metric leaves out.</p>
-      <h3>2. Mocked tests passed; the first live call failed</h3>
-      <p>All 105 tests passed with a scripted AI. The first live run then sent the same incomplete change ten times. Our tool schema declared only the change's kind, and the model followed the schema exactly. Fix: declare every field, return errors that name what is missing, and stop after three identical failures. The real responses are now a replay test.</p>
-      <h3>3. "Wait" starts at the till, so the metric was gameable a second time</h3>
-      <p>We measure wait from placing the order to receiving it, matching how the 18 orders were timed. None of the 167 plans accepted in the evaluation made time in the café worse, so at first we only showed both numbers. Then the live app, on the near-capacity Curio café with no new hires, recommended moving a cashier to the kitchen: wait 66% shorter, every check passed, but time in the café rose from 43 to 169 minutes because the order line grew without limit. Fix: the rule now also requires that time in the café gets no more than 10% worse. Re-running all 20 evaluation scenarios with it changed no result. In the same session an empty register (two moves off a two-person till) slipped through a search path that skipped the empty-station check, the same bug as story 1 by a different route. Now one shared validator serves every path, with a test for each.</p>
+      <h2>Why every recommendation is re-checked</h2>
+      <p>The search tests each plan on a modest number of simulated rushes. Near the 10% bar, that is noisy. When we re-ran every accepted plan on a fresh seed with five times the simulations, {o.falsePositives} of {o.accepted} failed on the original scenarios, but {i.falsePositives} of {i.accepted} did on the interacting ones. All of those were borderline: they passed at 10–13% and re-measured at 6–10%, still real improvements but under the bar. One was the AI agent's own recommendation in a test café. None was a best plan.</p>
+      <p>So the app never shows a plan straight from the search. The best passing plan is re-run on 1,000 fresh simulated rushes against the full acceptance test; if it fails, the next best is tried. The results page labels the recommendation "verified" only after that, and its headline numbers come from the re-check run.</p>
+
+      <h2>Turning descriptions into cafés</h2>
+      <p>The AI reads a plain-English description into a café the owner checks before anything runs. On 10 test descriptions it got {b.before.pct}% of stated fields right at first; it kept dropping stated zeros like "no kitchen staff" or "drinks only". After fixing that, it scored {b.afterSeen.pct}% on those 10 descriptions, but they had been seen while writing the fix. The fair test is five new descriptions written and committed before the fix ran: <strong>{b.heldOut.pct}% ({b.heldOut.correct} of {b.heldOut.fields} fields), with {b.heldOut.invented} invented field</strong>.</p>
+
+      <h2>Three times the metric could be gamed, and how each was caught</h2>
+      <p>An optimizer, human or AI, finds the cheapest way to move the number it is judged by. Three times, the cheapest way was to stop the number seeing the problem.</p>
+      <h3>1. An empty kitchen: orders that never finish don't count</h3>
+      <p><em>Caught by an adversarial test of the acceptance rule, before any AI ran.</em> "Move the cook to the drinks station" passed every check with an 82% shorter bad-case wait at no cost. With nobody in the kitchen, food orders never finished, and the simulator only measured orders that did. Fix: the simulator reports unserved orders, the rule requires that every order is served, and plans that leave a station empty are refused.</p>
+      <h3>2. An empty register: the same exploit by a different route</h3>
+      <p><em>Caught when a test run hung while building this app.</em> The new search applied plans without the empty-station check the AI's input went through. Two moves off a two-person register, each fine alone, left nobody taking orders, and with batch cooking the simulator ran forever. Fix: one shared plan validator that every path uses (AI agent, what-if, greedy, brute force, the hybrid, the evaluation), checking every staffing window during the rush, with a regression test through each path; and a hard time limit in the simulator.</p>
+      <h3>3. "Wait" starts at the till</h3>
+      <p><em>Caught testing the app on the near-capacity Curio café with no new hires.</em> We measure wait from placing the order to receiving it, matching how the 18 real orders were timed. The app recommended moving a cashier to the kitchen: wait 66% shorter, every check passed, but time in the café went from 43 to 169 minutes because the order line grew without limit, outside the measured window. In the evaluation this had never happened ({EVAL.timeInCafe.worse} of {EVAL.timeInCafe.acceptedPlans} accepted plans made time in the café worse), because those cafés' registers had spare capacity. Fix: a seventh check, time in the café must not get more than 10% worse. Re-running all {T.scenarios} evaluation scenarios with it changed no result; on Curio the recommendation became parallel prep plus grab-and-go, and time in the café improved.</p>
+      <h3>Also: mocked tests passed, the first live call failed</h3>
+      <p>All 105 tests passed with a scripted AI. The first live run then sent the same incomplete change ten times: the tool schema declared only the change's kind, and the model followed the schema exactly. Fix: declare every field, return errors that name what is missing, and stop after three identical failures. The real responses are now a replay test.</p>
 
       <h2>Limitations</h2>
       <ul>
         <li>Calibrated on 18 orders from one session at one café. Staffing, arrival rate and several task times there are assumptions.</li>
-        <li>18 of the 20 evaluation cafés are synthetic, and their option spaces are small.</li>
+        <li>18 of the 20 evaluation cafés are synthetic, their option spaces are small, and each AI configuration ran once per scenario (results vary between runs).</li>
         <li>Confidence intervals cover simulation noise only, not whether the model matches a real café.</li>
         <li>Costs are user-entered; the defaults are assumptions.</li>
         <li>Decision support, not a guarantee.</li>
